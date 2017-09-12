@@ -1,0 +1,42 @@
+#ifndef __WINDOWS_TYPES_HPP_
+#define	__WINDOWS_TYPES_HPP_
+
+
+namespace DadEngine::Core//::Types
+{
+	typedef unsigned long long uint64;
+	typedef long long int64;
+	typedef unsigned int uint32;
+	typedef	int int32;
+	typedef	unsigned short uint16;
+	typedef short int16;
+	typedef unsigned char uint8;
+	typedef char int8;
+
+	// bool ?
+
+	typedef uint32 size_t;
+
+
+
+	namespace Test
+	{
+		// Insert assert test here:
+		FORCE_INLINE void TestTypes()
+		{
+			/*ASSERT(sizeof(uint64) == 8);
+			ASSERT(sizeof(int64) == 8);
+			ASSERT(sizeof(uint32) == 4);
+			ASSERT(sizeof(int32) == 4);
+			ASSERT(sizeof(int16) == 2);
+			ASSERT(sizeof(uint16) == 2);
+			ASSERT(sizeof(uint8) == 1);
+			ASSERT(sizeof(int8) == 1);
+			ASSERT(sizeof(size_t) == 4);*/
+		}
+	}
+}
+
+//using namespace DadEngine::Core::Types;
+
+#endif //__WINDOWS_TYPES_HPP_

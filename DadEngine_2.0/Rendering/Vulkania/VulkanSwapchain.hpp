@@ -1,0 +1,61 @@
+#ifndef __VULKAN_SWAPCHAIN_HPP_
+#define __VULKAN_SWAPCHAIN_HPP_
+
+#include "vulkan/vulkan.h"
+
+#include "../../Core/Core.hpp"
+#include "VulkanHelper.hpp"
+
+
+namespace DadEngine::Rendering
+{
+
+	struct SwapchainImage
+	{
+		VkImage image;
+		VkImageView view;
+	};
+
+	class VulkanSwapchain
+	{
+
+	public:
+		
+		VulkanSwapchain() = default;
+
+		~VulkanSwapchain();
+
+		void Initialize(VkDevice& _InDevice, VkPhysicalDevice& _InPhysicalDevice, VkSurfaceKHR& _InSurface, VkPresentModeKHR& _InPresentationMode, PlatformWindow& _InWindow);
+
+
+		void Present(VkQueue& _InQueue, VkSemaphore& _InRenderingFinishedSemaphore, VkSemaphore& _InImageAvailableSemaphore, uint32 _InImageIndex);
+
+
+		uint32 GetNextImageIndex(VkSemaphore& _InImageAvailableSemaphore);
+
+		uint32 GetImageCount() { return m_SwapchainImages.Size(); }
+
+
+		TArray<SwapchainImage> m_SwapchainImages;
+
+		VkExtent2D m_SwapchainExtent;
+		uint32 m_uiPresentQueueFamilyIndex = 0U;
+
+	private:
+
+		PFN_vkCreateSwapchainKHR CreateSwapchain = VK_NULL_HANDLE;
+		PFN_vkDestroySwapchainKHR DestroySwapchain = VK_NULL_HANDLE;
+		PFN_vkGetSwapchainImagesKHR SwapchainImages = VK_NULL_HANDLE;
+		PFN_vkAcquireNextImageKHR AcquireNextImage = VK_NULL_HANDLE;
+		PFN_vkQueuePresentKHR QueuePresent = VK_NULL_HANDLE;
+
+		VkSwapchainKHR m_Swapchain = VK_NULL_HANDLE;
+		VkSurfaceFormatKHR m_surfaceFormat;
+
+		uint32 m_uiImageIndex = 0U;
+
+		VkDevice m_Device;
+	};
+}
+
+#endif //__VULKAN_SWAPCHAIN_HPP_
