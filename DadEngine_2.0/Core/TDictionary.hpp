@@ -22,16 +22,16 @@ namespace DadEngine::Core//::Containers
 		{
 			for (size_t i = 0U; i < m_Values.Size(); i++)
 			{
-				if (m_Values[i].k == _InKeyVal)
+				if (m_Values[(uint32)i].k == _InKeyVal)
 				{
-					return Pair<uint8, Value> { TRUE, m_Values[i].v };
+					return Pair<uint8, Value> { TRUE, m_Values[(uint32)i].v };
 				}
 			}
 
 			return Pair<uint8, Value> { FALSE };
 		}
 
-		FORCE_INLINE void Add(P& _InNewItem)
+		FORCE_INLINE void Add(P _InNewItem)
 		{
 			Pair<uint8, Value> pair = Contains(_InNewItem.k);
 
@@ -62,7 +62,7 @@ namespace DadEngine::Core//::Containers
 			return P{};
 		}
 
-		FORCE_INLINE uint32 Size () const
+		FORCE_INLINE size_t Size () const
 		{
 			return m_Values.Size();
 		}

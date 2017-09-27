@@ -2,7 +2,10 @@
 #define __MEMORYMANAGER_HPP_
 
 #include <malloc.h>
-#include <string.h>
+
+#include "../Defines.hpp"
+#include "../PlatformTypes.hpp"
+#include "../PlatformMemory.hpp"
 
 namespace DadEngine::Core//::Memory
 {
@@ -46,6 +49,11 @@ namespace DadEngine::Core//::Memory
 			//(uint8 [_InCpySize])_InSrc
 		}
 
+		FORCE_INLINE static void GetMemoryInfo()
+		{
+			PlatformMemory::GetStatus();
+		}
+
 
 		/*FORCE_INLINE static uint32 MemoryUsage()
 		{
@@ -81,12 +89,8 @@ namespace DadEngine::Core//::Memory
 };
 
 
-FORCE_INLINE void * operator new(size_t _InChunkSize) {
-	return DadEngine::Core::MemoryManager::Allocate(1, _InChunkSize);
-}
+void* operator new(size_t _InChunkSize);
 
-FORCE_INLINE void operator delete(void * _InMemLocation) {
-	DadEngine::Core::MemoryManager::Deallocate(_InMemLocation);
-}
+void operator delete(void * _InMemLocation);
 
 #endif //__MEMORYMANAGER_HPP_

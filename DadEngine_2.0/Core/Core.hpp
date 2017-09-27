@@ -6,6 +6,7 @@
 #include "PlatformThreads.hpp"
 #include "PlatformTimers.hpp"
 #include "PlatformWindow.hpp"
+#include "PlatformMemory.hpp"
 #include "Debug.hpp"
 #include "PlatformEntryPoint.hpp"
 #include "Memory.hpp"

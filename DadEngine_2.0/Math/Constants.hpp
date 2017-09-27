@@ -28,4 +28,4 @@ namespace DadEngine::Math::Test
 	}
 }
 
-#endif // !__CONSTANTS_HPP_
+#endif //!__CONSTANTS_HPP_

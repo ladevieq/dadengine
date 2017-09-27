@@ -3,7 +3,6 @@
 
 #include <Windows.h>
 
-
 namespace DadEngine::Core
 {
 	class WindowsWindow
@@ -41,8 +40,8 @@ namespace DadEngine::Core
 			{
 				case WM_SIZE:
 				{
-					uint32 uiWidth = LOWORD(_InLParam);
-					uint32 uiHeight = HIWORD(_InLParam);
+					//uint32 uiWidth = LOWORD(_InLParam);
+					//uint32 uiHeight = HIWORD(_InLParam);
 
 					//OnSize(_InHWND, uiWidth, uiHeight);
 					//GetClientRect(_InHWND, );
@@ -93,6 +92,8 @@ namespace DadEngine::Core
 
 			m_uiConsoleEnabled = !m_uiConsoleEnabled;
 		}
+
+		FORCE_INLINE void SetWindowTitle(const char* _InWindowName) { SetWindowText(m_windowHandle, _InWindowName); }
 
 		/*void OnSize(HWND _InHWND, uint32 _InWidth, uint32 _InHeight)
 		{
@@ -186,5 +187,7 @@ namespace DadEngine::Core
 		const char* m_sWindowName;
 	};
 }
+
+using PlatformWindow = DadEngine::Core::WindowsWindow;
 
 #endif //__WINDOWS_WINDOW_HPP_

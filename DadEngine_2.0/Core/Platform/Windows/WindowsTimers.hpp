@@ -97,4 +97,6 @@ namespace DadEngine::Core
 	}
 }
 
+using PlatformTimer = DadEngine::Core::WindowsTimer;
+
 #endif __WINDOWS_TIMERS_HPP_

@@ -10,7 +10,7 @@ namespace DadEngine::Core//::Containers
 
 	public:
 
-		TArray() {}// = default;
+		TArray() = default;
 
 		TArray(size_t _InItemCount)
 		{
@@ -66,7 +66,7 @@ namespace DadEngine::Core//::Containers
 			return m_allocator.m_ptrMemLocation;
 		}
 
-		FORCE_INLINE uint32 Size() const
+		FORCE_INLINE size_t Size() const
 		{
 			return m_allocator.m_uiCapacity;
 		}

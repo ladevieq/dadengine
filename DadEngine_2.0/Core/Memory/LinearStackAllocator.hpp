@@ -15,12 +15,15 @@ namespace DadEngine::Core//::Memory
 
 		LinearStackAllocator(const LinearStackAllocator<T>& _InMoveInstance)
 		{
-			m_ptrMemLocation = static_cast<T*>(MemoryManager::Allocate(_InMoveInstance.m_uiCapacity, _InMoveInstance.m_ItemSize));
+			if (_InMoveInstance.m_ptrMemLocation != nullptr)
+			{
+				m_ptrMemLocation = static_cast<T*>(MemoryManager::Allocate(_InMoveInstance.m_uiCapacity, _InMoveInstance.m_ItemSize));
 
-			m_ItemSize = _InMoveInstance.m_ItemSize;
-			m_uiCapacity = _InMoveInstance.m_uiCapacity;
+				m_ItemSize = _InMoveInstance.m_ItemSize;
+				m_uiCapacity = _InMoveInstance.m_uiCapacity;
 
-			MemoryManager::Copy(_InMoveInstance.m_ptrMemLocation, m_ptrMemLocation, m_ItemSize * m_uiCapacity);
+				MemoryManager::Copy(_InMoveInstance.m_ptrMemLocation, m_ptrMemLocation, m_ItemSize * m_uiCapacity);
+			}
 		}
 
 		LinearStackAllocator(LinearStackAllocator<T>&& _InMoveInstance) = default;
@@ -32,12 +35,15 @@ namespace DadEngine::Core//::Memory
 
 		LinearStackAllocator<T>& operator= (const LinearStackAllocator<T>& _InMoveInstance)
 		{
-			m_ptrMemLocation = static_cast<T*>(MemoryManager::Allocate(_InMoveInstance.m_uiCapacity, _InMoveInstance.m_ItemSize));
+			if (_InMoveInstance.m_ptrMemLocation != nullptr)
+			{
+				m_ptrMemLocation = static_cast<T*>(MemoryManager::Allocate(_InMoveInstance.m_uiCapacity, _InMoveInstance.m_ItemSize));
 
-			m_ItemSize = _InMoveInstance.m_ItemSize;
-			m_uiCapacity = _InMoveInstance.m_uiCapacity;
+				m_ItemSize = _InMoveInstance.m_ItemSize;
+				m_uiCapacity = _InMoveInstance.m_uiCapacity;
 
-			MemoryManager::Copy(_InMoveInstance.m_ptrMemLocation, m_ptrMemLocation, m_ItemSize * m_uiCapacity);
+				MemoryManager::Copy(_InMoveInstance.m_ptrMemLocation, m_ptrMemLocation, m_ItemSize * m_uiCapacity);
+			}
 
 			return *this;
 		}

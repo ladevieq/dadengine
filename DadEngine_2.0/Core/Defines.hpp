@@ -4,8 +4,8 @@
 // Plateform defines
 #if defined (_WIN32) || (_WIN64)
 	#define	WINDOWS
-	#define _CRT_SECURE_NO_WARNINGS
-	#define VK_USE_PLATFORM_WIN32_KHR
+	//#define _CRT_SECURE_NO_WARNINGS
+	//#define VK_USE_PLATFORM_WIN32_KHR
 #elif defined (__APPLE__)
 	#define APPLE
 #elif defined (__linux__)

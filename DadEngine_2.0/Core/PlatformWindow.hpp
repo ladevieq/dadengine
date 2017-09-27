@@ -6,10 +6,6 @@
 
 #include "Platform/Windows/WindowsWindow.hpp"
 
-namespace DadEngine::Core {
-	using PlatformWindow = WindowsWindow;
-}
-
 #endif
 
 #endif //__PLATFORM_WINDOW_HPP_

@@ -34,7 +34,7 @@ namespace DadEngine::Core
 
 		FORCE_INLINE void Append(const char* _InNewCStrign)
 		{
-
+			m_string.Resize();
 		}
 
 		FORCE_INLINE const char* Cstr() const

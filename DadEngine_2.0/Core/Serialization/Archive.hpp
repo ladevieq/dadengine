@@ -42,7 +42,7 @@ namespace DadEngine::Core
 			}
 
 			for (size_t i = 0U; i < _InValue.Size(); i++)
-				_InAr.Serialize(&_InValue[i], sizeof(_InValue[i]));
+				_InAr.Serialize(&_InValue[(uint32)i], sizeof(_InValue[(uint32)i]));
 
 			return _InAr;
 		}
