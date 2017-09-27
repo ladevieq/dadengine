@@ -41,6 +41,35 @@
     <ClInclude Include="Rendering\Vulkania\VulkanDebug.hpp" />
     <ClInclude Include="Rendering\Vulkania\VulkanSwapchain.hpp" />
     <ClInclude Include="Rendering\Vulkania\VulkanHelper.hpp" />
+    <ClInclude Include="Rendering\OpenGL\wglext.hpp" />
+    <ClInclude Include="Rendering\OpenGL\glext.hpp" />
+    <ClInclude Include="Core\Platform\Windows\WindowsMemory.hpp" />
+    <ClInclude Include="Core\PlatformMemory.hpp" />
+    <ClInclude Include="Rendering\ViewPacket.hpp" />
+    <ClInclude Include="Rendering\Camera.hpp" />
+    <ClInclude Include="Rendering\RenderObject.hpp" />
+    <ClInclude Include="Rendering\RenderNode.hpp" />
+    <ClInclude Include="Rendering\Color.hpp" />
+    <ClInclude Include="Rendering\Feature\RenderingFeature.hpp" />
+    <ClInclude Include="Rendering\Feature\StaticMeshRenderingFeature.hpp" />
+    <ClInclude Include="Rendering\Feature\RenderComponent.hpp" />
+    <ClInclude Include="Rendering\Feature\StaticMeshComponent.hpp" />
+    <ClInclude Include="Rendering\Features.hpp" />
+    <ClInclude Include="Rendering\RawMesh.hpp" />
+    <ClInclude Include="Math\Math.hpp" />
+    <ClInclude Include="Rendering\StaticMeshVertexFactory.hpp" />
+    <ClInclude Include="Rendering\RawVertex.hpp" />
+    <ClInclude Include="Math\Vector3f.hpp" />
+    <ClInclude Include="Math\MathFunctions.hpp" />
+    <ClInclude Include="Math\Vector2f.hpp" />
+    <ClInclude Include="Math\Vector4f.hpp" />
+    <ClInclude Include="Math\Constants.hpp" />
+    <ClInclude Include="Math\Quaternion.hpp" />
+    <ClInclude Include="Math\Matrix4x4.hpp" />
+    <ClInclude Include="Math\Matrix3x3.hpp" />
+    <ClInclude Include="Math\Matrix2x2.hpp" />
+    <ClInclude Include="Rendering\RenderDebug.hpp" />
+    <ClInclude Include="Math\AABB.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -48,5 +77,12 @@
     <ClCompile Include="Rendering\Vulkania\VulkanDebug.cpp" />
     <ClCompile Include="Rendering\Vulkania\VulkanSwapchain.cpp" />
     <ClCompile Include="Rendering\Vulkania\VulkanHelper.cpp" />
+    <ClCompile Include="Rendering\FramePacket.cpp" />
+    <ClCompile Include="Rendering\ViewPacket.cpp" />
+    <ClCompile Include="Math\MathFunctions.cpp" />
+    <ClCompile Include="Math\Vector4f.cpp" />
+    <ClCompile Include="Math\Vector3f.cpp" />
+    <ClCompile Include="Math\Vector2f.cpp" />
+    <ClCompile Include="Core\Memory\MemoryManager.cpp" />
   </ItemGroup>
 </Project>

@@ -31,10 +31,12 @@
     <ClInclude Include="Core\Memory.hpp" />
     <ClInclude Include="Core\Memory\MemoryManager.hpp" />
     <ClInclude Include="Core\PlatformEntryPoint.hpp" />
+    <ClInclude Include="Core\PlatformMemory.hpp" />
     <ClInclude Include="Core\PlatformThreads.hpp" />
     <ClInclude Include="Core\PlatformTypes.hpp" />
     <ClInclude Include="Core\PlatformTimers.hpp" />
     <ClInclude Include="Core\PlatformWindow.hpp" />
+    <ClInclude Include="Core\Platform\Windows\WindowsMemory.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsWindow.hpp" />
     <ClInclude Include="Core\Profile.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsThreads.hpp" />
@@ -47,13 +49,40 @@
     <ClInclude Include="Core\TArray.hpp" />
     <ClInclude Include="Core\TDictionary.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsTypes.hpp" />
+    <ClInclude Include="Math\AABB.hpp" />
+    <ClInclude Include="Math\Constants.hpp" />
+    <ClInclude Include="Math\Math.hpp" />
+    <ClInclude Include="Math\MathFunctions.hpp" />
+    <ClInclude Include="Math\Matrix2x2.hpp" />
+    <ClInclude Include="Math\Matrix3x3.hpp" />
+    <ClInclude Include="Math\Matrix4x4.hpp" />
+    <ClInclude Include="Math\Quaternion.hpp" />
+    <ClInclude Include="Math\Vector2f.hpp" />
+    <ClInclude Include="Math\Vector3f.hpp" />
+    <ClInclude Include="Math\Vector4f.hpp" />
+    <ClInclude Include="Rendering\Camera.hpp" />
+    <ClInclude Include="Rendering\Color.hpp" />
     <ClInclude Include="Rendering\CommandBuffer.hpp" />
+    <ClInclude Include="Rendering\Features.hpp" />
     <ClInclude Include="Rendering\FramePacket.hpp" />
     <ClInclude Include="Rendering\OpenGL.hpp" />
+    <ClInclude Include="Rendering\OpenGL\glext.hpp" />
     <ClInclude Include="Rendering\OpenGL\OpenGLRenderContext.hpp" />
+    <ClInclude Include="Rendering\OpenGL\wglext.hpp" />
+    <ClInclude Include="Rendering\RawMesh.hpp" />
+    <ClInclude Include="Rendering\RawVertex.hpp" />
     <ClInclude Include="Rendering\RenderCommand.hpp" />
+    <ClInclude Include="Rendering\Feature\RenderComponent.hpp" />
     <ClInclude Include="Rendering\RenderContext.hpp" />
+    <ClInclude Include="Rendering\RenderDebug.hpp" />
     <ClInclude Include="Rendering\Rendering.hpp" />
+    <ClInclude Include="Rendering\Feature\RenderingFeature.hpp" />
+    <ClInclude Include="Rendering\RenderNode.hpp" />
+    <ClInclude Include="Rendering\RenderObject.hpp" />
+    <ClInclude Include="Rendering\Feature\StaticMeshComponent.hpp" />
+    <ClInclude Include="Rendering\Feature\StaticMeshRenderingFeature.hpp" />
+    <ClInclude Include="Rendering\StaticMeshVertexFactory.hpp" />
+    <ClInclude Include="Rendering\ViewPacket.hpp" />
     <ClInclude Include="Rendering\Vulkan.hpp" />
     <ClInclude Include="Rendering\Vulkania\VulkanDebug.hpp" />
     <ClInclude Include="Rendering\Vulkania\VulkanHelper.hpp" />
@@ -61,7 +90,14 @@
     <ClInclude Include="Rendering\Vulkania\VulkanSwapchain.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Memory\MemoryManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Math\MathFunctions.cpp" />
+    <ClCompile Include="Math\Vector2f.cpp" />
+    <ClCompile Include="Math\Vector3f.cpp" />
+    <ClCompile Include="Math\Vector4f.cpp" />
+    <ClCompile Include="Rendering\FramePacket.cpp" />
+    <ClCompile Include="Rendering\ViewPacket.cpp" />
     <ClCompile Include="Rendering\Vulkania\VulkanDebug.cpp" />
     <ClCompile Include="Rendering\Vulkania\VulkanHelper.cpp" />
     <ClCompile Include="Rendering\Vulkania\VulkanRenderContext.cpp" />
@@ -142,9 +178,11 @@
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>$(VULKAN_SDK)/Lib/vulkan-1.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -156,6 +194,7 @@
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -173,11 +212,13 @@
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
+      <AdditionalDependencies>$(VULKAN_SDK)/Lib/vulkan-1.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

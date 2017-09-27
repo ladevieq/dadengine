@@ -1,7 +1,6 @@
 #include "Core/Core.hpp"
 #include "Rendering/Rendering.hpp"
-
-#pragma comment(lib, "opengl32.lib")
+#include "Math/Math.hpp"
 
 void Tests()
 {
@@ -14,6 +13,11 @@ void Tests()
 	//Test::TestTime();
 	//Test::TestProfile();
 	//Test::TestSerialization();
+	DadEngine::Math::Test::TestMathConstants();
+	DadEngine::Math::Test::TestMathFunctions();
+	DadEngine::Math::Test::TestMatrix2x2();
+	DadEngine::Math::Test::TestMatrix3x3();
+	DadEngine::Math::Test::TestMatrix4x4();
 }
 
 int main
@@ -25,13 +29,22 @@ int main
 
 	//RenderContext* renderContext = new OpenGLRenderContext(window);
 	RenderContext* renderContext = new VulkanRenderContext(window);
-	CommandBuffer cmdBuff;
-	cmdBuff.Clear(Color(0.f, 1.f, 0.f, 1.f));
-	cmdBuff.Present();
+	RenderingFeatureInfo renderFeatureInfo;
+	StaticMeshRenderingFeature renderFeature;
+	StaticMeshComponent meshComponent;
+
+	renderFeature.Initialize(renderFeatureInfo);
+	renderFeature.AddComponent(&meshComponent);
+
+	TArray<RenderObject*> WorldObjects;
+	WorldObjects.Add(meshComponent.m_RenderObjectHandle);
 
 	Tests();
 
 	uint8 bLoop = TRUE;
+	uint32 uiCounter = 0U;
+	PlatformTimer fpsTimer;
+	fpsTimer.Start();
 
 	while (bLoop)
 	{
@@ -51,14 +64,53 @@ int main
 
 		else
 		{
-			Profile renderProfile ("Rendering");
+			//Profile renderProfile ("Rendering");
+			CommandBuffer cmdBuff;
+			ViewPacket view;
+			FramePacket frame;
+			Camera cam;
+
+			// Extract visible objects
+			cam.ExtractVisibleObjects(WorldObjects, frame);
+
+			// Extract rendernode / component data
+			frame.Extract();
+
+			// Foreach feature generate the rendering instructions
+			renderFeature.SubmitViewBegin(view, cmdBuff);
+
+			if (renderFeatureInfo.SubmitNode == TRUE)
+			{
+				//renderFeature.SubmitNode();
+			}
+
+			if (renderFeatureInfo.SubmitNodes == TRUE)
+			{
+				//renderFeature.SubmitNodes();
+			}
+
+			renderFeature.SubmitViewEnd(view, cmdBuff);
+
+
+			// Sync rendering and game threads
+			// Exchange extracted datas and rendering commands
+			
+			// Resume threads
 
 			cmdBuff.Execute(renderContext);
 
-			/*for (size_t i = 0; i < 1000000000U; i++)
-			{
 
-			}*/
+			if (fpsTimer.GetMilliseconds() >= 1000U)
+			{
+				//sprintf(name, "%u\0", uiCounter);
+				printf("%u\n", uiCounter);
+
+				//window.SetWindowTitle(name);
+				fpsTimer.Reset();
+				uiCounter = 0U;
+			}
+
+			uiCounter++;
 		}
 	}
 

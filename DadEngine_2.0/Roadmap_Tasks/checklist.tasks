@@ -19,9 +19,40 @@ DadEngine:
         ✔ Platform dependent stuff @done (03/09/2017 à 22:47:26)
         ✔ Serialization @done (06/09/2017 à 23:03:50)
     ☐ Rendering
-        ☐ Render context
-        ☐ Command buffer
-        ☐ 
+        ✔ Render context @done (2017-9-26 00:55:21)
         ☐ OpenGl
         ☐ Vulkan
-    ☐ Math/Physics
+        ☐ DirectX
+        ☐ Graphics Pipeline
+            ☐ Basic shading
+            ☐ Shadows
+        ☐ Compute pipeline
+            ☐ Simple particules
+            ☐ Physics calculation
+        ☐ Frustum culling
+            ☐ Octree
+        ☐ Rendering debugging API
+        ☐ Mesh API
+            ☐ Loading (.fbx, .obj, khronos format)
+            ☐ Intermediate storage
+    ☐ Math
+        ☐ Matrix
+        ☐ Vectors
+        ☐ Quaternions
+        ☐ Homdemade basic functions
+        ☐ SIMD implementation
+        ☐ Ray
+        ☐ AABB
+        ☐ OBB
+        ☐ Collisions
+    ☐ Physic
+        ☐ Cinematic
+        ☐ Rigidbody
+    ☐ Gameplay API
+        ☐ Actors
+        ☐ Components
+    ☐ UI
+
+    ☐ Custom shading language
+        ☐ Syntax
+        ☐ Compiler
