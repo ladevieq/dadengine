@@ -8,6 +8,10 @@
 #include "OpenGL.hpp"
 #include "Vulkan.hpp"
 
+#include "Camera.hpp"
+
+#include "Features.hpp"
+
 using namespace DadEngine::Rendering;
 
 #endif //__RENDERING_HPP_
