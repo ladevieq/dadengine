@@ -96,6 +96,7 @@ namespace DadEngine::Rendering
 		VulkanImage m_depthStencilBuffer;
 
 		VkRenderPass m_Renderpass = VK_NULL_HANDLE;
+		//TArray<VkRenderPass> m_Renderpasses;
 
 		VkPipelineCache m_PipelineChache = VK_NULL_HANDLE;
 

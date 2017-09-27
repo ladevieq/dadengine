@@ -83,7 +83,7 @@ namespace DadEngine::Rendering
 
 		VK_CHECK_RESULT(vkQueueSubmit(m_GraphicsQueue, 1U, &submit_info, VK_NULL_HANDLE));
 
-		m_Swapchain.Present(m_GraphicsQueue, m_RenderingFinishedSemaphore, m_ImageAvailableSemaphore, uiCurrentImageIndex);
+		m_Swapchain.Present(m_GraphicsQueue, m_RenderingFinishedSemaphore, uiCurrentImageIndex);
 	}
 
 
@@ -100,18 +100,21 @@ namespace DadEngine::Rendering
 
 		TArray<const char*> layersNames;
 		layersNames.Add("VK_LAYER_LUNARG_standard_validation");
+		layersNames.Add("VK_LAYER_LUNARG_core_validation");
+		layersNames.Add("VK_LAYER_LUNARG_object_tracker");
+		layersNames.Add("VK_LAYER_GOOGLE_threading");
 
 		TArray<const char*> extensionsNames;
 		extensionsNames.Add("VK_KHR_surface");
 		extensionsNames.Add("VK_KHR_win32_surface");
-		extensionsNames.Add("VK_EXT_debug_report");
+		extensionsNames.Add(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 
 		VkInstanceCreateInfo instance_create_info = {};
 		instance_create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		instance_create_info.pNext = VK_NULL_HANDLE;
-		instance_create_info.enabledLayerCount = layersNames.Size();
+		instance_create_info.enabledLayerCount = (uint32)layersNames.Size();
 		instance_create_info.ppEnabledLayerNames = layersNames.GetData();
-		instance_create_info.enabledExtensionCount = extensionsNames.Size();
+		instance_create_info.enabledExtensionCount = (uint32)extensionsNames.Size();
 		instance_create_info.ppEnabledExtensionNames = extensionsNames.GetData();
 		instance_create_info.pApplicationInfo = &app_info;
 		instance_create_info.flags = 0U;
@@ -129,7 +132,8 @@ namespace DadEngine::Rendering
 		layersNames.Add("VK_LAYER_LUNARG_object_tracker");
 		layersNames.Add("VK_LAYER_LUNARG_core_validation");
 		layersNames.Add("VK_LAYER_LUNARG_parameter_validation");
-
+		layersNames.Add("VK_LAYER_GOOGLE_threading");
+		layersNames.Add("VK_LAYER_GOOGLE_unique_objects");
 
 		// Queue submiting priority nirmalized float 1.0f = MAX  0.0f = MIN
 		TArray<float> queuePriorities;
@@ -161,11 +165,11 @@ namespace DadEngine::Rendering
 		VkDeviceCreateInfo device_create_info = {};
 		device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		device_create_info.pNext = VK_NULL_HANDLE;
-		device_create_info.queueCreateInfoCount = device_queue_create_info.Size();
+		device_create_info.queueCreateInfoCount = (uint32)device_queue_create_info.Size();
 		device_create_info.pQueueCreateInfos = device_queue_create_info.GetData();
-		device_create_info.enabledExtensionCount = extensionsNames.Size();
+		device_create_info.enabledExtensionCount = (uint32)extensionsNames.Size();
 		device_create_info.ppEnabledExtensionNames = extensionsNames.GetData();
-		device_create_info.enabledLayerCount = layersNames.Size();
+		device_create_info.enabledLayerCount = (uint32)layersNames.Size();
 		device_create_info.ppEnabledLayerNames = layersNames.GetData();
 		device_create_info.pEnabledFeatures = &physical_device_features;
 		device_create_info.flags = NULL;
@@ -251,12 +255,12 @@ namespace DadEngine::Rendering
 			{
 				VkBool32 presentationSupported = VK_FALSE;
 
-				vkGetPhysicalDeviceSurfaceSupportKHR(m_PhysicalDevice, j, m_PresentationSurface, &presentationSupported);
+				vkGetPhysicalDeviceSurfaceSupportKHR(m_PhysicalDevice, (uint32)j, m_PresentationSurface, &presentationSupported);
 
 				if (presentationSupported == VK_TRUE)
 				{
-					m_uiPresentationsQueueFamilyIndex = j;
-					m_PresentationMode = presentModes[i];
+					m_uiPresentationsQueueFamilyIndex = (uint32)j;
+					m_PresentationMode = presentModes[(uint32)i];
 					return;
 				}
 			}
@@ -446,9 +450,10 @@ namespace DadEngine::Rendering
 
 		for (size_t i = 0U; i < m_Framebuffers.Size(); i++)
 		{
-			attachments[0U] = m_Swapchain.m_SwapchainImages[i].view;
 
-			VK_CHECK_RESULT(vkCreateFramebuffer(m_Device, &framebuffer_create_info, VK_NULL_HANDLE, &m_Framebuffers[i]));
+			attachments[0U] = m_Swapchain.m_SwapchainImages[(uint32)i].view;
+
+			VK_CHECK_RESULT(vkCreateFramebuffer(m_Device, &framebuffer_create_info, VK_NULL_HANDLE, &m_Framebuffers[(uint32)i]));
 		}
 	}
 
@@ -472,7 +477,7 @@ namespace DadEngine::Rendering
 			VkImageMemoryBarrier from_present_to_clear = {};
 			from_present_to_clear.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 			from_present_to_clear.pNext = VK_NULL_HANDLE;
-			from_present_to_clear.image = m_Swapchain.m_SwapchainImages[i].image;
+			from_present_to_clear.image = m_Swapchain.m_SwapchainImages[(uint32)i].image;
 			from_present_to_clear.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 			from_present_to_clear.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 			from_present_to_clear.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
@@ -484,7 +489,7 @@ namespace DadEngine::Rendering
 			VkImageMemoryBarrier from_clear_to_present = {};
 			from_clear_to_present.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 			from_clear_to_present.pNext = VK_NULL_HANDLE;
-			from_clear_to_present.image = m_Swapchain.m_SwapchainImages[i].image;
+			from_clear_to_present.image = m_Swapchain.m_SwapchainImages[(uint32)i].image;
 			from_clear_to_present.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 			from_clear_to_present.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 			from_clear_to_present.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -500,14 +505,14 @@ namespace DadEngine::Rendering
 			VkRenderPassBeginInfo render_pass_begin_info = {};
 			render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			render_pass_begin_info.pNext = VK_NULL_HANDLE;
-			render_pass_begin_info.framebuffer = m_Framebuffers[i];
+			render_pass_begin_info.framebuffer = m_Framebuffers[(uint32)i];
 			render_pass_begin_info.renderPass = m_Renderpass;
 			render_pass_begin_info.renderArea = renderArea;
 			render_pass_begin_info.clearValueCount = 2U;
 			render_pass_begin_info.pClearValues = clearValues;
 
-			vkBeginCommandBuffer(m_GraphicCommandBuffers[i], &command_buffer_begin_info);
-			vkCmdBeginRenderPass(m_GraphicCommandBuffers[i], &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+			vkBeginCommandBuffer(m_GraphicCommandBuffers[(uint32)i], &command_buffer_begin_info);
+			vkCmdBeginRenderPass(m_GraphicCommandBuffers[(uint32)i], &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 			/*vkCmdPipelineBarrier(m_GraphicCommandBuffers[i], VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
 				0U, 0U, nullptr, 0U, nullptr, 1U, &from_present_to_clear);*/
 			/*vkCmdClearColorImage(m_GraphicCommandBuffers[i], m_Swapchain.m_SwapchainImages[i].image,
@@ -515,8 +520,9 @@ namespace DadEngine::Rendering
 			1U, &image_subresource_range);*/
 			/*vkCmdPipelineBarrier(m_GraphicCommandBuffers[i], VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
 				0U, 0U, nullptr, 0U, nullptr, 1U, &from_clear_to_present);*/
-			vkCmdEndRenderPass(m_GraphicCommandBuffers[i]);
-			vkEndCommandBuffer(m_GraphicCommandBuffers[i]);
+			//vkCmdClearAttachments(m_GraphicCommandBuffers[i], 2U, )
+			vkCmdEndRenderPass(m_GraphicCommandBuffers[(uint32)i]);
+			vkEndCommandBuffer(m_GraphicCommandBuffers[(uint32)i]);
 		}
 	}
 }

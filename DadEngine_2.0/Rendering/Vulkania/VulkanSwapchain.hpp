@@ -28,12 +28,12 @@ namespace DadEngine::Rendering
 		void Initialize(VkDevice& _InDevice, VkPhysicalDevice& _InPhysicalDevice, VkSurfaceKHR& _InSurface, VkPresentModeKHR& _InPresentationMode, PlatformWindow& _InWindow);
 
 
-		void Present(VkQueue& _InQueue, VkSemaphore& _InRenderingFinishedSemaphore, VkSemaphore& _InImageAvailableSemaphore, uint32 _InImageIndex);
+		void Present(VkQueue& _InQueue, VkSemaphore& _InRenderingFinishedSemaphore, uint32 _InImageIndex);
 
 
 		uint32 GetNextImageIndex(VkSemaphore& _InImageAvailableSemaphore);
 
-		uint32 GetImageCount() { return m_SwapchainImages.Size(); }
+		uint32 GetImageCount() { return (uint32)m_SwapchainImages.Size(); }
 
 
 		TArray<SwapchainImage> m_SwapchainImages;

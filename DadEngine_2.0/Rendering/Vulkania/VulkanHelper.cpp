@@ -123,9 +123,9 @@ namespace DadEngine::Rendering::VulkanHelper
 
 		for (size_t i = 0U; i < queueFamilyProperties.Size(); i++)
 		{
-			if (queueFamilyProperties[i].queueCount > 0 && queueFamilyProperties[i].queueFlags & _InFlag)
+			if (queueFamilyProperties[(uint32)i].queueCount > 0 && queueFamilyProperties[(uint32)i].queueFlags & _InFlag)
 			{
-				return i;
+				return (uint32)i;
 			}
 		}
 
@@ -138,9 +138,9 @@ namespace DadEngine::Rendering::VulkanHelper
 		{
 			if ((_InMemoryTypeBits & 1U) == 1U)
 			{
-				if (_InPhysicalDeviceMemoryProperties.memoryTypes[i].propertyFlags & _InProperties)
+				if (_InPhysicalDeviceMemoryProperties.memoryTypes[(uint32)i].propertyFlags & _InProperties)
 				{
-					return i;
+					return (uint32)i;
 				}
 
 				else
@@ -220,6 +220,8 @@ namespace DadEngine::Rendering::VulkanHelper
 				return currentDepthStencilFormat;
 			}
 		}
+
+		return VK_FORMAT_UNDEFINED;
 	}
 
 

@@ -9,7 +9,7 @@ namespace DadEngine::Rendering::VulkanDebug
 
 	VkDebugReportCallbackEXT DebugReportCallback;
 
-	VkBool32 MessageCallback(VkDebugReportFlagsEXT _InFlag, VkDebugReportObjectTypeEXT _InObjectType, uint64 _InSrcObject, size_t _InMemoryLocation, int32 _InMessageCode, const char* _inPrefixLayer, const char * _InMessage, void * _InUserData)
+	VkBool32 VKAPI_PTR MessageCallback(VkDebugReportFlagsEXT _InFlag, VkDebugReportObjectTypeEXT _InObjectType, uint64 _InSrcObject, size_t _InMemoryLocation, int32 _InMessageCode, const char* _inPrefixLayer, const char * _InMessage, void * _InUserData)
 	{
 		if (_InFlag & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
 			printf("%s%s%s%d%s%s\n", "ERROR: [", _inPrefixLayer, "] Code ", _InMessageCode, " : ", _InMessage);
@@ -49,7 +49,7 @@ namespace DadEngine::Rendering::VulkanDebug
 		debug_report_callback_create_info.pNext = VK_NULL_HANDLE;
 		debug_report_callback_create_info.pfnCallback = (PFN_vkDebugReportCallbackEXT)&MessageCallback;
 		debug_report_callback_create_info.pUserData = NULL;
-		debug_report_callback_create_info.flags = VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT /*| VK_DEBUG_REPORT_INFORMATION_BIT_EXT*/;
+		debug_report_callback_create_info.flags = VK_DEBUG_REPORT_DEBUG_BIT_EXT | VK_DEBUG_REPORT_ERROR_BIT_EXT | VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT | VK_DEBUG_REPORT_WARNING_BIT_EXT | VK_DEBUG_REPORT_INFORMATION_BIT_EXT;
 
 		VK_CHECK_RESULT(CreateDebugReportCallback(_InInstance, &debug_report_callback_create_info, VK_NULL_HANDLE, &DebugReportCallback));
 	}

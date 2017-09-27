@@ -1,6 +1,8 @@
 #ifndef __OPENGL_RENDER_CONTEXT_HPP_
 #define __OPENGL_RENDER_CONTEXT_HPP_
 
+#include "glext.hpp"
+#include "wglext.hpp"
 
 namespace DadEngine::Rendering
 {
@@ -26,6 +28,32 @@ namespace DadEngine::Rendering
 
 			m_renderContext = wglCreateContext(m_HDC);
 			wglMakeCurrent(m_HDC, m_renderContext);
+
+			//uint32 uiExtensionsCount = 0U;
+
+			//glGetIntegerv(GL_NUM_EXTENSIONS
+
+			//for(size_t i = 0U; i < 100U; i++)
+			//printf("%s\n", glGetString(GL_EXTENSIONS));
+
+			printf("%s\n", glGetString(GL_VERSION));
+			printf("%s\n", glGetString(GL_VENDOR));
+			printf("%s\n", glGetString(GL_RENDERER));
+
+			PFNGLGETSTRINGIPROC getStringi = (PFNGLGETSTRINGIPROC) wglGetProcAddress("glGetStringi");
+
+			int32 n;
+
+			glGetIntegerv(GL_NUM_EXTENSIONS, &n);
+
+			for (int32 i = 0; i < n; i++)
+			{
+				printf("%s\n", getStringi(GL_EXTENSIONS, i));
+			}
+
+			PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
+			wglSwapIntervalEXT(0);
 		}
 
 

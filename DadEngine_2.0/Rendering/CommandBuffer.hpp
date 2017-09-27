@@ -1,7 +1,10 @@
 #ifndef __COMMAND_BUFFER_HPP_
 #define __COMMAND_BUFFER_HPP_
 
-
+#include "RenderContext.hpp"
+#include "RenderCommand.hpp"
+#include "Color.hpp"
+#include "../Core/Core.hpp"
 
 namespace DadEngine::Rendering
 {
@@ -54,7 +57,7 @@ namespace DadEngine::Rendering
 
 
 	private:
-		Core::TArray<RenderCommand*> m_commands;
+		TArray<RenderCommand*> m_commands;
 	};
 }
 

@@ -86,7 +86,7 @@ namespace DadEngine::Rendering
 			VkImageViewCreateInfo image_view_create_info = {};
 			image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 			image_view_create_info.pNext = VK_NULL_HANDLE;
-			image_view_create_info.image = images[i];
+			image_view_create_info.image = images[(uint32)i];
 			image_view_create_info.format = m_surfaceFormat.format;
 			image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
 			image_view_create_info.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G , VK_COMPONENT_SWIZZLE_B , VK_COMPONENT_SWIZZLE_A };
@@ -97,14 +97,14 @@ namespace DadEngine::Rendering
 			image_view_create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 			image_view_create_info.flags = 0U;
 
-			VK_CHECK_RESULT(vkCreateImageView(m_Device, &image_view_create_info, VK_NULL_HANDLE, &imageViews[i]));
+			VK_CHECK_RESULT(vkCreateImageView(m_Device, &image_view_create_info, VK_NULL_HANDLE, &imageViews[(uint32)i]));
 
-			m_SwapchainImages[i] = { images[i] , imageViews[i] };
+			m_SwapchainImages[(uint32)i] = { images[(uint32)i] , imageViews[(uint32)i] };
 		}
 	}
 
 
-	void VulkanSwapchain::Present(VkQueue& _InQueue, VkSemaphore& _InRenderingFinishedSemaphore, VkSemaphore& _InImageAvailableSemaphore, uint32 _InImageIndex)
+	void VulkanSwapchain::Present(VkQueue& _InQueue, VkSemaphore& _InRenderingFinishedSemaphore, uint32 _InImageIndex)
 	{
 		VkPresentInfoKHR present_info = {};
 		present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
