@@ -1,16 +1,20 @@
 #ifndef __RENDERING_HPP_
 #define __RENDERING_HPP_
 
-#include "RenderContext.hpp"
+#include "RenderContext/RenderContext.hpp"
 #include "RenderCommand.hpp"
 #include "CommandBuffer.hpp"
 
-#include "OpenGL.hpp"
-#include "Vulkan.hpp"
+#include "RenderContext/OpenGL.hpp"
+#include "RenderContext/Vulkan.hpp"
 
-#include "Camera.hpp"
+#include "Culling/Camera.hpp"
 
 #include "Features.hpp"
+
+#include "Shader/Shader.h"
+
+#include "Mesh/VertexFactory.hpp"
 
 using namespace DadEngine::Rendering;
 
