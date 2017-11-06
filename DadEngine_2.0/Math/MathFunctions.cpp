@@ -1,7 +1,6 @@
 #include "MathFunctions.hpp"
 
 #include <math.h>
-#include "../Core/Core.hpp"
 
 namespace DadEngine::Math
 {

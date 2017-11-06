@@ -130,6 +130,8 @@ namespace DadEngine::Math
 		float y = 0.f;
 		float z = 0.f;
 	};
+
+	static const Vector3f NullVector3f(0.f, 0.f, 0.f);
 }
 
 #endif //__VECTOR3F_HPP_
