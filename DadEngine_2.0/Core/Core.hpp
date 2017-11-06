@@ -14,12 +14,10 @@
 #include "TArray.hpp"
 #include "TDictionary.hpp"
 #include "String.hpp"
-#include "IFile.hpp"
-#include "PlatformFile.hpp"
 #include "Profile.hpp"
 #include "Serialization.hpp"
 #include "Application.hpp"
 
 using namespace DadEngine::Core;
 
-#endif //!__CORE_HPP_
+#endif //__CORE_HPP_

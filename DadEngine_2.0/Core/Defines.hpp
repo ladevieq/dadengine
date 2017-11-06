@@ -24,9 +24,9 @@
 	if(!(expr))		\
 		throw
 
-#define LOG_ASSERT(expr, msg)								\
-	if(!(expr)) {											\
-		DadEngine::Core::LogAssert(msg, __FILE__, __LINE__);\
+#define LOG_ASSERT(expr, msg)	\
+	if(!(expr)) {				\
+		DadEngine::Core::LogAssert(msg, __FILE__, __LINE__); \
 		throw; }
 		
 

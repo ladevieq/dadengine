@@ -17,13 +17,6 @@ namespace DadEngine::Core//::Containers
 			m_allocator.Allocate(_InItemCount);
 		}
 
-		TArray(size_t _InItemCount, T _InInitValue)
-		{
-			m_allocator.Allocate(_InItemCount);
-
-			MemoryManager::Set(m_allocator.m_ptrMemLocation, *(int32*)&_InInitValue, _InItemCount);
-		}
-
 		~TArray() = default;
 
 
@@ -76,11 +69,6 @@ namespace DadEngine::Core//::Containers
 		FORCE_INLINE size_t Size() const
 		{
 			return m_allocator.m_uiCapacity;
-		}
-
-		FORCE_INLINE T& Last() const
-		{
-			return m_allocator.m_ptrMemLocation[m_allocator.m_uiCapacity - 1U];
 		}
 
 

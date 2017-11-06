@@ -2,7 +2,6 @@
 #define __WINDOWS_WINDOW_HPP_
 
 #include <Windows.h>
-#include <stdio.h>
 
 namespace DadEngine::Core
 {

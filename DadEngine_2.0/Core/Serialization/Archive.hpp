@@ -13,7 +13,7 @@ namespace DadEngine::Core
 	public:
 
 		Archive() = default;
-		Archive(TArray<uint8>& _InData, b8 _InReading) : m_Data(_InData) {}
+		Archive(TArray<uint8>& _InData) : m_Data(_InData) {}
 
 		FORCE_INLINE TArray<uint8>& GetData() { return m_Data; }
 
@@ -52,7 +52,7 @@ namespace DadEngine::Core
 		TArray<uint8> m_Data;
 
 		uint32 m_uiOffset = 0U;
-		b8 m_bIsReading : 1;
+		uint8 m_bIsReading : 1;
 	};
 
 	namespace Test

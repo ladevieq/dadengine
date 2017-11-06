@@ -5,7 +5,7 @@ DadEngine:
         ✔ Time @done (03/09/2017 à 16:45:03)
         ✔ Array @today @done (02/09/2017 à 12:52:35)
         ✔ Dictionnary @today @done (03/09/2017 à 10:17:55)
-        ✔ String @high @done (2017-10-10 00:12:50)
+        ☐ String @high
         ✔ Iterators @done (07/09/2017 à 12:27:33)
         ✔ Macros @today @done (02/09/2017 à 11:10:34)
         ☐ Memory
@@ -16,20 +16,14 @@ DadEngine:
         ✔ Profiling @done (03/09/2017 à 17:09:52)
         ✔ Window @done (03/09/2017 à 22:04:06)
         ✔ Application @done (04/09/2017 à 12:15:15)
-        ✔ Platform dependant stuff @done (03/09/2017 à 22:47:26)
+        ✔ Platform dependent stuff @done (03/09/2017 à 22:47:26)
         ✔ Serialization @done (06/09/2017 à 23:03:50)
-        ✔ IO stuff @high @done (2017-10-15 10:54:09)
-        ☐ Platform dependant RenderContext Creation
-        ☐ Window message pump system
     ☐ Rendering
         ✔ Render context @done (2017-9-26 00:55:21)
         ☐ OpenGl
-            ☐ Rework VAO and VBO usage
         ☐ Vulkan
         ☐ DirectX
         ☐ Graphics Pipeline
-            ☐ Shaders iimplementation
-            ☐ Materials
             ☐ Basic shading
             ☐ Shadows
         ☐ Compute pipeline
@@ -40,11 +34,11 @@ DadEngine:
         ☐ Rendering debugging API
         ☐ Mesh API
             ☐ Loading (.fbx, .obj, khronos format)
-            ✔ Intermediate storage @done (2017-10-10 00:13:06)
+            ☐ Intermediate storage
     ☐ Math
-        ✔ Matrix @done (2017-10-10 00:13:11)
-        ✔ Vectors @done (2017-10-10 00:13:12)
-        ✔ Quaternions @done (2017-10-10 00:13:13)
+        ☐ Matrix
+        ☐ Vectors
+        ☐ Quaternions
         ☐ Homdemade basic functions
         ☐ SIMD implementation
         ☐ Ray
@@ -57,9 +51,8 @@ DadEngine:
     ☐ Gameplay API
         ☐ Actors
         ☐ Components
-        ☐ AI
     ☐ UI
 
-    ☐ Custom shading language @low
+    ☐ Custom shading language
         ☐ Syntax
         ☐ Compiler

@@ -8,7 +8,7 @@ namespace DadEngine::Core
 
 	public:
 
-		MemoryReader(TArray<uint8>& _InData) : Archive(_InData, TRUE) {}
+		MemoryReader(TArray<uint8>& _InData) : Archive(_InData) { m_bIsReading = TRUE; }
 
 
 	private:
