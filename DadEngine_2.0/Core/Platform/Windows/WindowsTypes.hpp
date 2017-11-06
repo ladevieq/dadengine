@@ -12,13 +12,16 @@ namespace DadEngine::Core//::Types
 	using int16 = short;
 	using uint8 = unsigned char;
 	using int8 = char;
+	using b64 = unsigned long long;
+	using b32 = unsigned int;
+	using b16 = unsigned short;
+	using b8 = unsigned char;
 
-	// bool ?
 
 #if defined (_WIN64)
-	using uint64 = size_t;
+	using size_t = uint64;
 #else
-	using uint32 = size_t;
+	using size_t = uint32;
 #endif
 
 	namespace Test
