@@ -1,7 +1,9 @@
 #ifndef __APPLICATION_HPP_
 #define __APPLICATION_HPP_
 
-
+#include "Defines.hpp"
+#include "PlatformTypes.hpp"
+#include "PlatformWindow.hpp"
 
 namespace DadEngine::Core
 {
@@ -18,18 +20,12 @@ namespace DadEngine::Core
 	{
 	public:
 
-		Application() : m_window(m_AppInfo.m_sApplicationName, m_AppInfo.m_uiWidth, m_AppInfo.m_uiHeight, m_AppInfo.m_bFullscreen, m_AppInfo.m_bVerticalSync) {}//, m_renderContext(new Rendering::OpenGLRenderContext(m_window)) {}
+		Application();//, m_renderContext(new Rendering::OpenGLRenderContext(m_window)) {}
 
-		Application(ApplicationInfo& _InAppInfo) : m_AppInfo(_InAppInfo), m_window(m_AppInfo.m_sApplicationName, m_AppInfo.m_uiWidth, m_AppInfo.m_uiHeight, m_AppInfo.m_bFullscreen, m_AppInfo.m_bVerticalSync) {}//, m_renderContext(new Rendering::OpenGLRenderContext(m_window)) {}
+		Application(ApplicationInfo& _InAppInfo);//, m_renderContext(new Rendering::OpenGLRenderContext(m_window)) {}
 
 
-		void Run()
-		{
-			while (m_bLoop)
-			{
-
-			}
-		}
+		void Run();
 
 
 	private:
@@ -38,7 +34,7 @@ namespace DadEngine::Core
 
 		ApplicationInfo m_AppInfo = {};
 		PlatformWindow m_window;
-		//Rendering::RenderContext* m_renderContext = nullptr;
+		//RenderContext* m_renderContext = nullptr;
 
 		uint8 m_bLoop = TRUE;
 	};

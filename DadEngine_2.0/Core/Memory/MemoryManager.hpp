@@ -49,6 +49,12 @@ namespace DadEngine::Core//::Memory
 			//(uint8 [_InCpySize])_InSrc
 		}
 
+		FORCE_INLINE static void Set(void* _InDst, int32 _InValue, size_t _InCpySize)
+		{
+			ASSERT(_InDst);
+			memset(_InDst, _InValue, _InCpySize);
+		}
+
 		FORCE_INLINE static void GetMemoryInfo()
 		{
 			PlatformMemory::GetStatus();

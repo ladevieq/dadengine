@@ -3,18 +3,97 @@
 
 #include <stdio.h>
 
+#include "Defines.hpp"
+//#include "String.hpp"
+#include "PlatformTypes.hpp"
+
 
 namespace DadEngine::Core//::Debug
 {
-	FORCE_INLINE static void LogAssert(const char* const _InMessage, const char* const _InFile, uint32 _InLine)
-	{
-		printf("[%s, %s, %u]: %s", "Assertion", _InFile, _InLine, _InMessage);
-	}
+	/* Codes ranges
+		1xxxx - Core Report Codes
+			11xxx -
+			12xxx -
+			13xxx -
+		2xxxx - Rendering Context Report Codes
+			21xxx - Shader / Shader program Informations
+				21001 Shader compilation succeded
+				21002 Shader program linking succeded
+			22xxx - Shader / Shader program Warnings
+			23xxx - Shader / Shader Program Errors
+				23001 Shader compilation error
+				23002 Shader program linking error
 
-	FORCE_INLINE static void Log(const char* const _InMessage)
+		x1xxx - INFORMATION
+		x2xxx - WARNING
+		x3xxx - ERROR
+	*/
+	enum DEBUG_REPORT_CODE
 	{
-		printf("%s", _InMessage);
-	}
+		DEBUG_REPORT_CODE_SHADER_COMPILING_SUCCEDED = 21001,
+		DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_SUCCEDED = 21002,
+		
+		DEBUG_REPORT_CODE_SHADER_COMPILING_FAILED = 23001,
+		DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_FAILED = 23002,
+		MAX_DEBUG_REPORT_CODE = 0xffffffff
+	};
+	using DebugReportCode = uint32;
+
+
+	enum DEBUG_REPORT_TYPE
+	{
+		DEBUG_REPORT_TYPE_INFORMATION,
+		DEBUG_REPORT_TYPE_WARNING,
+		DEBUG_REPORT_TYPE_ERROR,
+		MAX_DEBUG_REPORT_TYPE = 0xffffffff
+	};
+	using DebugReportTypeFlags = uint32;
+
+
+	enum DEBUG_REPORT_CONTEXT
+	{
+		DEBUG_REPORT_CONTEXT_CORE,
+		DEBUG_REPORT_CONTEXT_OPENGL,
+		DEBUG_REPORT_CONTEXT_VULKAN,
+		MAX_DEBUG_REPORT_CONTEXT = 0xffffffff
+	};
+	using DebugReportContextFlags = uint8;
+
+
+	struct DebugReport
+	{
+		DebugReport() = default;
+
+		DebugReport(DebugReportContextFlags _InContextFlag, DebugReportTypeFlags _InReportType, DebugReportCode _InErrorCode, const char* sMessage)
+			: m_uiContextFlag(_InContextFlag),
+				m_uiReportTypeFlag (_InReportType),
+				m_uiReportCode(_InErrorCode),
+				m_sMessage(sMessage)
+		{}
+
+		/*DebugReport(DebugReportContextFlags _InContextFlag, DebugReportTypeFlags _InReportType, DebugReportCode _InErrorCode, String& sMessage)
+			: m_uiContextFlag(_InContextFlag),
+				m_uiReportTypeFlag(_InReportType),
+				m_uiErrorCode(_InErrorCode),
+				m_sMessage(sMessage.Cstr())
+		{}*/
+
+		DebugReportContextFlags m_uiContextFlag = MAX_DEBUG_REPORT_CONTEXT;
+		DebugReportTypeFlags m_uiReportTypeFlag = MAX_DEBUG_REPORT_TYPE;
+		DebugReportCode m_uiReportCode = MAX_DEBUG_REPORT_CODE;
+		const char* m_sMessage = nullptr;
+	};
+
+
+	/*
+		[Context] : [Type] : (Code) : Message
+	*/
+	void LogDebugReport(const DebugReport& _InDebugReport);
+
+	void LogAssert(const char* const _InMessage, const char* const _InFile, uint32 _InLine);
+
+	void Log(const char* const _InMessage);
+	
 
 	namespace Test
 	{

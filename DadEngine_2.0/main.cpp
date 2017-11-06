@@ -27,8 +27,36 @@ int main
 
 	window.ToggleConsole();
 
+	IFile* vertexShaderReader = PlatformFileSystem::CreateTextFileReader(/*"test.vert"*/"vert.spv");
+	String vertexShaderCode(vertexShaderReader->Size());
+	b8 ret = vertexShaderReader->Read(vertexShaderCode);
+
+	IFile* fragmentShaderReader = PlatformFileSystem::CreateTextFileReader(/*"test.frag"*/"frag.spv");
+	String fragmentShaderCode(fragmentShaderReader->Size());
+	fragmentShaderReader->Read(fragmentShaderCode);
+
 	//RenderContext* renderContext = new OpenGLRenderContext(window);
 	RenderContext* renderContext = new VulkanRenderContext(window);
+
+	RawMesh triangle;
+	triangle.m_vertices.Add(RawVertex{ Vector3f{ -0.5f, -0.5f, 0.f }, Vector3f{ 1.0f, 0.0f, 0.0f } });
+	triangle.m_vertices.Add(RawVertex{ Vector3f{ 0.5f, -0.5f, 0.f }, Vector3f{ 0.0f, 1.0f, 0.0f } });
+	triangle.m_vertices.Add(RawVertex{ Vector3f{ 0.0f, 0.5f, 0.f }, Vector3f{ 0.0f, 0.0f, 1.0f } });
+
+	TArray<VertexInput> vertexLayout;
+	vertexLayout.Add({ 0U, VertexInputType::VERTEX_INPUT_TYPE_POSITION });
+	vertexLayout.Add({ 1U, VertexInputType::VERTEX_INPUT_TYPE_COLOR });
+	uint32 uiStride = 0U;
+
+	VertexShader* vertexShader = renderContext->CreateVertexShader(vertexShaderCode.Cstr(), vertexShaderCode.Size(), vertexLayout);
+	FragmentShader* fragmentShader = renderContext->CreateFragmentShader(fragmentShaderCode.Cstr(), fragmentShaderCode.Size());
+	Shader* mainShader = renderContext->CreateShader(vertexShader, nullptr, fragmentShader);
+
+	TArray<float> rawPosition;
+	Vertexfactory::Create(triangle, rawPosition, vertexLayout, uiStride);
+
+	VertexBuffer* vb = renderContext->CreateVertexBuffer((uint32)triangle.m_vertices.Size(), rawPosition, vertexLayout, uiStride);
+
 	RenderingFeatureInfo renderFeatureInfo;
 	StaticMeshRenderingFeature renderFeature;
 	StaticMeshComponent meshComponent;
@@ -70,6 +98,8 @@ int main
 			FramePacket frame;
 			Camera cam;
 
+			renderContext->BeginFrame();
+
 			// Extract visible objects
 			cam.ExtractVisibleObjects(WorldObjects, frame);
 
@@ -78,6 +108,11 @@ int main
 
 			// Foreach feature generate the rendering instructions
 			renderFeature.SubmitViewBegin(view, cmdBuff);
+
+			//cmdBuff.BindShaderProgram(mainShader);
+			//cmdBuff.BindVertexBuffer(vb);
+			//cmdBuff.DrawVertexBuffer(vb);
+
 
 			if (renderFeatureInfo.SubmitNode == TRUE)
 			{
