@@ -20,7 +20,7 @@ namespace DadEngine::Rendering::VulkanHelper
 
 	VkSurfaceFormatKHR CheckSurfaceFormats(VkPhysicalDevice& _InPhysicalDevice, VkSurfaceKHR& _InSurface);
 
-	void CreateCommandBuffer(VkDevice& _InDevice, VkCommandPool& _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBUffers);
+	void CreateCommandBuffer(VkDevice& _InDevice, VkCommandPool& _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers);
 
 	VkExtent2D GetExtent2D(VkPhysicalDevice& _InDevice, VkSurfaceKHR& _InSurface);
 
@@ -29,6 +29,8 @@ namespace DadEngine::Rendering::VulkanHelper
 	void SetImageLayout(VkCommandBuffer& _InCommandBuffer, VkImage& _InImage,
 		VkImageLayout _InOldImageLayout, VkImageLayout _InNewImageLayout,
 		VkPipelineStageFlags _InSrcPipilineStageFalgs, VkPipelineStageFlags _InDstPipilineStageFalgs);
+
+	void AllocateBufferMemory(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice, VkBuffer _InBuffer, VkDeviceMemory& _OutMemory);
 }
 
 #endif //__VULKAN_HELPER_HPP_

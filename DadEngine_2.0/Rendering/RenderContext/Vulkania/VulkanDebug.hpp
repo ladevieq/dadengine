@@ -6,8 +6,7 @@
 
 #include "../../Core/Core.hpp"
 
-#define VK_CHECK_RESULT(result) if (result != VK_SUCCESS)	\
-									throw
+#define VK_CHECK_RESULT(result) if (result != VK_SUCCESS)	throw
 
 namespace DadEngine::Rendering::VulkanDebug
 {

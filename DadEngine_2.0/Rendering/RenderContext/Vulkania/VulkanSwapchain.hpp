@@ -33,8 +33,7 @@ namespace DadEngine::Rendering
 
 		uint32 GetNextImageIndex(VkSemaphore& _InImageAvailableSemaphore);
 
-		uint32 GetImageCount() { return (uint32)m_SwapchainImages.Size(); }
-
+		FORCE_INLINE uint32 GetImageCount() { return (uint32)m_SwapchainImages.Size(); }
 
 		TArray<SwapchainImage> m_SwapchainImages;
 
@@ -51,8 +50,6 @@ namespace DadEngine::Rendering
 
 		VkSwapchainKHR m_Swapchain = VK_NULL_HANDLE;
 		VkSurfaceFormatKHR m_surfaceFormat;
-
-		uint32 m_uiImageIndex = 0U;
 
 		VkDevice m_Device;
 	};

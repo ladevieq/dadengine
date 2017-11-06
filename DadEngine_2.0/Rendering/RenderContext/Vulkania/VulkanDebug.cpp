@@ -11,17 +11,34 @@ namespace DadEngine::Rendering::VulkanDebug
 
 	VkBool32 VKAPI_PTR MessageCallback(VkDebugReportFlagsEXT _InFlag, VkDebugReportObjectTypeEXT _InObjectType, uint64 _InSrcObject, size_t _InMemoryLocation, int32 _InMessageCode, const char* _inPrefixLayer, const char * _InMessage, void * _InUserData)
 	{
+		DebugReport report;
+
 		if (_InFlag & VK_DEBUG_REPORT_ERROR_BIT_EXT) {
-			printf("%s%s%s%d%s%s\n", "ERROR: [", _inPrefixLayer, "] Code ", _InMessageCode, " : ", _InMessage);
+			report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_VULKAN;
+			report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_ERROR;
+			report.m_uiReportCode = _InMessageCode;
+			report.m_sMessage = _InMessage;
+			//printf("%s%s%s%d%s%s\n", "ERROR: [", _inPrefixLayer, "] Code ", _InMessageCode, " : ", _InMessage);
+			LogDebugReport(report);
 		}
 		else if (_InFlag & VK_DEBUG_REPORT_WARNING_BIT_EXT) {
-			printf("%s%s%s%d%s%s\n", "WARNING: [", _inPrefixLayer, "] Code ", _InMessageCode, " : ", _InMessage);
+			report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_VULKAN;
+			report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_WARNING;
+			report.m_uiReportCode = _InMessageCode;
+			report.m_sMessage = _InMessage;
+			//printf("%s%s%s%d%s%s\n", "WARNING: [", _inPrefixLayer, "] Code ", _InMessageCode, " : ", _InMessage);
+			LogDebugReport(report);
 		}
 		else if (_InFlag & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT) {
 			printf("%s%s%s%d%s%s\n", "PERFORMANCE WARNING: [", _inPrefixLayer, "] Code ", _InMessageCode, " : ", _InMessage);
 		}
 		else if (_InFlag & VK_DEBUG_REPORT_INFORMATION_BIT_EXT) {
-			printf("%s%s%s%d%s%s\n", "INFO: [", _inPrefixLayer, "] Code ", _InMessageCode, " : ", _InMessage);
+			report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_VULKAN;
+			report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_INFORMATION;
+			report.m_uiReportCode = _InMessageCode;
+			report.m_sMessage = _InMessage;
+			//printf("%s%s%s%d%s%s\n", "INFO: [", _inPrefixLayer, "] Code ", _InMessageCode, " : ", _InMessage);
+			LogDebugReport(report);
 		}
 		else if (_InFlag & VK_DEBUG_REPORT_DEBUG_BIT_EXT) {
 			printf("%s%s%s%d%s%s\n", "DEBUG: [", _inPrefixLayer, "] Code ", _InMessageCode, " : ", _InMessage);

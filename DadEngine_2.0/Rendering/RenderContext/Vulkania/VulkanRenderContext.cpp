@@ -1,7 +1,6 @@
 #include "VulkanRenderContext.hpp"
 
 #include "VulkanDebug.hpp"
-// Watch video about preproc c++
 
 namespace DadEngine::Rendering
 {
@@ -46,9 +45,8 @@ namespace DadEngine::Rendering
 		CreatePipelineCache();
 		CreateFramebuffers();
 		CreateSemaphores();
+		CreateFences();
 		CreateCommandBuffers();
-
-		RecordClearBuffers();
 	}
 
 	VulkanRenderContext::~VulkanRenderContext()
@@ -60,30 +58,225 @@ namespace DadEngine::Rendering
 		vkDestroyInstance(m_Instance, VK_NULL_HANDLE);
 	}
 
+
 	void VulkanRenderContext::ClearBuffer(Color& _InClearColor)
 	{
+		/*VkCommandBufferBeginInfo command_buffer_begin_info = {};
+		command_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		command_buffer_begin_info.pNext = VK_NULL_HANDLE;
+		command_buffer_begin_info.pInheritanceInfo = VK_NULL_HANDLE;
+		command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+
+		VkImageSubresourceRange image_subresource_range = {};
+		image_subresource_range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		image_subresource_range.baseArrayLayer = 0U;
+		image_subresource_range.baseMipLevel = 0U;
+		image_subresource_range.layerCount = 1U;
+		image_subresource_range.levelCount = 1U;
+
+		for (size_t i = 0U; i < m_Swapchain.GetImageCount(); i++)
+		{
+			VkImageMemoryBarrier from_present_to_clear = {};
+			from_present_to_clear.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+			from_present_to_clear.pNext = VK_NULL_HANDLE;
+			from_present_to_clear.image = m_Swapchain.m_SwapchainImages[(uint32)i].image;
+			from_present_to_clear.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+			from_present_to_clear.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+			from_present_to_clear.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+			from_present_to_clear.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			from_present_to_clear.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
+			from_present_to_clear.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
+			from_present_to_clear.subresourceRange = image_subresource_range;
+
+			VkImageMemoryBarrier from_clear_to_present = {};
+			from_clear_to_present.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+			from_clear_to_present.pNext = VK_NULL_HANDLE;
+			from_clear_to_present.image = m_Swapchain.m_SwapchainImages[(uint32)i].image;
+			from_clear_to_present.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+			from_clear_to_present.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+			from_clear_to_present.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			from_clear_to_present.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+			from_clear_to_present.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
+			from_clear_to_present.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
+			from_clear_to_present.subresourceRange = image_subresource_range;
+
+			VkClearColorValue color = { 0.f, 1.f, 0.f, 1.f };
+			VkClearValue clearValues[2U] = { { _InClearColor.r, _InClearColor.g, _InClearColor.b, _InClearColor.a }, { 1.0f, 0.0f } };
+			VkRect2D renderArea = { { 0, 0 }, m_Swapchain.m_SwapchainExtent };
+
+			VkRenderPassBeginInfo render_pass_begin_info = {};
+			render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+			render_pass_begin_info.pNext = VK_NULL_HANDLE;
+			render_pass_begin_info.framebuffer = m_Framebuffers[(uint32)i];
+			render_pass_begin_info.renderPass = m_Renderpass;
+			render_pass_begin_info.renderArea = renderArea;
+			render_pass_begin_info.clearValueCount = 2U;
+			render_pass_begin_info.pClearValues = clearValues;
+
+			vkBeginCommandBuffer(m_GraphicCommandBuffers[(uint32)i], &command_buffer_begin_info);
+			vkCmdBeginRenderPass(m_GraphicCommandBuffers[(uint32)i], &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);*/
+			/*vkCmdPipelineBarrier(m_GraphicCommandBuffers[i], VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+			0U, 0U, nullptr, 0U, nullptr, 1U, &from_present_to_clear);*/
+			/*vkCmdClearColorImage(m_GraphicCommandBuffers[i], m_Swapchain.m_SwapchainImages[i].image,
+			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &color,
+			1U, &image_subresource_range);*/
+			/*vkCmdPipelineBarrier(m_GraphicCommandBuffers[i], VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+			0U, 0U, nullptr, 0U, nullptr, 1U, &from_clear_to_present);*/
+			//vkCmdClearAttachments(m_GraphicCommandBuffers[i], 2U, )
+			/*vkCmdEndRenderPass(m_GraphicCommandBuffers[(uint32)i]);
+			vkEndCommandBuffer(m_GraphicCommandBuffers[(uint32)i]);
+		}*/
+
+		VkCommandBufferBeginInfo command_buffer_begin_info = {};
+		command_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+		command_buffer_begin_info.pNext = VK_NULL_HANDLE;
+		command_buffer_begin_info.pInheritanceInfo = VK_NULL_HANDLE;
+		command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+
+		VkImageSubresourceRange image_subresource_range = {};
+		image_subresource_range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		image_subresource_range.baseArrayLayer = 0U;
+		image_subresource_range.baseMipLevel = 0U;
+		image_subresource_range.layerCount = 1U;
+		image_subresource_range.levelCount = 1U;
+
+		VkImageMemoryBarrier from_present_to_clear = {};
+		from_present_to_clear.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		from_present_to_clear.pNext = VK_NULL_HANDLE;
+		from_present_to_clear.image = m_Swapchain.m_SwapchainImages[m_uiNextImage].image;
+		from_present_to_clear.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		from_present_to_clear.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		from_present_to_clear.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		from_present_to_clear.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		from_present_to_clear.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
+		from_present_to_clear.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
+		from_present_to_clear.subresourceRange = image_subresource_range;
+
+		VkImageMemoryBarrier from_clear_to_present = {};
+		from_clear_to_present.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		from_clear_to_present.pNext = VK_NULL_HANDLE;
+		from_clear_to_present.image = m_Swapchain.m_SwapchainImages[m_uiNextImage].image;
+		from_clear_to_present.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		from_clear_to_present.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		from_clear_to_present.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		from_clear_to_present.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		from_clear_to_present.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
+		from_clear_to_present.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
+		from_clear_to_present.subresourceRange = image_subresource_range;
+
+		VkClearColorValue color = { 0.f, 1.f, 0.f, 1.f };
+		VkClearValue clearValues[2U] = { { _InClearColor.r, _InClearColor.g, _InClearColor.b, _InClearColor.a },{ 1.0f, 0.0f } };
+		VkRect2D renderArea = { { 0, 0 }, m_Swapchain.m_SwapchainExtent };
+
+		VkRenderPassBeginInfo render_pass_begin_info = {};
+		render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+		render_pass_begin_info.pNext = VK_NULL_HANDLE;
+		render_pass_begin_info.framebuffer = m_Framebuffers[m_uiNextImage];
+		render_pass_begin_info.renderPass = m_Renderpass;
+		render_pass_begin_info.renderArea = renderArea;
+		render_pass_begin_info.clearValueCount = 2U;
+		render_pass_begin_info.pClearValues = clearValues;
+
+
+		// Wait for the command buffer to be available
+		vkWaitForFences(m_Device, 1U, &m_CommandBufferAvailables[m_uiNextImage], VK_FALSE, INFINITE);
+		vkResetFences(m_Device, 1U, &m_CommandBufferAvailables[m_uiNextImage]);
+
+		//vkBeginCommandBuffer(m_GraphicCommandBuffers[m_uiNextImage], &command_buffer_begin_info);
+		vkCmdBeginRenderPass(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+		vkCmdEndRenderPass(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer);
+		//vkEndCommandBuffer(m_GraphicCommandBuffers[m_uiNextImage]);
 	}
 
 	void VulkanRenderContext::Present()
 	{
-		uint32 uiCurrentImageIndex = m_Swapchain.GetNextImageIndex(m_ImageAvailableSemaphore);
-
 		VkPipelineStageFlags wait_pipelinestage_flag = VK_PIPELINE_STAGE_TRANSFER_BIT;
 
 		VkSubmitInfo submit_info = {};
 		submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit_info.pNext = VK_NULL_HANDLE;
 		submit_info.commandBufferCount = 1U;
-		submit_info.pCommandBuffers = &m_GraphicCommandBuffers[uiCurrentImageIndex];
+		submit_info.pCommandBuffers = &m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer;
 		submit_info.waitSemaphoreCount = 1U;
 		submit_info.pWaitSemaphores = &m_ImageAvailableSemaphore;
 		submit_info.signalSemaphoreCount = 1U;
 		submit_info.pSignalSemaphores = &m_RenderingFinishedSemaphore;
 		submit_info.pWaitDstStageMask = &wait_pipelinestage_flag;
 
-		VK_CHECK_RESULT(vkQueueSubmit(m_GraphicsQueue, 1U, &submit_info, VK_NULL_HANDLE));
+		VK_CHECK_RESULT(vkQueueSubmit(m_GraphicsQueue, 1U, &submit_info, m_CommandBufferAvailables[m_uiNextImage]));
 
-		m_Swapchain.Present(m_GraphicsQueue, m_RenderingFinishedSemaphore, uiCurrentImageIndex);
+		m_Swapchain.Present(m_GraphicsQueue, m_RenderingFinishedSemaphore, m_uiNextImage);
+	}
+
+
+	void VulkanRenderContext::BeginFrame()
+	{
+		m_uiNextImage = m_Swapchain.GetNextImageIndex(m_ImageAvailableSemaphore);
+	}
+
+	void VulkanRenderContext::DrawPrimitives()
+	{
+
+	}
+
+	void VulkanRenderContext::Draw(VertexBuffer* _InVertexBuffer)
+	{
+		// Rethink vulkan command buffers
+		vkCmdDraw(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, _InVertexBuffer->m_uiVertexCount, 1U, 0U, 0U);
+	}
+
+	void VulkanRenderContext::BindVertexBuffer(VertexBuffer* _InVertexBuffer)
+	{
+		VK_CHECK_RESULT(vkBindBufferMemory(m_Device, ((VulkanVertexBuffer*)_InVertexBuffer)->m_buffer, ((VulkanVertexBuffer*)_InVertexBuffer)->m_memory, 0U));
+	}
+
+	void VulkanRenderContext::BindShaderProgram(Shader* _InShader)
+	{
+		vkCmdBindPipeline(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, ((VulkanShader*)_InShader)->m_graphics_pipeline);
+	}
+
+
+	void VulkanRenderContext::SetViewport(Viewport& _InViewport)
+	{
+		VkCommandBuffer currentCommandBuffer = nullptr;
+
+		//vkCmdSetViewport(currentCommandBuffer, 0U, 1U, )
+	}
+
+	void VulkanRenderContext::SetCullingMode(CullingMode _InCullingMode)
+	{
+		// Pipeline related
+	}
+
+	void VulkanRenderContext::SetFillMode(FillMode _InFillMode)
+	{
+		// Pipeline related
+	}
+
+
+	VertexBuffer * VulkanRenderContext::CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride)
+	{
+		return new VulkanVertexBuffer(_InVertexCount, _InVertexLayout, _InData, _InVerticesStride, m_Device, m_PhysicalDevice);
+	}
+
+	VertexShader * VulkanRenderContext::CreateVertexShader(const char * _InShaderCode, size_t _InShaderCodeSize, TArray<VertexInput>& _InVertexInputLayout)
+	{
+		return new VulkanVertexShader(_InShaderCode, _InShaderCodeSize, _InVertexInputLayout, m_Device);
+	}
+
+	GeometryShader * VulkanRenderContext::CreateGeometryShader(const char * _InShaderCode, size_t _InShaderCodeSize)
+	{
+		return new VulkanGeometryShader(_InShaderCode, _InShaderCodeSize, m_Device);
+	}
+
+	FragmentShader * VulkanRenderContext::CreateFragmentShader(const char * _InShaderCode, size_t _InShaderCodeSize)
+	{
+		return new VulkanFragmentShader(_InShaderCode, _InShaderCodeSize, m_Device);
+	}
+
+	Shader * VulkanRenderContext::CreateShader(VertexShader * _InVertexShader, GeometryShader * _InGeometryShader, FragmentShader * _InFragmentShader)
+	{
+		return new VulkanShader(_InVertexShader, _InGeometryShader, _InFragmentShader, m_Device, m_Renderpass, m_PipelineCache);
 	}
 
 
@@ -202,10 +395,18 @@ namespace DadEngine::Rendering
 		uint32 uiSwapchainImageCount = m_Swapchain.GetImageCount();
 
 		m_GraphicCommandBuffers.Resize(uiSwapchainImageCount);
-		VulkanHelper::CreateCommandBuffer(m_Device, m_GraphicsCommandPool, uiSwapchainImageCount, m_GraphicCommandBuffers.GetData());
+		//VulkanHelper::CreateCommandBuffer(m_Device, m_GraphicsCommandPool, uiSwapchainImageCount, m_GraphicCommandBuffers.GetData());
+		for (VulkanCommandBuffer& cmdbuffer : m_GraphicCommandBuffers)
+		{
+			cmdbuffer.Initialize(m_Device, m_GraphicsCommandPool);
+		}
 
 		m_PresentationCommandBuffers.Resize(uiSwapchainImageCount);
-		VulkanHelper::CreateCommandBuffer(m_Device, m_PresentationCommandPool, uiSwapchainImageCount, m_PresentationCommandBuffers.GetData());
+		//VulkanHelper::CreateCommandBuffer(m_Device, m_PresentationCommandPool, uiSwapchainImageCount, m_PresentationCommandBuffers.GetData());
+		for (VulkanCommandBuffer& cmdbuffer : m_PresentationCommandBuffers)
+		{
+			cmdbuffer.Initialize(m_Device, m_PresentationCommandPool);
+		}
 	}
 
 	void VulkanRenderContext::CreateSetupCommandBuffer()
@@ -419,6 +620,21 @@ namespace DadEngine::Rendering
 		VK_CHECK_RESULT(vkCreateSemaphore(m_Device, &semaphore_create_info, VK_NULL_HANDLE, &m_RenderingFinishedSemaphore));
 	}
 
+	void VulkanRenderContext::CreateFences()
+	{
+		m_CommandBufferAvailables.Resize(m_Swapchain.GetImageCount());
+
+		for (VkFence& fence : m_CommandBufferAvailables)
+		{
+			VkFenceCreateInfo fence_create_info = {};
+			fence_create_info.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+			fence_create_info.pNext = VK_NULL_HANDLE;
+			fence_create_info.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+			VK_CHECK_RESULT(vkCreateFence(m_Device, &fence_create_info, VK_NULL_HANDLE, &fence));
+		}
+	}
+
 	void VulkanRenderContext::CreatePipelineCache()
 	{
 		VkPipelineCacheCreateInfo pipeline_cache_create_info = {};
@@ -427,7 +643,7 @@ namespace DadEngine::Rendering
 		//pipeline_cache_create_info.initialDataSize
 		pipeline_cache_create_info.flags = 0U;
 
-		VK_CHECK_RESULT(vkCreatePipelineCache(m_Device, &pipeline_cache_create_info, VK_NULL_HANDLE, &m_PipelineChache));
+		VK_CHECK_RESULT(vkCreatePipelineCache(m_Device, &pipeline_cache_create_info, VK_NULL_HANDLE, &m_PipelineCache));
 	}
 
 	void VulkanRenderContext::CreateFramebuffers()
@@ -454,75 +670,6 @@ namespace DadEngine::Rendering
 			attachments[0U] = m_Swapchain.m_SwapchainImages[(uint32)i].view;
 
 			VK_CHECK_RESULT(vkCreateFramebuffer(m_Device, &framebuffer_create_info, VK_NULL_HANDLE, &m_Framebuffers[(uint32)i]));
-		}
-	}
-
-	void VulkanRenderContext::RecordClearBuffers()
-	{
-		VkCommandBufferBeginInfo command_buffer_begin_info = {};
-		command_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		command_buffer_begin_info.pNext = VK_NULL_HANDLE;
-		command_buffer_begin_info.pInheritanceInfo = VK_NULL_HANDLE;
-		command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
-		VkImageSubresourceRange image_subresource_range = {};
-		image_subresource_range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		image_subresource_range.baseArrayLayer = 0U;
-		image_subresource_range.baseMipLevel = 0U;
-		image_subresource_range.layerCount = 1U;
-		image_subresource_range.levelCount = 1U;
-
-		for (size_t i = 0U; i < m_Swapchain.GetImageCount(); i++)
-		{
-			VkImageMemoryBarrier from_present_to_clear = {};
-			from_present_to_clear.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			from_present_to_clear.pNext = VK_NULL_HANDLE;
-			from_present_to_clear.image = m_Swapchain.m_SwapchainImages[(uint32)i].image;
-			from_present_to_clear.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			from_present_to_clear.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			from_present_to_clear.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-			from_present_to_clear.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			from_present_to_clear.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-			from_present_to_clear.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-			from_present_to_clear.subresourceRange = image_subresource_range;
-
-			VkImageMemoryBarrier from_clear_to_present = {};
-			from_clear_to_present.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			from_clear_to_present.pNext = VK_NULL_HANDLE;
-			from_clear_to_present.image = m_Swapchain.m_SwapchainImages[(uint32)i].image;
-			from_clear_to_present.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			from_clear_to_present.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-			from_clear_to_present.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			from_clear_to_present.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-			from_clear_to_present.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-			from_clear_to_present.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-			from_clear_to_present.subresourceRange = image_subresource_range;
-
-			VkClearColorValue color = { 0.f, 1.f, 0.f, 1.f };
-			VkClearValue clearValues[2U] = { { 0.f, 1.f, 0.f, 1.f }, {1.0f, 0.0f }};
-			VkRect2D renderArea = { { 0, 0 }, m_Swapchain.m_SwapchainExtent };
-
-			VkRenderPassBeginInfo render_pass_begin_info = {};
-			render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			render_pass_begin_info.pNext = VK_NULL_HANDLE;
-			render_pass_begin_info.framebuffer = m_Framebuffers[(uint32)i];
-			render_pass_begin_info.renderPass = m_Renderpass;
-			render_pass_begin_info.renderArea = renderArea;
-			render_pass_begin_info.clearValueCount = 2U;
-			render_pass_begin_info.pClearValues = clearValues;
-
-			vkBeginCommandBuffer(m_GraphicCommandBuffers[(uint32)i], &command_buffer_begin_info);
-			vkCmdBeginRenderPass(m_GraphicCommandBuffers[(uint32)i], &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
-			/*vkCmdPipelineBarrier(m_GraphicCommandBuffers[i], VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
-				0U, 0U, nullptr, 0U, nullptr, 1U, &from_present_to_clear);*/
-			/*vkCmdClearColorImage(m_GraphicCommandBuffers[i], m_Swapchain.m_SwapchainImages[i].image,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &color,
-			1U, &image_subresource_range);*/
-			/*vkCmdPipelineBarrier(m_GraphicCommandBuffers[i], VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-				0U, 0U, nullptr, 0U, nullptr, 1U, &from_clear_to_present);*/
-			//vkCmdClearAttachments(m_GraphicCommandBuffers[i], 2U, )
-			vkCmdEndRenderPass(m_GraphicCommandBuffers[(uint32)i]);
-			vkEndCommandBuffer(m_GraphicCommandBuffers[(uint32)i]);
 		}
 	}
 }

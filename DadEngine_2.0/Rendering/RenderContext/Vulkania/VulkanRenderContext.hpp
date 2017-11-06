@@ -9,6 +9,11 @@
 #include "VulkanSwapchain.hpp"
 #include "VulkanHelper.hpp"
 
+#include "VulkanCommandBuffer.hpp"
+#include "VulkanVertexInputLayout.hpp"
+#include "VulkanShader.hpp"
+#include "VulkanVertexBuffer.hpp"
+
 
 namespace DadEngine::Rendering
 {
@@ -30,6 +35,31 @@ namespace DadEngine::Rendering
 
 		void ClearBuffer(Color& _InClearColor) override final;
 		void Present() override final;
+
+		void BeginFrame() override final;
+
+		void DrawPrimitives() override final;
+
+		void Draw(VertexBuffer* _InVertexBuffer) override final;
+
+		void BindVertexBuffer(VertexBuffer* _InVertexBuffer) override final;
+
+		void BindShaderProgram(Shader* _InShader) override final;
+
+		void SetViewport(Viewport& _InViewport) override final;
+
+		void SetCullingMode(CullingMode _InCullingMode) override final;
+
+		void SetFillMode(FillMode _InFillMode) override final;
+
+
+		VertexBuffer* CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride) override final;
+
+		VertexShader* CreateVertexShader(const char* _InShaderCode, size_t _InShaderCodeSize, TArray<VertexInput>& _InVertexInputLayout) override final;
+		GeometryShader* CreateGeometryShader(const char* _InShaderCode, size_t _InShaderCodeSize) override final;
+		FragmentShader* CreateFragmentShader(const char* _InShaderCode, size_t _InShaderCodeSize) override final;
+
+		Shader* CreateShader(VertexShader* _InVertexShader, GeometryShader* _InGeometryShader, FragmentShader* _InFragmentShader) override final;
 
 
 	private:
@@ -58,11 +88,11 @@ namespace DadEngine::Rendering
 
 		void CreateSemaphores();
 
+		void CreateFences();
+
 		void CreatePipelineCache();
 
 		void CreateFramebuffers();
-
-		void RecordClearBuffers();
 
 
 		uint32 m_uiGraphicsQueueFamilyIndex = 0U;
@@ -79,13 +109,17 @@ namespace DadEngine::Rendering
 		VkSemaphore m_ImageAvailableSemaphore = VK_NULL_HANDLE;
 		VkSemaphore m_RenderingFinishedSemaphore = VK_NULL_HANDLE;
 
+		TArray<VkFence> m_CommandBufferAvailables;
+
 		VkCommandPool m_GraphicsCommandPool = VK_NULL_HANDLE;
 		VkCommandPool m_PresentationCommandPool = VK_NULL_HANDLE;
 
 		VkCommandBuffer m_setupCommandBuffer = VK_NULL_HANDLE;
 
-		TArray<VkCommandBuffer> m_GraphicCommandBuffers;
-		TArray<VkCommandBuffer> m_PresentationCommandBuffers;
+		TArray<VulkanCommandBuffer> m_GraphicCommandBuffers;
+		TArray<VulkanCommandBuffer> m_PresentationCommandBuffers;
+		//TArray<VkCommandBuffer> m_GraphicCommandBuffers;
+		//TArray<VkCommandBuffer> m_PresentationCommandBuffers;
 
 		VulkanSwapchain m_Swapchain;
 
@@ -98,11 +132,13 @@ namespace DadEngine::Rendering
 		VkRenderPass m_Renderpass = VK_NULL_HANDLE;
 		//TArray<VkRenderPass> m_Renderpasses;
 
-		VkPipelineCache m_PipelineChache = VK_NULL_HANDLE;
+		VkPipelineCache m_PipelineCache = VK_NULL_HANDLE;
 
 		VkPresentModeKHR m_PresentationMode;
 
 		TArray<VkFramebuffer> m_Framebuffers;
+
+		uint32 m_uiNextImage = 0U;
 	};
 }
 

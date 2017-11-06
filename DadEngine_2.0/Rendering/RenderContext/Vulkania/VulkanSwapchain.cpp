@@ -122,9 +122,11 @@ namespace DadEngine::Rendering
 
 	uint32 VulkanSwapchain::GetNextImageIndex(VkSemaphore& _InImageAvailableSemaphore)
 	{
-		// Need at least fence or semaphore
-		AcquireNextImage(m_Device, m_Swapchain, UINT64_MAX, _InImageAvailableSemaphore, VK_NULL_HANDLE, &m_uiImageIndex);
+		uint32 uiImageIndex = 0U;
 
-		return m_uiImageIndex;
+		// Need at least fence or semaphore
+		AcquireNextImage(m_Device, m_Swapchain, UINT64_MAX, _InImageAvailableSemaphore, VK_NULL_HANDLE, &uiImageIndex);
+
+		return uiImageIndex;
 	}
 }

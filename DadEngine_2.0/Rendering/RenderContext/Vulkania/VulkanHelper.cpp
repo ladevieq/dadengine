@@ -96,19 +96,19 @@ namespace DadEngine::Rendering::VulkanHelper
 
 		vkEnumeratePhysicalDevices(_InInstance, &physicalDevicesCount, _InPhysicalDevices.GetData());
 
-		/*for (VkPhysicalDevice currentPhysicalDevice : _InPhysicalDevices)
+		for (VkPhysicalDevice currentPhysicalDevice : _InPhysicalDevices)
 		{
-		VkPhysicalDeviceProperties physicalDeviceProperties;
-		VkPhysicalDeviceFeatures physicalDeviceFeatures;
+			VkPhysicalDeviceProperties physicalDeviceProperties;
+			VkPhysicalDeviceFeatures physicalDeviceFeatures;
 
-		vkGetPhysicalDeviceProperties(currentPhysicalDevice, &physicalDeviceProperties);
+			vkGetPhysicalDeviceProperties(currentPhysicalDevice, &physicalDeviceProperties);
 
-		printf("%s%s\n", "Name: ", physicalDeviceProperties.deviceName);
+			printf("%s%s\n", "Name: ", physicalDeviceProperties.deviceName);
 
-		vkGetPhysicalDeviceFeatures(currentPhysicalDevice, &physicalDeviceFeatures);
+			vkGetPhysicalDeviceFeatures(currentPhysicalDevice, &physicalDeviceFeatures);
 
-		CheckDeviceQueueFamilyProperties(currentPhysicalDevice, VK_QUEUE_GRAPHICS_BIT);
-		}*/
+			CheckDeviceQueueFamilyProperties(currentPhysicalDevice, VK_QUEUE_GRAPHICS_BIT);
+		}
 	}
 
 	uint32 CheckDeviceQueueFamilyProperties(VkPhysicalDevice& _InPhysicalDevice, VkQueueFlags _InFlag)
@@ -179,7 +179,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		return surfaceFormats[0];
 	}
 
-	void CreateCommandBuffer(VkDevice& _InDevice, VkCommandPool& _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBUffers)
+	void CreateCommandBuffer(VkDevice& _InDevice, VkCommandPool& _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers)
 	{
 		VkCommandBufferAllocateInfo command_buffer_allocate_info = {};
 		command_buffer_allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -188,7 +188,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		command_buffer_allocate_info.commandPool = _InCommandPool;
 		command_buffer_allocate_info.commandBufferCount = _InCount;
 
-		VK_CHECK_RESULT(vkAllocateCommandBuffers(_InDevice, &command_buffer_allocate_info, _OutCommandBUffers));
+		VK_CHECK_RESULT(vkAllocateCommandBuffers(_InDevice, &command_buffer_allocate_info, _OutCommandBuffers));
 	}
 
 	VkExtent2D GetExtent2D(VkPhysicalDevice & _InPhysicalDevice, VkSurfaceKHR & _InSurface)
@@ -287,5 +287,31 @@ namespace DadEngine::Rendering::VulkanHelper
 		}
 
 		vkCmdPipelineBarrier(_InCommandBuffer, _InSrcPipilineStageFalgs, _InDstPipilineStageFalgs, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+	}
+
+	void AllocateBufferMemory(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice, VkBuffer _InBuffer, VkDeviceMemory& _OutMemory)
+	{
+		VkMemoryRequirements buffer_memory_requirements;
+		vkGetBufferMemoryRequirements(_InDevice, _InBuffer, &buffer_memory_requirements);
+
+		VkPhysicalDeviceMemoryProperties memory_properties;
+		vkGetPhysicalDeviceMemoryProperties(_InPhysicalDevice, &memory_properties);
+
+		for (size_t i = 0U; i < (size_t)memory_properties.memoryTypeCount; i++)
+		{
+			if (buffer_memory_requirements.memoryTypeBits & (1 << i) &&
+				memory_properties.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
+			{
+				VkMemoryAllocateInfo memory_allocate_info = {};
+				memory_allocate_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				memory_allocate_info.pNext = VK_NULL_HANDLE;
+				memory_allocate_info.allocationSize = buffer_memory_requirements.size;
+				memory_allocate_info.memoryTypeIndex = i;
+
+				VK_CHECK_RESULT(vkAllocateMemory(_InDevice, &memory_allocate_info, VK_NULL_HANDLE, &_OutMemory));
+
+				return;
+			}
+		}
 	}
 }
