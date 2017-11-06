@@ -1,10 +1,10 @@
 #ifndef __RENDERING_FEATURE_HPP_
 #define __RENDERING_FEATURE_HPP_
 
-#include "../ViewPacket.hpp"
-#include "../RenderNode.hpp"
+#include "../Culling/ViewPacket.hpp"
+#include "../Culling/RenderNode.hpp"
 #include "../CommandBuffer.hpp"
-#include "../RenderObject.hpp"
+#include "../Culling/RenderObject.hpp"
 #include "../../Core/Core.hpp"
 
 namespace DadEngine::Rendering

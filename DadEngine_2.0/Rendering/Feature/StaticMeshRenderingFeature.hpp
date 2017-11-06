@@ -34,6 +34,7 @@ namespace DadEngine::Rendering
 		void SubmitViewBegin(ViewPacket& _InViewPacket, CommandBuffer& _InCommandBuffer) override final
 		{
 			_InCommandBuffer.Clear(Color{1.f, 0.f, 0.f, 1.f});
+			//_InCommandBuffer.SetViewport(Viewport{ 0, 0, 1280, 720 });
 		}
 
 		void SubmitViewEnd(ViewPacket& _InViewPacket, CommandBuffer& _InCommandBuffer) override final

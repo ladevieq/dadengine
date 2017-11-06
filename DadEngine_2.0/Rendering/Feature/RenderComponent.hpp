@@ -1,8 +1,8 @@
 #ifndef __RENDER_COMPONENT_HPP_
 #define __RENDER_COMPONENT_HPP_
 
-#include "../RenderObject.hpp"
-#include "../FramePacket.hpp"
+#include "../Culling/RenderObject.hpp"
+#include "../Culling/FramePacket.hpp"
 
 namespace DadEngine::Rendering
 {
