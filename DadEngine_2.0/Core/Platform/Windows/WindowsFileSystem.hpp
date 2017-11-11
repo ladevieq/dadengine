@@ -13,14 +13,20 @@ namespace DadEngine::Core
 		}
 
 
-		static IFile* CreateTextFileReader(const char* _InFilePath)
+		static IFile* CreateFileReader(const char* _InFilePath, IOMode _InFileFormat)
 		{
-			return new PlatformFile(_InFilePath, IO_MODE_READ /*| IO_MODE_TEXT*/);
+			if (_InFileFormat == IO_MODE_TEXT)
+				return new PlatformTextFile(_InFilePath, IO_MODE_READ);
+			else
+				return new PlatformBinaryFile(_InFilePath, IO_MODE_READ);
 		}
 
-		static IFile* CreateTextFileWriter(const char* _InFilePath)
+		static IFile* CreateTextFileWriter(const char* _InFilePath, IOMode _InFileFormat)
 		{
-			return new PlatformFile(_InFilePath, IO_MODE_WRITE /*| IO_MODE_TEXT*/);
+			if(_InFileFormat == IO_MODE_TEXT)
+				return new PlatformTextFile(_InFilePath, IO_MODE_WRITE);
+			else
+				return new PlatformBinaryFile(_InFilePath, IO_MODE_WRITE);
 		}
 
 

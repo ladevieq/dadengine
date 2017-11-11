@@ -11,7 +11,7 @@ namespace DadEngine::Core
 		IO_MODE_WRITE = 0x2,
 		IO_MODE_APPEND = 0x4,
 		IO_MODE_TEXT = 0x8,
-		IO_MODE_BINAY = 0xf,
+		IO_MODE_BINARY = 0xf,
 		MAX_IO_MODE = 0xff
 	};
 

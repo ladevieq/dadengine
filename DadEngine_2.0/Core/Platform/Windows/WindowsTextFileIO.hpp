@@ -1,5 +1,5 @@
-#ifndef __WINDOWS_FILE_IO_HPP_
-#define __WINDOWS_FILE_IO_HPP_
+#ifndef __WINDOWS_TEXT_FILE_IO_HPP_
+#define __WINDOWS_TEXT_FILE_IO_HPP_
 
 #include <Windows.h>
 
@@ -7,9 +7,9 @@ namespace DadEngine::Core
 {
 	// Use windows IO stuff ?
 
-	struct WindowsFile : public IFile
+	struct WindowsTextFile : public IFile
 	{
-		WindowsFile(const char* _InFilePath, IOModeFlag _InIOMode)
+		WindowsTextFile(const char* _InFilePath, IOModeFlag _InIOMode)
 		{
 			switch (_InIOMode)
 			{
@@ -28,7 +28,7 @@ namespace DadEngine::Core
 			}
 		}
 		
-		~WindowsFile()
+		~WindowsTextFile()
 		{
 			fclose(m_fileHandle);
 		}
@@ -36,7 +36,7 @@ namespace DadEngine::Core
 
 		b8 OpenRead(const char* _InFilePath) override final
 		{
-			m_fileHandle = fopen(_InFilePath, "rb");
+			m_fileHandle = fopen(_InFilePath, "rt");
 
 			return m_fileHandle != nullptr;
 		}
@@ -49,14 +49,14 @@ namespace DadEngine::Core
 
 		b8 Read(String& _InDst) override final
 		{
-			size_t size = fread((void*)_InDst.Cstr(), sizeof(uint8)/*1U*/, _InDst.Size(), m_fileHandle);
+			size_t size = fread((void*)_InDst.Cstr(), sizeof(uint8), _InDst.Size(), m_fileHandle);
 			return size == _InDst.Size();
 		}
 		
 
 		b8 OpenWrite(const char* _InFilePath) override final
 		{
-			m_fileHandle = fopen(_InFilePath, "w");
+			m_fileHandle = fopen(_InFilePath, "wt");
 
 			return m_fileHandle != nullptr;
 		}
@@ -95,7 +95,7 @@ namespace DadEngine::Core
 		FILE* m_fileHandle = nullptr;
 	};
 
-	using PlatformFile = WindowsFile;
+	using PlatformTextFile = WindowsTextFile;
 }
 
-#endif //!__WINDOWS_FILE_IO_HPP_
+#endif //!__WINDOWS_TEXT_FILE_IO_HPP_

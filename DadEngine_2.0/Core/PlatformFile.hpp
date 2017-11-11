@@ -2,7 +2,8 @@
 #define __PLATEFORM_FILE_HPP_
 
 #if defined (WINDOWS)
-#include "Platform/Windows/WindowsFileIO.hpp"
+#include "Platform/Windows/WindowsTextFileIO.hpp"
+#include "Platform/Windows/WindowsBinaryFileIO.hpp"
 #include "Platform/Windows/WindowsFileSystem.hpp"
 #endif
 
