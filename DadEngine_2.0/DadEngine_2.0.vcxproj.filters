@@ -75,7 +75,6 @@
     <ClInclude Include="Rendering\CommandBuffer.hpp" />
     <ClInclude Include="Rendering\VertexBuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLVertexBuffer.hpp" />
-    <ClInclude Include="Core\Platform\Windows\WindowsFileIO.hpp" />
     <ClInclude Include="Core\IFile.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsFileSystem.hpp" />
     <ClInclude Include="Core\PlatformFile.hpp" />
@@ -91,6 +90,8 @@
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanVertexInputLayout.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanVertexBuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanCommandBuffer.hpp" />
+    <ClInclude Include="Core\Platform\Windows\WindowsTextFileIO.hpp" />
+    <ClInclude Include="Core\Platform\Windows\WindowsBinaryFileIO.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

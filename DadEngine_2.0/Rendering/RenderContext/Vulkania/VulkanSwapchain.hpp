@@ -35,6 +35,8 @@ namespace DadEngine::Rendering
 
 		FORCE_INLINE uint32 GetImageCount() { return (uint32)m_SwapchainImages.Size(); }
 
+		FORCE_INLINE VkFormat GetFormat() { return m_surfaceFormat.format; }
+
 		TArray<SwapchainImage> m_SwapchainImages;
 
 		VkExtent2D m_SwapchainExtent;

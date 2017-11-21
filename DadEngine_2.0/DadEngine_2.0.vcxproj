@@ -38,7 +38,8 @@
     <ClInclude Include="Core\PlatformTypes.hpp" />
     <ClInclude Include="Core\PlatformTimers.hpp" />
     <ClInclude Include="Core\PlatformWindow.hpp" />
-    <ClInclude Include="Core\Platform\Windows\WindowsFileIO.hpp" />
+    <ClInclude Include="Core\Platform\Windows\WindowsBinaryFileIO.hpp" />
+    <ClInclude Include="Core\Platform\Windows\WindowsTextFileIO.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsFileSystem.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsMemory.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsWindow.hpp" />

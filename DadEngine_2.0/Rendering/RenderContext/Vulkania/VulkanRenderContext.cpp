@@ -61,12 +61,6 @@ namespace DadEngine::Rendering
 
 	void VulkanRenderContext::ClearBuffer(Color& _InClearColor)
 	{
-		/*VkCommandBufferBeginInfo command_buffer_begin_info = {};
-		command_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		command_buffer_begin_info.pNext = VK_NULL_HANDLE;
-		command_buffer_begin_info.pInheritanceInfo = VK_NULL_HANDLE;
-		command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
 		VkImageSubresourceRange image_subresource_range = {};
 		image_subresource_range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 		image_subresource_range.baseArrayLayer = 0U;
@@ -74,98 +68,23 @@ namespace DadEngine::Rendering
 		image_subresource_range.layerCount = 1U;
 		image_subresource_range.levelCount = 1U;
 
-		for (size_t i = 0U; i < m_Swapchain.GetImageCount(); i++)
-		{
-			VkImageMemoryBarrier from_present_to_clear = {};
-			from_present_to_clear.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			from_present_to_clear.pNext = VK_NULL_HANDLE;
-			from_present_to_clear.image = m_Swapchain.m_SwapchainImages[(uint32)i].image;
-			from_present_to_clear.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-			from_present_to_clear.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			from_present_to_clear.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-			from_present_to_clear.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			from_present_to_clear.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-			from_present_to_clear.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-			from_present_to_clear.subresourceRange = image_subresource_range;
+		VkClearColorValue color = { _InClearColor.r, _InClearColor.g, _InClearColor.b, _InClearColor.a };
+		VkClearDepthStencilValue depthStencil = { 1.0f, 0.0f };
 
-			VkImageMemoryBarrier from_clear_to_present = {};
-			from_clear_to_present.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-			from_clear_to_present.pNext = VK_NULL_HANDLE;
-			from_clear_to_present.image = m_Swapchain.m_SwapchainImages[(uint32)i].image;
-			from_clear_to_present.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-			from_clear_to_present.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-			from_clear_to_present.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-			from_clear_to_present.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-			from_clear_to_present.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-			from_clear_to_present.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-			from_clear_to_present.subresourceRange = image_subresource_range;
 
-			VkClearColorValue color = { 0.f, 1.f, 0.f, 1.f };
-			VkClearValue clearValues[2U] = { { _InClearColor.r, _InClearColor.g, _InClearColor.b, _InClearColor.a }, { 1.0f, 0.0f } };
-			VkRect2D renderArea = { { 0, 0 }, m_Swapchain.m_SwapchainExtent };
+		vkCmdClearColorImage(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, m_Swapchain.m_SwapchainImages[m_uiNextImage].image,
+			VK_IMAGE_LAYOUT_UNDEFINED, &color, 1U, &image_subresource_range);
 
-			VkRenderPassBeginInfo render_pass_begin_info = {};
-			render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-			render_pass_begin_info.pNext = VK_NULL_HANDLE;
-			render_pass_begin_info.framebuffer = m_Framebuffers[(uint32)i];
-			render_pass_begin_info.renderPass = m_Renderpass;
-			render_pass_begin_info.renderArea = renderArea;
-			render_pass_begin_info.clearValueCount = 2U;
-			render_pass_begin_info.pClearValues = clearValues;
+		vkCmdClearDepthStencilImage(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, m_Swapchain.m_SwapchainImages[m_uiNextImage].image,
+			VK_IMAGE_LAYOUT_UNDEFINED, &depthStencil, 1U, &image_subresource_range);
+	}
 
-			vkBeginCommandBuffer(m_GraphicCommandBuffers[(uint32)i], &command_buffer_begin_info);
-			vkCmdBeginRenderPass(m_GraphicCommandBuffers[(uint32)i], &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);*/
-			/*vkCmdPipelineBarrier(m_GraphicCommandBuffers[i], VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
-			0U, 0U, nullptr, 0U, nullptr, 1U, &from_present_to_clear);*/
-			/*vkCmdClearColorImage(m_GraphicCommandBuffers[i], m_Swapchain.m_SwapchainImages[i].image,
-			VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, &color,
-			1U, &image_subresource_range);*/
-			/*vkCmdPipelineBarrier(m_GraphicCommandBuffers[i], VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
-			0U, 0U, nullptr, 0U, nullptr, 1U, &from_clear_to_present);*/
-			//vkCmdClearAttachments(m_GraphicCommandBuffers[i], 2U, )
-			/*vkCmdEndRenderPass(m_GraphicCommandBuffers[(uint32)i]);
-			vkEndCommandBuffer(m_GraphicCommandBuffers[(uint32)i]);
-		}*/
-
-		VkCommandBufferBeginInfo command_buffer_begin_info = {};
-		command_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-		command_buffer_begin_info.pNext = VK_NULL_HANDLE;
-		command_buffer_begin_info.pInheritanceInfo = VK_NULL_HANDLE;
-		command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
-		VkImageSubresourceRange image_subresource_range = {};
-		image_subresource_range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		image_subresource_range.baseArrayLayer = 0U;
-		image_subresource_range.baseMipLevel = 0U;
-		image_subresource_range.layerCount = 1U;
-		image_subresource_range.levelCount = 1U;
-
-		VkImageMemoryBarrier from_present_to_clear = {};
-		from_present_to_clear.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		from_present_to_clear.pNext = VK_NULL_HANDLE;
-		from_present_to_clear.image = m_Swapchain.m_SwapchainImages[m_uiNextImage].image;
-		from_present_to_clear.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		from_present_to_clear.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		from_present_to_clear.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		from_present_to_clear.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		from_present_to_clear.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-		from_present_to_clear.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-		from_present_to_clear.subresourceRange = image_subresource_range;
-
-		VkImageMemoryBarrier from_clear_to_present = {};
-		from_clear_to_present.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		from_clear_to_present.pNext = VK_NULL_HANDLE;
-		from_clear_to_present.image = m_Swapchain.m_SwapchainImages[m_uiNextImage].image;
-		from_clear_to_present.oldLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
-		from_clear_to_present.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-		from_clear_to_present.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		from_clear_to_present.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		from_clear_to_present.srcQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-		from_clear_to_present.dstQueueFamilyIndex = m_uiGraphicsQueueFamilyIndex;
-		from_clear_to_present.subresourceRange = image_subresource_range;
+	void VulkanRenderContext::BeginFrame()
+	{
+		m_uiNextImage = m_Swapchain.GetNextImageIndex(m_ImageAvailableSemaphore);
 
 		VkClearColorValue color = { 0.f, 1.f, 0.f, 1.f };
-		VkClearValue clearValues[2U] = { { _InClearColor.r, _InClearColor.g, _InClearColor.b, _InClearColor.a },{ 1.0f, 0.0f } };
+		VkClearValue clearValues[2U] = { { color },{ 1.0f, 0.0f } };
 		VkRect2D renderArea = { { 0, 0 }, m_Swapchain.m_SwapchainExtent };
 
 		VkRenderPassBeginInfo render_pass_begin_info = {};
@@ -182,14 +101,15 @@ namespace DadEngine::Rendering
 		vkWaitForFences(m_Device, 1U, &m_CommandBufferAvailables[m_uiNextImage], VK_FALSE, INFINITE);
 		vkResetFences(m_Device, 1U, &m_CommandBufferAvailables[m_uiNextImage]);
 
-		//vkBeginCommandBuffer(m_GraphicCommandBuffers[m_uiNextImage], &command_buffer_begin_info);
+		m_GraphicCommandBuffers[m_uiNextImage].BeginRecord();
 		vkCmdBeginRenderPass(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
-		vkCmdEndRenderPass(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer);
-		//vkEndCommandBuffer(m_GraphicCommandBuffers[m_uiNextImage]);
 	}
 
 	void VulkanRenderContext::Present()
 	{
+		vkCmdEndRenderPass(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer);
+		m_GraphicCommandBuffers[m_uiNextImage].EndRecord();
+
 		VkPipelineStageFlags wait_pipelinestage_flag = VK_PIPELINE_STAGE_TRANSFER_BIT;
 
 		VkSubmitInfo submit_info = {};
@@ -209,10 +129,6 @@ namespace DadEngine::Rendering
 	}
 
 
-	void VulkanRenderContext::BeginFrame()
-	{
-		m_uiNextImage = m_Swapchain.GetNextImageIndex(m_ImageAvailableSemaphore);
-	}
 
 	void VulkanRenderContext::DrawPrimitives()
 	{
@@ -227,7 +143,14 @@ namespace DadEngine::Rendering
 
 	void VulkanRenderContext::BindVertexBuffer(VertexBuffer* _InVertexBuffer)
 	{
-		VK_CHECK_RESULT(vkBindBufferMemory(m_Device, ((VulkanVertexBuffer*)_InVertexBuffer)->m_buffer, ((VulkanVertexBuffer*)_InVertexBuffer)->m_memory, 0U));
+		VkDeviceSize deviceSize = 0U;
+
+		vkCmdBindVertexBuffers(
+			m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer,
+			0U,
+			1U,
+			&((VulkanVertexBuffer*)_InVertexBuffer)->m_buffer,
+			&deviceSize);
 	}
 
 	void VulkanRenderContext::BindShaderProgram(Shader* _InShader)
@@ -276,7 +199,7 @@ namespace DadEngine::Rendering
 
 	Shader * VulkanRenderContext::CreateShader(VertexShader * _InVertexShader, GeometryShader * _InGeometryShader, FragmentShader * _InFragmentShader)
 	{
-		return new VulkanShader(_InVertexShader, _InGeometryShader, _InFragmentShader, m_Device, m_Renderpass, m_PipelineCache);
+		return new VulkanShader(_InVertexShader, _InGeometryShader, _InFragmentShader, m_Device, m_Renderpass, m_PipelineCache, m_Swapchain);
 	}
 
 
@@ -552,16 +475,12 @@ namespace DadEngine::Rendering
 	void VulkanRenderContext::CreateRenderpass()
 	{
 		VkAttachmentDescription attachments[2] = {};
-		attachments[0].format = VK_FORMAT_B8G8R8A8_UNORM;
+		attachments[0].format = m_Swapchain.GetFormat();
 		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
 		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 		attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
 		attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[0].initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-		attachments[0].finalLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-
 		attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
@@ -595,6 +514,26 @@ namespace DadEngine::Rendering
 		subpass_description.preserveAttachmentCount = 0U;
 		subpass_description.pPreserveAttachments = VK_NULL_HANDLE;
 
+
+		// Dependency to prepare implicit barrier
+		TArray<VkSubpassDependency> dependencies(2U);
+		dependencies[0U].srcSubpass = VK_SUBPASS_EXTERNAL;
+		dependencies[0U].dstSubpass = 0;
+		dependencies[0U].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		dependencies[0U].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependencies[0U].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		dependencies[0U].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		dependencies[0U].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+		dependencies[1U].srcSubpass = 0;
+		dependencies[1U].dstSubpass = VK_SUBPASS_EXTERNAL;
+		dependencies[1U].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependencies[1U].dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		dependencies[1U].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		dependencies[1U].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		dependencies[1U].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+
 		VkRenderPassCreateInfo renderpass_create_info = {};
 		renderpass_create_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		renderpass_create_info.pNext = VK_NULL_HANDLE;
@@ -602,8 +541,8 @@ namespace DadEngine::Rendering
 		renderpass_create_info.pAttachments = attachments;
 		renderpass_create_info.subpassCount = 1U;
 		renderpass_create_info.pSubpasses = &subpass_description;
-		renderpass_create_info.dependencyCount = 0U;
-		renderpass_create_info.pDependencies = VK_NULL_HANDLE;
+		renderpass_create_info.dependencyCount = 2U;
+		renderpass_create_info.pDependencies = dependencies.GetData();
 		renderpass_create_info.flags = 0U;
 
 		VK_CHECK_RESULT(vkCreateRenderPass(m_Device, &renderpass_create_info, VK_NULL_HANDLE, &m_Renderpass));

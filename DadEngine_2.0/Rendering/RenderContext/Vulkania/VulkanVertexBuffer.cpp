@@ -22,6 +22,8 @@ namespace DadEngine::Rendering
 
 		VulkanHelper::AllocateBufferMemory(_InDevice, _InPhysicalDevice, m_buffer, m_memory);
 
+		VK_CHECK_RESULT(vkBindBufferMemory(_InDevice, m_buffer, m_memory, 0U));
+
 		// Upload data to the buffers memory
 		void* device_memory = nullptr;
 		VK_CHECK_RESULT(vkMapMemory(_InDevice, m_memory, 0U, BufferSize, 0U, &device_memory));

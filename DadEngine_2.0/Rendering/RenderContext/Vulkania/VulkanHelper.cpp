@@ -306,7 +306,7 @@ namespace DadEngine::Rendering::VulkanHelper
 				memory_allocate_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 				memory_allocate_info.pNext = VK_NULL_HANDLE;
 				memory_allocate_info.allocationSize = buffer_memory_requirements.size;
-				memory_allocate_info.memoryTypeIndex = i;
+				memory_allocate_info.memoryTypeIndex = (uint32)i;
 
 				VK_CHECK_RESULT(vkAllocateMemory(_InDevice, &memory_allocate_info, VK_NULL_HANDLE, &_OutMemory));
 

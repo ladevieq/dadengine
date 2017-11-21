@@ -24,6 +24,8 @@ namespace DadEngine::Rendering
 		void Present() override final;
 
 
+		void BeginFrame() override final {};
+
 		void DrawPrimitives() override final;
 
 		void Draw(VertexBuffer* _InVertexBuffer) override final;

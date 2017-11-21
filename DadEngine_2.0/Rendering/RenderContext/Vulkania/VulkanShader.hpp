@@ -6,6 +6,7 @@
 #include "VulkanGeometryShader.hpp"
 #include "VulkanFragmentShader.hpp"
 
+
 namespace DadEngine::Rendering
 {
 	// Pipeline object
@@ -13,7 +14,8 @@ namespace DadEngine::Rendering
 	{
 	public:
 
-		VulkanShader(VertexShader* _InVertexShader, GeometryShader* _InGeometryShader, FragmentShader* _InFragmentShader, VkDevice _InDevice, VkRenderPass _InRenderPass, VkPipelineCache _InPipelineCache)
+		VulkanShader(VertexShader* _InVertexShader, GeometryShader* _InGeometryShader, FragmentShader* _InFragmentShader, VkDevice _InDevice,
+			VkRenderPass _InRenderPass, VkPipelineCache _InPipelineCache, VulkanSwapchain& _InSwapchain)
 			: Shader(_InVertexShader, _InGeometryShader, _InFragmentShader)
 		{
 			TArray<VkPipelineShaderStageCreateInfo> shader_stage_create_infos;
@@ -59,35 +61,40 @@ namespace DadEngine::Rendering
 
 
 			// Vertex input layout state
-			TArray<VkVertexInputBindingDescription> vertices_input_binding(m_ptrVertexShader->m_vertexInputLayout.Size());
+			VkVertexInputBindingDescription vertices_input_binding;
 			TArray<VkVertexInputAttributeDescription> vertices_input_attribute(m_ptrVertexShader->m_vertexInputLayout.Size());
+			size_t offset = 0U;
+			uint32 stride;
+
+			VertexInput::GetLayoutStride(m_ptrVertexShader->m_vertexInputLayout, stride);
+
+			// Bindings
+			vertices_input_binding.binding = 0U;
+			vertices_input_binding.stride = stride;
+			vertices_input_binding.inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // Per vertex data
 
 			for (size_t i = 0U; i < m_ptrVertexShader->m_vertexInputLayout.Size(); i++)
 			{
 				size_t size;
-				uint32 count, stride;
+				uint32 count;
 
-				VertexInput::GetLayoutStride(m_ptrVertexShader->m_vertexInputLayout, stride);
 				m_ptrVertexShader->m_vertexInputLayout[(uint32)i].GetInputTypeInfo(size, count);
 
-				// Bindings
-				vertices_input_binding[(uint32)i].binding = m_ptrVertexShader->m_vertexInputLayout[(uint32)i].uiIndex;
-				vertices_input_binding[(uint32)i].stride = stride;
-				vertices_input_binding[(uint32)i].inputRate = VK_VERTEX_INPUT_RATE_VERTEX; // Per vertex data
-
-																				   // Attributes
-				vertices_input_attribute[(uint32)i].binding = m_ptrVertexShader->m_vertexInputLayout[(uint32)i].uiIndex;
+				// Attributes
+				vertices_input_attribute[(uint32)i].binding = 0U;
 				vertices_input_attribute[(uint32)i].location = m_ptrVertexShader->m_vertexInputLayout[(uint32)i].uiIndex;
 				vertices_input_attribute[(uint32)i].format = VertexInputTypeFormat(m_ptrVertexShader->m_vertexInputLayout[(uint32)i].uiVertexInputType);
-				vertices_input_attribute[(uint32)i].offset = 0U; // Probably an error
+				vertices_input_attribute[(uint32)i].offset = (uint32)offset;
+
+				offset += size;
 			}
 
 
 			VkPipelineVertexInputStateCreateInfo vertex_input_state_create_info = {};
 			vertex_input_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 			vertex_input_state_create_info.pNext = VK_NULL_HANDLE;
-			vertex_input_state_create_info.vertexBindingDescriptionCount = (uint32)vertices_input_binding.Size();
-			vertex_input_state_create_info.pVertexBindingDescriptions = vertices_input_binding.GetData();
+			vertex_input_state_create_info.vertexBindingDescriptionCount = 1U;
+			vertex_input_state_create_info.pVertexBindingDescriptions = &vertices_input_binding;
 			vertex_input_state_create_info.vertexAttributeDescriptionCount = (uint32)vertices_input_attribute.Size();
 			vertex_input_state_create_info.pVertexAttributeDescriptions = vertices_input_attribute.GetData();
 			vertex_input_state_create_info.flags = 0U;
@@ -95,10 +102,22 @@ namespace DadEngine::Rendering
 
 			// Dynamic states
 			TArray<VkDynamicState> dynamic_states;
-			dynamic_states.Add(VK_DYNAMIC_STATE_SCISSOR);
-			dynamic_states.Add(VK_DYNAMIC_STATE_VIEWPORT);
+			//dynamic_states.Add(VK_DYNAMIC_STATE_SCISSOR);
+			//dynamic_states.Add(VK_DYNAMIC_STATE_VIEWPORT);
 			// Dynamic scissor and viewport if more than 1 camera
+			VkViewport viewport;
+			viewport.x = 0.f;
+			viewport.y = 0.f;
+			viewport.width = (float)_InSwapchain.m_SwapchainExtent.width;
+			viewport.height = (float)_InSwapchain.m_SwapchainExtent.height;
+			viewport.minDepth = 0.f;
+			viewport.maxDepth = 1.f;
 
+			VkRect2D rect;
+			rect.extent.width = _InSwapchain.m_SwapchainExtent.width;
+			rect.extent.height = _InSwapchain.m_SwapchainExtent.height;
+			rect.offset.x = 0;
+			rect.offset.y = 0;
 
 			// Input assembly state
 			VkPipelineInputAssemblyStateCreateInfo input_assembly_state_create_info = {};
@@ -112,9 +131,9 @@ namespace DadEngine::Rendering
 			viewport_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 			viewport_state_create_info.pNext = VK_NULL_HANDLE;
 			viewport_state_create_info.viewportCount = 1U;
-			viewport_state_create_info.pViewports = VK_NULL_HANDLE;
+			viewport_state_create_info.pViewports = &viewport;
 			viewport_state_create_info.scissorCount = 1U;
-			viewport_state_create_info.pScissors = VK_NULL_HANDLE;
+			viewport_state_create_info.pScissors = &rect;
 			viewport_state_create_info.flags = 0U;
 
 
@@ -136,7 +155,7 @@ namespace DadEngine::Rendering
 			rasterization_state_create_info.depthClampEnable = VK_FALSE;
 			rasterization_state_create_info.rasterizerDiscardEnable = VK_FALSE;
 			rasterization_state_create_info.polygonMode = VK_POLYGON_MODE_FILL;
-			rasterization_state_create_info.cullMode = VK_CULL_MODE_BACK_BIT;
+			rasterization_state_create_info.cullMode = VK_CULL_MODE_NONE;//VK_CULL_MODE_BACK_BIT;
 			rasterization_state_create_info.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 			rasterization_state_create_info.depthBiasEnable = VK_FALSE;
 			rasterization_state_create_info.depthBiasConstantFactor = 0.f;
@@ -225,7 +244,7 @@ namespace DadEngine::Rendering
 			graphics_pipeline_create_info.pMultisampleState = &multisample_state_create_info;
 			graphics_pipeline_create_info.pDepthStencilState = &depth_stencil_state_create_info;
 			graphics_pipeline_create_info.pColorBlendState = &color_blend_state_create_info;
-			graphics_pipeline_create_info.pDynamicState = &dynamic_state_create_info;
+			graphics_pipeline_create_info.pDynamicState = (dynamic_states.Size() > 0U) ? &dynamic_state_create_info : VK_NULL_HANDLE;
 			graphics_pipeline_create_info.layout = pipeline_layout;
 			graphics_pipeline_create_info.renderPass = _InRenderPass;
 			graphics_pipeline_create_info.subpass = 0U;

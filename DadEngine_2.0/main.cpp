@@ -2,6 +2,8 @@
 #include "Rendering/Rendering.hpp"
 #include "Math/Math.hpp"
 
+#define /*DADOPNEGL*/ DADVULKAN
+
 void Tests()
 {
 	//Test::TestTypes();
@@ -27,16 +29,29 @@ int main
 
 	window.ToggleConsole();
 
-	IFile* vertexShaderReader = PlatformFileSystem::CreateTextFileReader(/*"test.vert"*/"vert.spv");
+	
+
+#if defined(DADOPNEGL)
+	RenderContext* renderContext = new OpenGLRenderContext(window);
+
+	IFile* vertexShaderReader = PlatformFileSystem::CreateFileReader("test.vert", IO_MODE_TEXT);
 	String vertexShaderCode(vertexShaderReader->Size());
 	b8 ret = vertexShaderReader->Read(vertexShaderCode);
 
-	IFile* fragmentShaderReader = PlatformFileSystem::CreateTextFileReader(/*"test.frag"*/"frag.spv");
+	IFile* fragmentShaderReader = PlatformFileSystem::CreateFileReader("test.frag", IO_MODE_TEXT);
 	String fragmentShaderCode(fragmentShaderReader->Size());
 	fragmentShaderReader->Read(fragmentShaderCode);
-
-	//RenderContext* renderContext = new OpenGLRenderContext(window);
+#elif defined(DADVULKAN)
 	RenderContext* renderContext = new VulkanRenderContext(window);
+
+	IFile* vertexShaderReader = PlatformFileSystem::CreateFileReader("vert.spv", IO_MODE_BINARY);
+	String vertexShaderCode(vertexShaderReader->Size());
+	b8 ret = vertexShaderReader->Read(vertexShaderCode);
+
+	IFile* fragmentShaderReader = PlatformFileSystem::CreateFileReader("frag.spv", IO_MODE_BINARY);
+	String fragmentShaderCode(fragmentShaderReader->Size());
+	fragmentShaderReader->Read(fragmentShaderCode);
+#endif
 
 	RawMesh triangle;
 	triangle.m_vertices.Add(RawVertex{ Vector3f{ -0.5f, -0.5f, 0.f }, Vector3f{ 1.0f, 0.0f, 0.0f } });
@@ -109,9 +124,9 @@ int main
 			// Foreach feature generate the rendering instructions
 			renderFeature.SubmitViewBegin(view, cmdBuff);
 
-			//cmdBuff.BindShaderProgram(mainShader);
-			//cmdBuff.BindVertexBuffer(vb);
-			//cmdBuff.DrawVertexBuffer(vb);
+			cmdBuff.BindShaderProgram(mainShader);
+			cmdBuff.BindVertexBuffer(vb);
+			cmdBuff.DrawVertexBuffer(vb);
 
 
 			if (renderFeatureInfo.SubmitNode == TRUE)
