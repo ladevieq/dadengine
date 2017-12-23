@@ -16,8 +16,14 @@ namespace DadEngine::Rendering
 
 		VulkanVertexBuffer(uint32 _InVertexCount, TArray<VertexInput>& _InVerticesInputLayout, TArray<float>& _InData, uint32 _InStride, VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice);
 
-		VkBuffer m_buffer = VK_NULL_HANDLE;
-		VkDeviceMemory m_memory = VK_NULL_HANDLE;
+		~VulkanVertexBuffer();
+
+
+
+		VkDevice m_Device = VK_NULL_HANDLE;
+
+		VkBuffer m_Buffer = VK_NULL_HANDLE;
+		VkDeviceMemory m_Memory = VK_NULL_HANDLE;
 	};
 }
 

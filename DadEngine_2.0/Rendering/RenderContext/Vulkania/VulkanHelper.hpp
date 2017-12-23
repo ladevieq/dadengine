@@ -6,31 +6,40 @@
 #include "../../Core/Core.hpp"
 #include "VulkanDebug.hpp"
 
-namespace DadEngine::Rendering::VulkanHelper
+namespace DadEngine::Rendering
 {
-	void EnumerateDevices(VkInstance& _InInstance, TArray<VkPhysicalDevice>& _InPhysicalDevices);
+	class VulkanImage;
 
-	void EnumerateInstanceLayersAndExtensions();
+	namespace VulkanHelper
+	{
+		void EnumerateDevices(VkInstance& _InInstance, TArray<VkPhysicalDevice>& _InPhysicalDevices);
 
-	void EnumerateDeviceLayersAndExtensions(VkPhysicalDevice& _InPhysicalDevice);
+		void EnumerateInstanceLayersAndExtensions();
 
-	uint32 CheckDeviceQueueFamilyProperties(VkPhysicalDevice& _InPhysicalDevice, VkQueueFlags _InFlag);
+		void EnumerateDeviceLayersAndExtensions(VkPhysicalDevice& _InPhysicalDevice);
 
-	uint32 CheckMemoryType(uint32 _InMemoryTypeBits, VkFlags _InProperties, VkPhysicalDeviceMemoryProperties& _InPhysicalDeviceMemoryProperties);
+		uint32 CheckDeviceQueueFamilyProperties(VkPhysicalDevice& _InPhysicalDevice, VkQueueFlags _InFlag);
 
-	VkSurfaceFormatKHR CheckSurfaceFormats(VkPhysicalDevice& _InPhysicalDevice, VkSurfaceKHR& _InSurface);
+		uint32 CheckMemoryType(uint32 _InMemoryTypeBits, VkFlags _InProperties, VkPhysicalDeviceMemoryProperties& _InPhysicalDeviceMemoryProperties);
 
-	void CreateCommandBuffer(VkDevice& _InDevice, VkCommandPool& _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers);
+		VkSurfaceFormatKHR CheckSurfaceFormats(VkPhysicalDevice& _InPhysicalDevice, VkSurfaceKHR& _InSurface);
 
-	VkExtent2D GetExtent2D(VkPhysicalDevice& _InDevice, VkSurfaceKHR& _InSurface);
+		void CreateCommandBuffer(VkDevice& _InDevice, VkCommandPool& _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers);
 
-	VkFormat GetSupportDepthStencilFormats(VkPhysicalDevice& _InDevice);
+		VkExtent2D GetExtent2D(VkPhysicalDevice& _InDevice, VkSurfaceKHR& _InSurface);
 
-	void SetImageLayout(VkCommandBuffer& _InCommandBuffer, VkImage& _InImage,
-		VkImageLayout _InOldImageLayout, VkImageLayout _InNewImageLayout,
-		VkPipelineStageFlags _InSrcPipilineStageFalgs, VkPipelineStageFlags _InDstPipilineStageFalgs);
+		VkFormat GetSupportDepthStencilFormats(VkPhysicalDevice& _InDevice);
 
-	void AllocateBufferMemory(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice, VkBuffer _InBuffer, VkDeviceMemory& _OutMemory);
+		void SetImageLayout(VkCommandBuffer& _InCommandBuffer, VkImage& _InImage,
+			VkImageLayout _InOldImageLayout, VkImageLayout _InNewImageLayout,
+			VkPipelineStageFlags _InSrcPipilineStageFalgs, VkPipelineStageFlags _InDstPipilineStageFalgs);
+
+		void SetImageLayout(VkCommandBuffer& _InCommandBuffer, VulkanImage& _Image,
+			VkImageLayout _InNewImageLayout, VkPipelineStageFlags _InSrcPipilineStageFalgs,
+			VkPipelineStageFlags _InDstPipilineStageFalgs);
+
+		void AllocateBufferMemory(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice, VkBuffer _InBuffer, VkDeviceMemory& _OutMemory);
+	}
 }
 
 #endif //__VULKAN_HELPER_HPP_

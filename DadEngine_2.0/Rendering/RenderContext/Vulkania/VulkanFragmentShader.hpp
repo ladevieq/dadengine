@@ -8,7 +8,8 @@ namespace DadEngine::Rendering
 	{
 	public:
 
-		VulkanFragmentShader(const char* _InCompiledShaderCode, size_t _InShaderCodeSize, VkDevice _InDevice): FragmentShader(_InCompiledShaderCode)
+		VulkanFragmentShader(const char* _InCompiledShaderCode, size_t _InShaderCodeSize, VkDevice _InDevice)
+			: FragmentShader(_InCompiledShaderCode), m_Device(_InDevice)
 		{
 			VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
 			shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
@@ -20,6 +21,13 @@ namespace DadEngine::Rendering
 			vkCreateShaderModule(_InDevice, &shaderModuleCreateInfo, VK_NULL_HANDLE, &m_ShaderModule);
 		}
 
+		~VulkanFragmentShader()
+		{
+			//vkDestroyShaderModule(m_Device, m_ShaderModule, VK_NULL_HANDLE);
+		}
+
+
+		VkDevice m_Device = VK_NULL_HANDLE;
 
 		VkShaderModule m_ShaderModule = VK_NULL_HANDLE;
 	};

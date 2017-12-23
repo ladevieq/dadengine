@@ -4,17 +4,18 @@
 #include "vulkan/vulkan.h"
 
 #include "../../Core/Core.hpp"
+#include "VulkanImage.hpp"
 #include "VulkanHelper.hpp"
 
 
 namespace DadEngine::Rendering
 {
 
-	struct SwapchainImage
+	/*struct SwapchainImage
 	{
 		VkImage image;
 		VkImageView view;
-	};
+	};*/
 
 	class VulkanSwapchain
 	{
@@ -37,7 +38,8 @@ namespace DadEngine::Rendering
 
 		FORCE_INLINE VkFormat GetFormat() { return m_surfaceFormat.format; }
 
-		TArray<SwapchainImage> m_SwapchainImages;
+		//TArray<SwapchainImage> m_SwapchainImages;
+		TArray<VulkanImage> m_SwapchainImages;
 
 		VkExtent2D m_SwapchainExtent;
 		uint32 m_uiPresentQueueFamilyIndex = 0U;
@@ -46,7 +48,7 @@ namespace DadEngine::Rendering
 
 		PFN_vkCreateSwapchainKHR CreateSwapchain = VK_NULL_HANDLE;
 		PFN_vkDestroySwapchainKHR DestroySwapchain = VK_NULL_HANDLE;
-		PFN_vkGetSwapchainImagesKHR SwapchainImages = VK_NULL_HANDLE;
+		PFN_vkGetSwapchainImagesKHR GetSwapchainImages = VK_NULL_HANDLE;
 		PFN_vkAcquireNextImageKHR AcquireNextImage = VK_NULL_HANDLE;
 		PFN_vkQueuePresentKHR QueuePresent = VK_NULL_HANDLE;
 

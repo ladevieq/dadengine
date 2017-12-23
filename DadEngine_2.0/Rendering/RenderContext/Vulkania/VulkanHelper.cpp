@@ -1,5 +1,7 @@
 #include "VulkanHelper.hpp"
 
+#include "VulkanImage.hpp"
+
 namespace DadEngine::Rendering::VulkanHelper
 {
 	void EnumerateInstanceLayersAndExtensions()
@@ -288,6 +290,71 @@ namespace DadEngine::Rendering::VulkanHelper
 
 		vkCmdPipelineBarrier(_InCommandBuffer, _InSrcPipilineStageFalgs, _InDstPipilineStageFalgs, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 	}
+
+	void SetImageLayout(VkCommandBuffer& _InCommandBuffer, VulkanImage& _InImage, VkImageLayout _InNewImageLayout,
+		VkPipelineStageFlags _InSrcPipilineStageFalgs, VkPipelineStageFlags _InDstPipilineStageFalgs)
+	{
+		VkImageMemoryBarrier image_memory_barrier = {};
+		image_memory_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		image_memory_barrier.image = _InImage.m_Image;
+		image_memory_barrier.pNext = VK_NULL_HANDLE;
+		image_memory_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		image_memory_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		image_memory_barrier.oldLayout = _InImage.m_CurrentLayout;
+		image_memory_barrier.newLayout = _InNewImageLayout;
+		image_memory_barrier.subresourceRange.baseArrayLayer = 0U;
+		image_memory_barrier.subresourceRange.layerCount = 1U;
+		image_memory_barrier.subresourceRange.baseMipLevel = 0U;
+		image_memory_barrier.subresourceRange.levelCount = 1U;
+		image_memory_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT | VK_IMAGE_ASPECT_COLOR_BIT;
+
+		switch (_InImage.m_CurrentLayout) {
+		case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+			image_memory_barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+			image_memory_barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_PREINITIALIZED:
+			image_memory_barrier.srcAccessMask = VK_ACCESS_HOST_WRITE_BIT;
+			break;
+
+		default:
+			break;
+		}
+
+		switch (_InNewImageLayout) {
+		case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
+			image_memory_barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL:
+			image_memory_barrier.dstAccessMask = VK_ACCESS_TRANSFER_READ_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL:
+			image_memory_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL:
+			image_memory_barrier.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+			break;
+
+		case VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL:
+			image_memory_barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			break;
+
+		default:
+			break;
+		}
+
+		vkCmdPipelineBarrier(_InCommandBuffer, _InSrcPipilineStageFalgs, _InDstPipilineStageFalgs, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+
+		_InImage.m_CurrentLayout = _InNewImageLayout;
+	}
+
 
 	void AllocateBufferMemory(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice, VkBuffer _InBuffer, VkDeviceMemory& _OutMemory)
 	{

@@ -13,7 +13,7 @@ namespace DadEngine::Rendering
 
 		CreateSwapchain = (PFN_vkCreateSwapchainKHR)vkGetDeviceProcAddr(_InDevice, "vkCreateSwapchainKHR");
 		DestroySwapchain = (PFN_vkDestroySwapchainKHR)vkGetDeviceProcAddr(_InDevice, "vkDestroySwapchainKHR");
-		SwapchainImages = (PFN_vkGetSwapchainImagesKHR)vkGetDeviceProcAddr(_InDevice, "vkGetSwapchainImagesKHR");
+		GetSwapchainImages = (PFN_vkGetSwapchainImagesKHR)vkGetDeviceProcAddr(_InDevice, "vkGetSwapchainImagesKHR");
 		AcquireNextImage = (PFN_vkAcquireNextImageKHR)vkGetDeviceProcAddr(_InDevice, "vkAcquireNextImageKHR");
 		QueuePresent = (PFN_vkQueuePresentKHR)vkGetDeviceProcAddr(_InDevice, "vkQueuePresentKHR");
 
@@ -58,7 +58,7 @@ namespace DadEngine::Rendering
 		swapchain_create_info.imageArrayLayers = 1U;
 		swapchain_create_info.imageExtent = m_SwapchainExtent;
 		swapchain_create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		swapchain_create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT /*| VK_IMAGE_USAGE_TRANSFER_DST_BIT*/; // /!\*
+		swapchain_create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT; // /!\*
 		swapchain_create_info.presentMode = _InPresentationMode;
 		swapchain_create_info.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 		swapchain_create_info.oldSwapchain = m_Swapchain;
@@ -73,16 +73,23 @@ namespace DadEngine::Rendering
 		VK_CHECK_RESULT(CreateSwapchain(_InDevice, &swapchain_create_info, VK_NULL_HANDLE, &m_Swapchain));
 
 		uint32 imageCount = 0U;
-		SwapchainImages(m_Device, m_Swapchain, &imageCount, VK_NULL_HANDLE);
+		GetSwapchainImages(m_Device, m_Swapchain, &imageCount, VK_NULL_HANDLE);
 
 		TArray<VkImage> images(imageCount);
-		VK_CHECK_RESULT(SwapchainImages(m_Device, m_Swapchain, &imageCount, images.GetData()));
+		VK_CHECK_RESULT(GetSwapchainImages(m_Device, m_Swapchain, &imageCount, images.GetData()));
 
 		TArray<VkImageView> imageViews(imageCount);
 		m_SwapchainImages.Resize(imageCount);
 
 		for (size_t i = 0U; i < imageCount; i++)
 		{
+			VkImageSubresourceRange image_subresource_range = {};
+			image_subresource_range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			image_subresource_range.baseArrayLayer = 0U;
+			image_subresource_range.baseMipLevel = 0U;
+			image_subresource_range.layerCount = 1U;
+			image_subresource_range.levelCount = 1U;
+
 			VkImageViewCreateInfo image_view_create_info = {};
 			image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 			image_view_create_info.pNext = VK_NULL_HANDLE;
@@ -90,16 +97,12 @@ namespace DadEngine::Rendering
 			image_view_create_info.format = m_surfaceFormat.format;
 			image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
 			image_view_create_info.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G , VK_COMPONENT_SWIZZLE_B , VK_COMPONENT_SWIZZLE_A };
-			image_view_create_info.subresourceRange.baseArrayLayer = 0U;
-			image_view_create_info.subresourceRange.layerCount = 1U;
-			image_view_create_info.subresourceRange.baseMipLevel = 0U;
-			image_view_create_info.subresourceRange.levelCount = 1U;
-			image_view_create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+			image_view_create_info.subresourceRange = image_subresource_range;
 			image_view_create_info.flags = 0U;
 
 			VK_CHECK_RESULT(vkCreateImageView(m_Device, &image_view_create_info, VK_NULL_HANDLE, &imageViews[(uint32)i]));
 
-			m_SwapchainImages[(uint32)i] = { images[(uint32)i] , imageViews[(uint32)i] };
+			m_SwapchainImages[(uint32)i] = { m_Device, images[(uint32)i] , imageViews[(uint32)i], VK_NULL_HANDLE, m_surfaceFormat.format, m_SwapchainExtent, image_subresource_range };
 		}
 	}
 

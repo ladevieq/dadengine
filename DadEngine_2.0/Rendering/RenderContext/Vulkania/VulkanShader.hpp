@@ -124,6 +124,7 @@ namespace DadEngine::Rendering
 			input_assembly_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 			input_assembly_state_create_info.pNext = VK_NULL_HANDLE;
 			input_assembly_state_create_info.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+			input_assembly_state_create_info.primitiveRestartEnable = VK_FALSE;
 			input_assembly_state_create_info.flags = 0U;
 
 			// Viewport state
@@ -170,7 +171,7 @@ namespace DadEngine::Rendering
 			depth_stencil_state_create_info.pNext = VK_NULL_HANDLE;
 			depth_stencil_state_create_info.depthTestEnable = VK_TRUE;
 			depth_stencil_state_create_info.depthWriteEnable = VK_TRUE;
-			depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_LESS;
+			depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
 			depth_stencil_state_create_info.depthBoundsTestEnable = VK_FALSE;
 			depth_stencil_state_create_info.stencilTestEnable = VK_FALSE;
 			depth_stencil_state_create_info.front = {};
@@ -252,10 +253,10 @@ namespace DadEngine::Rendering
 			graphics_pipeline_create_info.basePipelineIndex = -1;
 			graphics_pipeline_create_info.flags = 0U;
 
-			vkCreateGraphicsPipelines(_InDevice, _InPipelineCache, 1U, &graphics_pipeline_create_info, VK_NULL_HANDLE, &m_graphics_pipeline);
+			vkCreateGraphicsPipelines(_InDevice, _InPipelineCache, 1U, &graphics_pipeline_create_info, VK_NULL_HANDLE, &m_GraphicsPipeline);
 		}
 
-		VkPipeline m_graphics_pipeline = VK_NULL_HANDLE;
+		VkPipeline m_GraphicsPipeline = VK_NULL_HANDLE;
 	};
 }
 

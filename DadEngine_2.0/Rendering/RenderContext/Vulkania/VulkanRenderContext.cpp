@@ -8,7 +8,7 @@ namespace DadEngine::Rendering
 	{
 		//VulkanHelper::EnumerateInstanceLayersAndExtensions();
 
-		m_windowExtent = { (uint32)_InWindow.GetRect().right, (uint32)_InWindow.GetRect().bottom };
+		m_WindowExtent = { (uint32)_InWindow.GetRect().right, (uint32)_InWindow.GetRect().bottom };
 
 		CreateInstance(_InWindow);
 
@@ -46,77 +46,218 @@ namespace DadEngine::Rendering
 		CreateFramebuffers();
 		CreateSemaphores();
 		CreateFences();
-		CreateCommandBuffers();
 	}
 
 	VulkanRenderContext::~VulkanRenderContext()
 	{
-		vkFreeCommandBuffers(m_Device, m_GraphicsCommandPool, 1U, &m_setupCommandBuffer);
 		vkDestroyCommandPool(m_Device, m_GraphicsCommandPool, VK_NULL_HANDLE);
+		vkDestroyCommandPool(m_Device, m_PresentationCommandPool, VK_NULL_HANDLE);
+
+		for (VkFence currentFence : m_CommandBufferAvailables)
+		{
+			vkDestroyFence(m_Device, currentFence, VK_NULL_HANDLE);
+		}
+
+		vkDestroySemaphore(m_Device, m_ImageAvailableSemaphore, VK_NULL_HANDLE);
+		vkDestroySemaphore(m_Device, m_RenderingFinishedSemaphore, VK_NULL_HANDLE);
+
+		vkDestroySurfaceKHR(m_Instance, m_PresentationSurface, VK_NULL_HANDLE);
+
 		vkDestroyDevice(m_Device, VK_NULL_HANDLE);
 		VulkanDebug::DestroyVulkanDebug(m_Instance);
 		vkDestroyInstance(m_Instance, VK_NULL_HANDLE);
 	}
 
 
-	void VulkanRenderContext::ClearBuffer(Color& _InClearColor)
+
+	void VulkanRenderContext::ClearColorBuffer(Color& _InClearColor, CommandBuffer* _InCommandBuffer)
 	{
-		VkImageSubresourceRange image_subresource_range = {};
-		image_subresource_range.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-		image_subresource_range.baseArrayLayer = 0U;
-		image_subresource_range.baseMipLevel = 0U;
-		image_subresource_range.layerCount = 1U;
-		image_subresource_range.levelCount = 1U;
+		VkImageMemoryBarrier image_memory_barrier_from_color_to_clear = {};
+		image_memory_barrier_from_color_to_clear.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		image_memory_barrier_from_color_to_clear.image = m_BackBuffer->m_Image;
+		image_memory_barrier_from_color_to_clear.pNext = VK_NULL_HANDLE;
+		image_memory_barrier_from_color_to_clear.srcAccessMask = 0U; //VK_ACCESS_MEMORY_READ_BIT;
+		image_memory_barrier_from_color_to_clear.dstAccessMask = /*VK_ACCESS_MEMORY_READ_BIT;//*/VK_ACCESS_TRANSFER_WRITE_BIT;
+		image_memory_barrier_from_color_to_clear.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		image_memory_barrier_from_color_to_clear.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		image_memory_barrier_from_color_to_clear.oldLayout = VK_IMAGE_LAYOUT_UNDEFINED;//m_BackBuffer->m_CurrentLayout; // Swapchain image is supposed to be undefined after being acquired
+		image_memory_barrier_from_color_to_clear.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		image_memory_barrier_from_color_to_clear.subresourceRange = m_BackBuffer->m_ImageSubresourceRange;
+
 
 		VkClearColorValue color = { _InClearColor.r, _InClearColor.g, _InClearColor.b, _InClearColor.a };
-		VkClearDepthStencilValue depthStencil = { 1.0f, 0.0f };
 
+		m_BackBuffer->m_CurrentLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
 
-		vkCmdClearColorImage(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, m_Swapchain.m_SwapchainImages[m_uiNextImage].image,
-			VK_IMAGE_LAYOUT_UNDEFINED, &color, 1U, &image_subresource_range);
+		vkCmdPipelineBarrier(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer,
+			VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+			0, 0, NULL, 0, NULL, 1, &image_memory_barrier_from_color_to_clear);
 
-		vkCmdClearDepthStencilImage(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, m_Swapchain.m_SwapchainImages[m_uiNextImage].image,
-			VK_IMAGE_LAYOUT_UNDEFINED, &depthStencil, 1U, &image_subresource_range);
+		vkCmdClearColorImage(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, m_BackBuffer->m_Image,
+			m_BackBuffer->m_CurrentLayout, &color, 1U, &m_BackBuffer->m_ImageSubresourceRange);
 	}
 
-	void VulkanRenderContext::BeginFrame()
+	void VulkanRenderContext::ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer)
 	{
-		m_uiNextImage = m_Swapchain.GetNextImageIndex(m_ImageAvailableSemaphore);
+		VkImageMemoryBarrier image_memory_barrier_from_depth_to_clear = {};
+		image_memory_barrier_from_depth_to_clear.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		image_memory_barrier_from_depth_to_clear.image = m_DepthStencilBuffer.m_Image;
+		image_memory_barrier_from_depth_to_clear.pNext = VK_NULL_HANDLE;
+		image_memory_barrier_from_depth_to_clear.srcAccessMask = 0U;
+		image_memory_barrier_from_depth_to_clear.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		image_memory_barrier_from_depth_to_clear.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		image_memory_barrier_from_depth_to_clear.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		image_memory_barrier_from_depth_to_clear.oldLayout = m_DepthStencilBuffer.m_CurrentLayout;
+		image_memory_barrier_from_depth_to_clear.newLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+		image_memory_barrier_from_depth_to_clear.subresourceRange = m_DepthStencilBuffer.m_ImageSubresourceRange;
 
-		VkClearColorValue color = { 0.f, 1.f, 0.f, 1.f };
-		VkClearValue clearValues[2U] = { { color },{ 1.0f, 0.0f } };
-		VkRect2D renderArea = { { 0, 0 }, m_Swapchain.m_SwapchainExtent };
+
+		VkClearDepthStencilValue depthStencil = { _InDepthValue, _InStencilValue };
+
+
+		vkCmdPipelineBarrier(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer,
+			VK_PIPELINE_STAGE_TRANSFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT,
+			0, 0, NULL, 0, NULL, 1, &image_memory_barrier_from_depth_to_clear);
+
+		m_DepthStencilBuffer.m_CurrentLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;
+
+
+		vkCmdClearDepthStencilImage(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, m_DepthStencilBuffer.m_Image,
+			m_DepthStencilBuffer.m_CurrentLayout, &depthStencil, 1U, &m_DepthStencilBuffer.m_ImageSubresourceRange);
+	}
+
+	void VulkanRenderContext::Present(CommandBuffer* _InCommandBuffer)
+	{
+		VkImageMemoryBarrier image_memory_barrier_from_anything_to_present = {};
+		image_memory_barrier_from_anything_to_present.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+		image_memory_barrier_from_anything_to_present.image = m_BackBuffer->m_Image;
+		image_memory_barrier_from_anything_to_present.pNext = VK_NULL_HANDLE;
+		image_memory_barrier_from_anything_to_present.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;//VK_ACCESS_TRANSFER_WRITE_BIT;
+		image_memory_barrier_from_anything_to_present.dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		image_memory_barrier_from_anything_to_present.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		image_memory_barrier_from_anything_to_present.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+		image_memory_barrier_from_anything_to_present.oldLayout = m_BackBuffer->m_CurrentLayout;
+		image_memory_barrier_from_anything_to_present.newLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		image_memory_barrier_from_anything_to_present.subresourceRange = m_BackBuffer->m_ImageSubresourceRange;
+
+
+		vkCmdPipelineBarrier(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer,
+			VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT/*VK_PIPELINE_STAGE_TRANSFER_BIT*/, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+			0, 0, NULL, 0, NULL, 1, &image_memory_barrier_from_anything_to_present);
+	}
+
+	void VulkanRenderContext::Draw(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer)
+	{
+		vkCmdDraw(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, _InVertexBuffer->m_uiVertexCount, 1U, 0U, 0U);
+	}
+
+	void VulkanRenderContext::BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer)
+	{
+		VkDeviceSize deviceSize = 0U;
+
+		vkCmdBindVertexBuffers(
+			((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer,
+			0U,
+			1U,
+			&((VulkanVertexBuffer*)_InVertexBuffer)->m_Buffer,
+			&deviceSize);
+	}
+
+	void VulkanRenderContext::BindShaderProgram(Shader* _InShader, CommandBuffer* _InCommandBuffer)
+	{
+		vkCmdBindPipeline(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, ((VulkanShader*)_InShader)->m_GraphicsPipeline);
+	}
+
+	void VulkanRenderContext::BeginRenderPass(RenderPass * _InRenderPass, Framebuffer* _InFrameBuffer, CommandBuffer* _InCommandBuffer)
+	{
+		TArray<VkClearValue> clearValues(((VulkanFramebuffer*)_InFrameBuffer)->m_Attachements.Size());
+		
+		// ------------------------------------------
+		//!\ All the attachments may not be clearable
+		// ------------------------------------------
+		clearValues[0U].color = VkClearColorValue{ 0.f, 0.f, 0.f, 1.f };
+		clearValues[1U].depthStencil = VkClearDepthStencilValue{ 1.f, UINT32_MAX };
 
 		VkRenderPassBeginInfo render_pass_begin_info = {};
 		render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		render_pass_begin_info.pNext = VK_NULL_HANDLE;
-		render_pass_begin_info.framebuffer = m_Framebuffers[m_uiNextImage];
-		render_pass_begin_info.renderPass = m_Renderpass;
-		render_pass_begin_info.renderArea = renderArea;
-		render_pass_begin_info.clearValueCount = 2U;
-		render_pass_begin_info.pClearValues = clearValues;
+		render_pass_begin_info.framebuffer = ((VulkanFramebuffer*)_InFrameBuffer)->m_Framebuffer;
+		render_pass_begin_info.renderPass = ((VulkanRenderPass*)_InRenderPass)->m_Renderpass;
+		render_pass_begin_info.renderArea = VkRect2D{ { 0, 0 }, m_Swapchain.m_SwapchainExtent };
+
+		render_pass_begin_info.clearValueCount = (uint32)clearValues.Size();
+		render_pass_begin_info.pClearValues = clearValues.GetData();
+
+		vkCmdBeginRenderPass(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
+	}
+
+	void VulkanRenderContext::EndRenderPass(CommandBuffer * _InCommandBuffer)
+	{
+		vkCmdEndRenderPass(((VulkanCommandBuffer*) _InCommandBuffer)->m_CmdBuffer);
+	}
+
+
+	void VulkanRenderContext::SetViewport(Viewport& _InViewport, CommandBuffer* _InCommandBuffer)
+	{
+		VkCommandBuffer currentCommandBuffer = nullptr;
+
+		//vkCmdSetViewport(currentCommandBuffer, 0U, 1U, )
+	}
+
+	void VulkanRenderContext::SetCullingMode(CullingMode _InCullingMode, CommandBuffer* _InCommandBuffer)
+	{
+		// Pipeline related
+	}
+
+	void VulkanRenderContext::SetFillMode(FillMode _InFillMode, CommandBuffer* _InCommandBuffer)
+	{
+		// Pipeline related
+	}
+
+
+	Image* VulkanRenderContext::GetBackBuffer()
+	{
+		return m_BackBuffer;
+	}
+
+	Image* VulkanRenderContext::GetDepthStencilBuffer()
+	{
+		return &m_DepthStencilBuffer;
+	}
+
+	Framebuffer *VulkanRenderContext::GetBackFramebuffer()
+	{
+		return &m_Framebuffers[(uint32)m_uiNextImage];
+	}
+
+	RenderPass * VulkanRenderContext::GetRenderPass()
+	{
+		return &m_Renderpass;
+	}
+
+
+	
+	void VulkanRenderContext::BeginFrame()
+	{
+		m_uiNextImage = m_Swapchain.GetNextImageIndex(m_ImageAvailableSemaphore);
+		m_BackBuffer = &m_Swapchain.m_SwapchainImages[m_uiNextImage];
 
 
 		// Wait for the command buffer to be available
-		vkWaitForFences(m_Device, 1U, &m_CommandBufferAvailables[m_uiNextImage], VK_FALSE, INFINITE);
 		vkResetFences(m_Device, 1U, &m_CommandBufferAvailables[m_uiNextImage]);
-
-		m_GraphicCommandBuffers[m_uiNextImage].BeginRecord();
-		vkCmdBeginRenderPass(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
 	}
 
-	void VulkanRenderContext::Present()
+	void VulkanRenderContext::EndFrame()
 	{
-		vkCmdEndRenderPass(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer);
-		m_GraphicCommandBuffers[m_uiNextImage].EndRecord();
+		VkPipelineStageFlags wait_pipelinestage_flag = /*VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;*/VK_PIPELINE_STAGE_TRANSFER_BIT;
 
-		VkPipelineStageFlags wait_pipelinestage_flag = VK_PIPELINE_STAGE_TRANSFER_BIT;
+		//m_SubmittedCommandBuffers.Add(m_FinalCommandBuffers[m_uiNextImage].m_CmdBuffer);
 
 		VkSubmitInfo submit_info = {};
 		submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit_info.pNext = VK_NULL_HANDLE;
-		submit_info.commandBufferCount = 1U;
-		submit_info.pCommandBuffers = &m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer;
+		submit_info.pCommandBuffers = m_SubmittedCommandBuffers.GetData();
+		submit_info.commandBufferCount = (uint32)m_SubmittedCommandBuffers.Size();
 		submit_info.waitSemaphoreCount = 1U;
 		submit_info.pWaitSemaphores = &m_ImageAvailableSemaphore;
 		submit_info.signalSemaphoreCount = 1U;
@@ -126,55 +267,20 @@ namespace DadEngine::Rendering
 		VK_CHECK_RESULT(vkQueueSubmit(m_GraphicsQueue, 1U, &submit_info, m_CommandBufferAvailables[m_uiNextImage]));
 
 		m_Swapchain.Present(m_GraphicsQueue, m_RenderingFinishedSemaphore, m_uiNextImage);
+
+
+		m_SubmittedCommandBuffers.Clear();
+
+
+		// Waiting for the command buffers to be executed
+		vkWaitForFences(m_Device, 1U, &m_CommandBufferAvailables[m_uiNextImage], VK_FALSE, INFINITE);
 	}
 
-
-
-	void VulkanRenderContext::DrawPrimitives()
+	void VulkanRenderContext::SubmitCommandBuffer(CommandBuffer * _InCommandBuffer)
 	{
-
+		m_SubmittedCommandBuffers.Add(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer);
 	}
-
-	void VulkanRenderContext::Draw(VertexBuffer* _InVertexBuffer)
-	{
-		// Rethink vulkan command buffers
-		vkCmdDraw(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, _InVertexBuffer->m_uiVertexCount, 1U, 0U, 0U);
-	}
-
-	void VulkanRenderContext::BindVertexBuffer(VertexBuffer* _InVertexBuffer)
-	{
-		VkDeviceSize deviceSize = 0U;
-
-		vkCmdBindVertexBuffers(
-			m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer,
-			0U,
-			1U,
-			&((VulkanVertexBuffer*)_InVertexBuffer)->m_buffer,
-			&deviceSize);
-	}
-
-	void VulkanRenderContext::BindShaderProgram(Shader* _InShader)
-	{
-		vkCmdBindPipeline(m_GraphicCommandBuffers[m_uiNextImage].m_cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, ((VulkanShader*)_InShader)->m_graphics_pipeline);
-	}
-
-
-	void VulkanRenderContext::SetViewport(Viewport& _InViewport)
-	{
-		VkCommandBuffer currentCommandBuffer = nullptr;
-
-		//vkCmdSetViewport(currentCommandBuffer, 0U, 1U, )
-	}
-
-	void VulkanRenderContext::SetCullingMode(CullingMode _InCullingMode)
-	{
-		// Pipeline related
-	}
-
-	void VulkanRenderContext::SetFillMode(FillMode _InFillMode)
-	{
-		// Pipeline related
-	}
+	
 
 
 	VertexBuffer * VulkanRenderContext::CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride)
@@ -197,10 +303,38 @@ namespace DadEngine::Rendering
 		return new VulkanFragmentShader(_InShaderCode, _InShaderCodeSize, m_Device);
 	}
 
-	Shader * VulkanRenderContext::CreateShader(VertexShader * _InVertexShader, GeometryShader * _InGeometryShader, FragmentShader * _InFragmentShader)
+	Shader * VulkanRenderContext::CreateShader(VertexShader * _InVertexShader, GeometryShader * _InGeometryShader, FragmentShader * _InFragmentShader, RenderPass* _InRenderpass)
 	{
-		return new VulkanShader(_InVertexShader, _InGeometryShader, _InFragmentShader, m_Device, m_Renderpass, m_PipelineCache, m_Swapchain);
+		return new VulkanShader(_InVertexShader, _InGeometryShader, _InFragmentShader, m_Device, ((VulkanRenderPass*)_InRenderpass)->m_Renderpass, m_PipelineCache, m_Swapchain);
 	}
+
+	CommandBuffer * VulkanRenderContext::CreateCommandBuffer()
+	{
+		return new VulkanCommandBuffer(m_Device, m_GraphicsCommandPool, this);
+	}
+
+	RenderPass * VulkanRenderContext::CreateRenderPass(TArray<Image*>& _InImage)
+	{
+		return new VulkanRenderPass(m_Device, ((VulkanImage*)*_InImage.GetData()), _InImage.Size());
+	}
+
+	Framebuffer * VulkanRenderContext::CreateFramebuffer(Extent2D& _InFramebufferSize, RenderPass* _InRenderPass)
+	{
+		// Image representation render context independant
+		//		---------Image -------
+		//		|					  |
+		//	OpenGLImage			VulkanImage
+		TArray<VkImageView> views(((VulkanRenderPass*)_InRenderPass)->m_Attachments.Size());
+
+		for (size_t i = 0U; i < ((VulkanRenderPass*)_InRenderPass)->m_Attachments.Size(); i++)
+		{
+			views[(uint32)i] = ((VulkanRenderPass*)_InRenderPass)->m_Attachments[(uint32)i]->m_View;
+		}
+
+		return new VulkanFramebuffer(m_Device, *((VkExtent2D*)&_InFramebufferSize), *(VulkanRenderPass*)_InRenderPass,
+			views.GetData(), views.Size());
+	}
+
 
 
 	void VulkanRenderContext::CreateInstance(PlatformWindow& _InWindow)
@@ -208,7 +342,7 @@ namespace DadEngine::Rendering
 		VkApplicationInfo app_info = {};
 		app_info.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 		app_info.pNext = VK_NULL_HANDLE;
-		app_info.apiVersion = VK_MAKE_VERSION(1, 0, 51); // VK_API_VERSION_1_0
+		app_info.apiVersion = VK_MAKE_VERSION(1, 0, 65); // VK_API_VERSION_1_0
 		app_info.applicationVersion = VK_MAKE_VERSION(1, 0, 0); // Add macro
 		app_info.engineVersion = VK_MAKE_VERSION(1, 0, 0);
 		app_info.pApplicationName = _InWindow.GetWindowName();
@@ -313,28 +447,9 @@ namespace DadEngine::Rendering
 		VK_CHECK_RESULT(vkCreateCommandPool(m_Device, &presentation_command_pool_create_info, VK_NULL_HANDLE, &m_PresentationCommandPool));
 	}
 
-	void VulkanRenderContext::CreateCommandBuffers()
-	{
-		uint32 uiSwapchainImageCount = m_Swapchain.GetImageCount();
-
-		m_GraphicCommandBuffers.Resize(uiSwapchainImageCount);
-		//VulkanHelper::CreateCommandBuffer(m_Device, m_GraphicsCommandPool, uiSwapchainImageCount, m_GraphicCommandBuffers.GetData());
-		for (VulkanCommandBuffer& cmdbuffer : m_GraphicCommandBuffers)
-		{
-			cmdbuffer.Initialize(m_Device, m_GraphicsCommandPool);
-		}
-
-		m_PresentationCommandBuffers.Resize(uiSwapchainImageCount);
-		//VulkanHelper::CreateCommandBuffer(m_Device, m_PresentationCommandPool, uiSwapchainImageCount, m_PresentationCommandBuffers.GetData());
-		for (VulkanCommandBuffer& cmdbuffer : m_PresentationCommandBuffers)
-		{
-			cmdbuffer.Initialize(m_Device, m_PresentationCommandPool);
-		}
-	}
-
 	void VulkanRenderContext::CreateSetupCommandBuffer()
 	{
-		VulkanHelper::CreateCommandBuffer(m_Device, m_GraphicsCommandPool, 1U, &m_setupCommandBuffer);
+		VulkanHelper::CreateCommandBuffer(m_Device, m_GraphicsCommandPool, 1U, &m_SetupCommandBuffer);
 
 		VkCommandBufferBeginInfo command_buffer_begin_info = {};
 		command_buffer_begin_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -342,7 +457,7 @@ namespace DadEngine::Rendering
 		command_buffer_begin_info.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
 		command_buffer_begin_info.pInheritanceInfo = VK_NULL_HANDLE;
 
-		vkBeginCommandBuffer(m_setupCommandBuffer, &command_buffer_begin_info);
+		vkBeginCommandBuffer(m_SetupCommandBuffer, &command_buffer_begin_info);
 	}
 
 	void VulkanRenderContext::GetQueues()
@@ -393,7 +508,7 @@ namespace DadEngine::Rendering
 
 	void VulkanRenderContext::DestroySetupCommandBuffer()
 	{
-		vkEndCommandBuffer(m_setupCommandBuffer);
+		vkEndCommandBuffer(m_SetupCommandBuffer);
 
 		VkSubmitInfo submit_info = {};
 		submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -402,7 +517,7 @@ namespace DadEngine::Rendering
 		vkQueueSubmit(m_GraphicsQueue, 1U, &submit_info, VK_NULL_HANDLE);
 		vkQueueWaitIdle(m_GraphicsQueue); // To not destroy before the end of submition
 
-		vkFreeCommandBuffers(m_Device, m_GraphicsCommandPool, 1U, &m_setupCommandBuffer);
+		vkFreeCommandBuffers(m_Device, m_GraphicsCommandPool, 1U, &m_SetupCommandBuffer);
 	}
 
 	void VulkanRenderContext::CreatePresentationSurface(PlatformWindow& _InWindow)
@@ -419,62 +534,19 @@ namespace DadEngine::Rendering
 
 	void VulkanRenderContext::CreateDepthStencilBuffer()
 	{
-		m_depthStencilBuffer.format = VulkanHelper::GetSupportDepthStencilFormats(m_PhysicalDevice);
+		VkFormat format = VulkanHelper::GetSupportDepthStencilFormats(m_PhysicalDevice);
 
-		VkImageCreateInfo image_create_info = {};
-		image_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-		image_create_info.pNext = VK_NULL_HANDLE;
-		image_create_info.arrayLayers = 1U;
-		image_create_info.format = m_depthStencilBuffer.format;
-		image_create_info.mipLevels = 1U;
-		image_create_info.samples = VK_SAMPLE_COUNT_1_BIT;
-		image_create_info.queueFamilyIndexCount = 0U;
-		image_create_info.pQueueFamilyIndices = VK_NULL_HANDLE;
-		image_create_info.tiling = VK_IMAGE_TILING_OPTIMAL;
-		image_create_info.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
-		image_create_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;//VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-		image_create_info.imageType = VK_IMAGE_TYPE_2D;
-		image_create_info.extent = { m_Swapchain.m_SwapchainExtent.width, m_Swapchain.m_SwapchainExtent.height, 1U };
-		image_create_info.flags = 0U;
-
-		VK_CHECK_RESULT(vkCreateImage(m_Device, &image_create_info, VK_NULL_HANDLE, &m_depthStencilBuffer.image));
-
-		VkMemoryRequirements memory_requierements = {};
-
-		vkGetImageMemoryRequirements(m_Device, m_depthStencilBuffer.image, &memory_requierements);
-
-		VkMemoryAllocateInfo memory_allocation_info = {};
-		memory_allocation_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		memory_allocation_info.pNext = VK_NULL_HANDLE;
-		memory_allocation_info.memoryTypeIndex = VulkanHelper::CheckMemoryType(memory_requierements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_PhysicalDeviceMemoryProperties);
-		memory_allocation_info.allocationSize = memory_requierements.size;
-
-		VK_CHECK_RESULT(vkAllocateMemory(m_Device, &memory_allocation_info, VK_NULL_HANDLE, &m_depthStencilBuffer.memory));
-		VK_CHECK_RESULT(vkBindImageMemory(m_Device, m_depthStencilBuffer.image, m_depthStencilBuffer.memory, 0U));
-
-		VkImageViewCreateInfo image_view_create_info = {};
-		image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-		image_view_create_info.pNext = VK_NULL_HANDLE;
-		image_view_create_info.format = m_depthStencilBuffer.format;
-		image_view_create_info.image = m_depthStencilBuffer.image;
-		image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
-		image_view_create_info.subresourceRange.baseArrayLayer = 0U;
-		image_view_create_info.subresourceRange.layerCount = 1U;
-		image_view_create_info.subresourceRange.baseMipLevel = 0U;
-		image_view_create_info.subresourceRange.levelCount = 1U;
-		image_view_create_info.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
-		//image_view_create_info.components = { VK_COMPONENT_SWIZZLE_R };
-		image_view_create_info.flags = 0U;
-
-		// Need the image to be allocated in memory
-		VK_CHECK_RESULT(vkCreateImageView(m_Device, &image_view_create_info, VK_NULL_HANDLE, &m_depthStencilBuffer.view));
-
-		VulkanHelper::SetImageLayout(m_setupCommandBuffer, m_depthStencilBuffer.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
+		m_DepthStencilBuffer = VulkanImage(m_Device, m_PhysicalDevice,
+			m_PhysicalDeviceMemoryProperties,
+			format,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
+			VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT,
+			m_Swapchain.m_SwapchainExtent, 1U);
 	}
 
 	void VulkanRenderContext::CreateRenderpass()
 	{
-		VkAttachmentDescription attachments[2] = {};
+		/*VkAttachmentDescription attachments[2] = {};
 		attachments[0].format = m_Swapchain.GetFormat();
 		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
 		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
@@ -545,7 +617,10 @@ namespace DadEngine::Rendering
 		renderpass_create_info.pDependencies = dependencies.GetData();
 		renderpass_create_info.flags = 0U;
 
-		VK_CHECK_RESULT(vkCreateRenderPass(m_Device, &renderpass_create_info, VK_NULL_HANDLE, &m_Renderpass));
+		VK_CHECK_RESULT(vkCreateRenderPass(m_Device, &renderpass_create_info, VK_NULL_HANDLE, &m_Renderpas.m_renderpass));*/
+		VulkanImage images[2U] = { m_Swapchain.m_SwapchainImages[0U], m_DepthStencilBuffer };
+
+		m_Renderpass = VulkanRenderPass(m_Device, images, 2U);
 	}
 
 	void VulkanRenderContext::CreateSemaphores()
@@ -587,28 +662,15 @@ namespace DadEngine::Rendering
 
 	void VulkanRenderContext::CreateFramebuffers()
 	{
-		VkImageView attachments [2U]  = {};
-		attachments[1U] = m_depthStencilBuffer.view;
-
-		VkFramebufferCreateInfo framebuffer_create_info = {};
-		framebuffer_create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-		framebuffer_create_info.pNext = VK_NULL_HANDLE;
-		framebuffer_create_info.attachmentCount = 2U;
-		framebuffer_create_info.pAttachments = attachments;
-		framebuffer_create_info.renderPass = m_Renderpass;
-		framebuffer_create_info.width = m_Swapchain.m_SwapchainExtent.width;
-		framebuffer_create_info.height = m_Swapchain.m_SwapchainExtent.height;
-		framebuffer_create_info.layers = 1U;
-		framebuffer_create_info.flags = 0U;
-
 		m_Framebuffers.Resize(m_Swapchain.GetImageCount());
+
+		TArray<VkImageView> attachments(2U);
+		attachments[1U] = m_DepthStencilBuffer.m_View;
 
 		for (size_t i = 0U; i < m_Framebuffers.Size(); i++)
 		{
-
-			attachments[0U] = m_Swapchain.m_SwapchainImages[(uint32)i].view;
-
-			VK_CHECK_RESULT(vkCreateFramebuffer(m_Device, &framebuffer_create_info, VK_NULL_HANDLE, &m_Framebuffers[(uint32)i]));
+			attachments[0U] = m_Swapchain.m_SwapchainImages[(uint32)i].m_View;
+			m_Framebuffers[(uint32)i] = VulkanFramebuffer(m_Device, m_Swapchain.m_SwapchainExtent, m_Renderpass, attachments.GetData(), attachments.Size());
 		}
 	}
 }
