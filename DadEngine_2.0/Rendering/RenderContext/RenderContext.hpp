@@ -3,7 +3,10 @@
 
 #include "../Color.hpp"
 #include "../VertexBuffer.hpp"
-#include "../Shader/Shader.h"
+#include "../Shader/Shader.hpp"
+#include "../RenderPass.hpp"
+#include "../Framebuffer.hpp"
+#include "../Image.hpp"
 
 namespace DadEngine::Rendering
 {
@@ -13,6 +16,7 @@ namespace DadEngine::Rendering
 		int32 y;
 		int32 width;
 		int32 height;
+		//Extent2D extend;
 	};
 
 	enum CullingMode
@@ -43,6 +47,8 @@ namespace DadEngine::Rendering
 	// Viewport state -> Camera
 	// Primitive type state -> Per object
 
+	class CommandBuffer;
+
 	class RenderContext
 	{
 
@@ -50,36 +56,57 @@ namespace DadEngine::Rendering
 
 
 		// Commands
-		virtual void ClearBuffer(Color& _InClearColor) = 0;
-		virtual void Present() = 0;
+		virtual void ClearColorBuffer(Color& _InClearColor, CommandBuffer* _InCommandBuffer) = 0;
+
+		virtual void ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer) = 0;
+
+		virtual void Present(CommandBuffer* _InCommandBuffer) = 0;
+
+		virtual void Draw(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) = 0;
+
+		virtual void BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) = 0;
+
+		virtual void BindShaderProgram(Shader* _InShader, CommandBuffer* _InCommandBuffer) = 0;
+
+		virtual void BeginRenderPass(RenderPass* _InRenderPass, Framebuffer* _InFrameBuffer, CommandBuffer* _InCommandBuffer) = 0;
+
+		virtual void EndRenderPass(CommandBuffer* _InCommandBuffer) = 0;
+
+
+		// State change commands
+		virtual void SetViewport(Viewport& _InViewport, CommandBuffer* _InCommandBuffer) = 0;
+
+		virtual void SetCullingMode(CullingMode _InCullingMode, CommandBuffer* _InCommandBuffer) = 0;
+
+		virtual void SetFillMode(FillMode _InFillMode, CommandBuffer* _InCommandBuffer) = 0;
+
+
+
+		virtual Image* GetBackBuffer() = 0;
+
+		virtual Image* GetDepthStencilBuffer() = 0;
+
+		virtual Framebuffer* GetBackFramebuffer() = 0;
+
+		virtual RenderPass* GetRenderPass() = 0;
+
 
 
 		virtual void BeginFrame() = 0;
 
+		virtual void EndFrame() = 0;
 
-		virtual void DrawPrimitives() = 0;
-
-		virtual void Draw(VertexBuffer* _InVertexBuffer) = 0;
-
-		virtual void BindVertexBuffer(VertexBuffer* _InVertexBuffer) = 0;
-
-		virtual void BindShaderProgram(Shader* _InShader) = 0;
-
-		// State change commands
-		virtual void SetViewport(Viewport& _InViewport) = 0;
-
-		virtual void SetCullingMode(CullingMode _InCullingMode) = 0;
-
-		virtual void SetFillMode(FillMode _InFillMode) = 0;
+		virtual void SubmitCommandBuffer(CommandBuffer* _InCommandBuffer) = 0;
 
 
 		virtual VertexBuffer* CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride) = 0;
-
 		virtual VertexShader* CreateVertexShader(const char* _InShaderCode, size_t _InShaderCodeSize, TArray<VertexInput>& _InVertexInputLayout) = 0;
 		virtual GeometryShader* CreateGeometryShader(const char* _InShaderCode, size_t _InShaderCodeSize) = 0;
 		virtual FragmentShader* CreateFragmentShader(const char* _InShaderCode, size_t _InShaderCodeSize) = 0;
-
-		virtual Shader* CreateShader(VertexShader* _InVertexShader, GeometryShader* _InGeometryShader, FragmentShader* _InFragmentShader) = 0;
+		virtual Shader* CreateShader(VertexShader* _InVertexShader, GeometryShader* _InGeometryShader, FragmentShader* _InFragmentShader, RenderPass* _InRenderpass) = 0;
+		virtual CommandBuffer* CreateCommandBuffer() = 0;
+		virtual RenderPass* CreateRenderPass(TArray<Image*>& _InImage) = 0;
+		virtual Framebuffer* CreateFramebuffer(Extent2D& _InFramebufferSize, RenderPass* _InRenderPass) = 0;
 	};
 }
 
