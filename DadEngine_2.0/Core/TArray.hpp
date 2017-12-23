@@ -24,6 +24,13 @@ namespace DadEngine::Core//::Containers
 			MemoryManager::Set(m_allocator.m_ptrMemLocation, *(int32*)&_InInitValue, _InItemCount);
 		}
 
+		TArray(T* _InValues, size_t _InItemCount)
+		{
+			m_allocator.Allocate(_InItemCount);
+
+			MemoryManager::Copy(_InValues, m_allocator.m_ptrMemLocation, _InItemCount * sizeof(T));
+		}
+
 		~TArray() = default;
 
 
@@ -55,9 +62,25 @@ namespace DadEngine::Core//::Containers
 			m_uiLastItemIndex++;
 		}
 
+		FORCE_INLINE void Add(T* _InValues, size_t _InItemCount)
+		{
+			if (m_uiLastItemIndex + _InItemCount >= m_allocator.m_uiCapacity)
+				Resize(m_allocator.m_uiCapacity + _InItemCount);
+
+			MemoryManager::Copy(_InValues, m_allocator.m_ptrMemLocation + m_uiLastItemIndex, _InItemCount * sizeof(T));
+			m_uiLastItemIndex += (uint32)_InItemCount;
+		}
+
 		FORCE_INLINE void Resize(size_t _InItemCount)
 		{
 			m_allocator.Resize(_InItemCount);
+		}
+		
+		FORCE_INLINE void Clear()
+		{
+			m_allocator.Deallocate();
+
+			m_uiLastItemIndex = 0U;
 		}
 
 
@@ -112,12 +135,19 @@ namespace DadEngine::Core//::Containers
 			printf("%d\n", eray[1]);
 			printf("%d\n", eray[2]);
 
+			eray.Clear();
+
 			bray = eray;
 
 			for(int32 i : eray)
 			{
 				printf("%d\n", i);
 			}
+
+			eray.Add(10);
+			eray.Add(20);
+
+			eray[0U] = 10;
 
 			/*printf("%d\n", bray[0]);
 			printf("%d\n", bray[1]);

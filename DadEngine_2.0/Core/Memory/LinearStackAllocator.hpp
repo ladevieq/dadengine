@@ -64,7 +64,8 @@ namespace DadEngine::Core//::Memory
 		{
 			if (m_ptrMemLocation != nullptr) {
 				MemoryManager::Deallocate(m_ptrMemLocation);
-							m_ptrMemLocation = nullptr;
+				m_ptrMemLocation = nullptr;
+				m_uiCapacity = 0U;
 			}
 			
 		}
@@ -79,6 +80,8 @@ namespace DadEngine::Core//::Memory
 			{
 				// Copy content to the new memory location
 				MemoryManager::Copy((void*)m_ptrMemLocation, ptrTempMemory, m_ItemSize * _InItemCout);
+
+				MemoryManager::Deallocate(m_ptrMemLocation);
 			}
 
 			m_ptrMemLocation = static_cast<T*>(ptrTempMemory);
