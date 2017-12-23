@@ -79,7 +79,12 @@ namespace DadEngine::Rendering::OpenGLWrapper
 	
 
 	// Framebuffer stuff
+	void __stdcall glGenFramebuffers(GLsizei _InFramebufferCount, GLuint* _InFramebuffersIndices);
+
 	void __stdcall glBindFrameBuffer(GLenum _InType, GLuint _InFramebuffer);
+
+	void __stdcall glDeleteFramebuffers(GLsizei _InFramebufferCount, GLuint* _InFramebuffersIndices);
+
 
 
 #if defined(GL_EXT_vertex_array)

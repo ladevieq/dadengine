@@ -71,61 +71,49 @@ namespace DadEngine::Rendering
 	}
 
 
-	void OpenGLRenderContext::ClearBuffer(Color& _InClearColor)
+	void OpenGLRenderContext::ClearColorBuffer(Color& _InClearColor, CommandBuffer* _InCommandBuffer)
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-		glClearColor(_InClearColor.r, _InClearColor.g, _InClearColor.b, _InClearColor.a);
+		CommandClearColorBuffer((OpenGLCommandBuffer*)_InCommandBuffer, _InClearColor);
 	}
 
-	void OpenGLRenderContext::Present()
+	void OpenGLRenderContext::ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer)
 	{
-		SwapBuffers(m_HDC);
-	}
-	
-
-	void OpenGLRenderContext::DrawPrimitives()
-	{
-		//glDrawElements(GL_TRIANGLES, _InVerticesCount, )
+		CommandClearDepthStencilBuffer((OpenGLCommandBuffer*)_InCommandBuffer, (double)_InDepthValue, _InStencilValue);
 	}
 
-	void OpenGLRenderContext::Draw(VertexBuffer* _InVertexBuffer)
+	void OpenGLRenderContext::Present(CommandBuffer* _InCommandBuffer)
 	{
-		OpenGLWrapper::glDrawArrays(GL_TRIANGLES, 0U, _InVertexBuffer->m_uiVertexCount);
+		OpenGLWrapper::glBindFrameBuffer(GL_FRAMEBUFFER, 0U);
 	}
 
-	void OpenGLRenderContext::BindVertexBuffer(VertexBuffer* _InVertexBuffer)
+	void OpenGLRenderContext::Draw(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer)
 	{
-		// Binding a VBO linked to a VAO and linking vertices inputs to the buffer
-		OpenGLWrapper::glBindBuffer(GL_ARRAY_BUFFER, ((OpenGLVertexBuffer*)_InVertexBuffer)->m_uiBufferIndex);
-
-		size_t offset = 0U;
-
-		for (VertexInput input : _InVertexBuffer->m_verticesLayout)
-		{
-			uint32 count;
-			size_t size;
-
-			input.GetInputTypeInfo(size, count);
-
-			OpenGLWrapper::glVertexAttribPointer(input.uiIndex, count, GL_FLOAT, GL_FALSE, (GLsizei)_InVertexBuffer->m_uiVertexLayoutStride, (void*)offset);
-			OpenGLWrapper::glEnableVertexAttribArray(input.uiIndex);
-
-			offset += size;
-		}
-		
-		// Unbinding the buffer linked to a VAO
-		OpenGLWrapper::glBindBuffer(GL_ARRAY_BUFFER, 0U);
-
-		// Bind the VAO
-		OpenGLWrapper::glBindVertexArray(((OpenGLVertexBuffer*)_InVertexBuffer)->m_uiArrayIndex);
+		CommandDraw((OpenGLCommandBuffer*)_InCommandBuffer, _InVertexBuffer);
 	}
 
-	void OpenGLRenderContext::BindShaderProgram(Shader* _InShader)
+	void OpenGLRenderContext::BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer)
 	{
-		OpenGLWrapper::glUseProgram(((OpenGLShader*)_InShader)->m_uiProgramID);
+		CommandBindVertexBuffer((OpenGLCommandBuffer*)_InCommandBuffer, (OpenGLVertexBuffer*)_InVertexBuffer);
 	}
 
-	void OpenGLRenderContext::SetViewport(Viewport& _InViewport)
+	void OpenGLRenderContext::BindShaderProgram(Shader* _InShader, CommandBuffer* _InCommandBuffer)
+	{
+		CommandBindShaderProgram((OpenGLCommandBuffer*)_InCommandBuffer, _InShader);
+	}
+
+
+	// We must keep this state somewhere
+	void OpenGLRenderContext::SetCullingMode(CullingMode _InCullingMode, CommandBuffer* _InCommandBuffer)
+	{
+		glPolygonMode(OpenGLCullingMode[_InCullingMode], GL_FILL);
+	}
+
+	void OpenGLRenderContext::SetFillMode(FillMode _InFillMode, CommandBuffer* _InCommandBuffer)
+	{
+		glPolygonMode(GL_FRONT, OpenGLFillMode[_InFillMode]);
+	}
+
+	void OpenGLRenderContext::SetViewport(Viewport& _InViewport, CommandBuffer* _InCommandBuffer)
 	{
 		glViewport(_InViewport.x, _InViewport.y, _InViewport.width, _InViewport.height);
 
@@ -133,16 +121,35 @@ namespace DadEngine::Rendering
 	}
 
 
-	// We must keep this state somewhere
-	void OpenGLRenderContext::SetCullingMode(CullingMode _InCullingMode)
+
+	void OpenGLRenderContext::BeginFrame() {}
+
+	void OpenGLRenderContext::EndFrame()
 	{
-		glPolygonMode(OpenGLCullingMode[_InCullingMode], GL_FILL);
+		// Execute commands
+		for (OpenGLCommandBuffer* currentCmdBuffer : m_SubmittedCommandBuffers)
+		{
+			for (OpenGLRenderCommand* currentRenderCmd : currentCmdBuffer->m_Commands)
+			{
+				currentRenderCmd->Execute();
+			}
+		}
+
+		SwapBuffers(m_HDC);
+
+		for (OpenGLCommandBuffer* currentCmdBuffer : m_SubmittedCommandBuffers)
+		{
+			currentCmdBuffer->m_Commands.Clear();
+		}
+
+		m_SubmittedCommandBuffers.Clear();
 	}
 
-	void OpenGLRenderContext::SetFillMode(FillMode _InFillMode)
+	void OpenGLRenderContext::SubmitCommandBuffer(CommandBuffer * _InCommandBuffer)
 	{
-		glPolygonMode(GL_FRONT, OpenGLFillMode[_InFillMode]);
+		m_SubmittedCommandBuffers.Add((OpenGLCommandBuffer*)_InCommandBuffer);
 	}
+
 
 
 	VertexBuffer * OpenGLRenderContext::CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride)
@@ -166,9 +173,13 @@ namespace DadEngine::Rendering
 		return new OpenGLFragmentShader(_InShaderCode, _InShaderCodeSize);
 	}
 
-
-	Shader* OpenGLRenderContext::CreateShader(VertexShader * _InVertexShader, GeometryShader * _InGeometryShader, FragmentShader * _InFragmentShader)
+	Shader* OpenGLRenderContext::CreateShader(VertexShader * _InVertexShader, GeometryShader * _InGeometryShader, FragmentShader * _InFragmentShader, RenderPass* _InRenderpass)
 	{
 		return new OpenGLShader(_InVertexShader, _InGeometryShader, _InFragmentShader);
+	}
+	
+	CommandBuffer * OpenGLRenderContext::CreateCommandBuffer()
+	{
+		return new OpenGLCommandBuffer(this);
 	}
 }

@@ -77,7 +77,11 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 
 	// Framebuffer stuff
+	PFNGLGENFRAMEBUFFERSPROC PFNglGenFramebuffers = nullptr;
+
 	PFNGLBINDFRAMEBUFFERPROC PFNglBindFramebuffer = nullptr;
+
+	PFNGLDELETEFRAMEBUFFERSPROC PFNglDeleteFramebuffers = nullptr;
 
 
 
@@ -231,9 +235,19 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 
 	// Framebuffer stuff
+	void __stdcall glGenFramebuffers(GLsizei _InFramebufferCount, GLuint* _InFramebuffersIndices)
+	{
+		PFNglGenFramebuffers(_InFramebufferCount, _InFramebuffersIndices);
+	}
+
 	void __stdcall glBindFrameBuffer(GLenum _InType, GLuint _InFramebuffer)
 	{
 		PFNglBindFramebuffer(_InType, _InFramebuffer);
+	}
+
+	void __stdcall glDeleteFramebuffers(GLsizei _InFramebufferCount, GLuint* _InFramebuffersIndices)
+	{
+		PFNglDeleteFramebuffers(_InFramebufferCount, _InFramebuffersIndices);
 	}
 
 
@@ -353,7 +367,11 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 
 		// Framebuffer stuff
+		PFNglGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC)glLoadFunction("glGenFramebuffers");
+
 		PFNglBindFramebuffer = (PFNGLBINDFRAMEBUFFERPROC)glLoadFunction("glBindFramebuffer");
+
+		PFNglDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC)glLoadFunction("glDeleteFramebuffers");
 	}
 
 	/*
