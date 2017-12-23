@@ -12,7 +12,7 @@
 
 #include "Features.hpp"
 
-#include "Shader/Shader.h"
+#include "Shader/Shader.hpp"
 
 #include "Mesh/VertexFactory.hpp"
 
