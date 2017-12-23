@@ -70,6 +70,11 @@
     <ClInclude Include="Rendering\CommandBuffer.hpp" />
     <ClInclude Include="Rendering\Features.hpp" />
     <ClInclude Include="Rendering\Culling\FramePacket.hpp" />
+    <ClInclude Include="Rendering\Framebuffer.hpp" />
+    <ClInclude Include="Rendering\Image.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLFramebuffer.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLRenderCommand.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLCommandBuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLFragmentShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLGeometryShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLWrapper.hpp" />
@@ -78,11 +83,15 @@
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLVertexShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanCommandBuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanFragmentShader.hpp" />
+    <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanFramebuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanGeometryShader.hpp" />
+    <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanImage.hpp" />
+    <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanRenderPass.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanVertexBuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanVertexInputLayout.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanVertexShader.hpp" />
+    <ClInclude Include="Rendering\RenderPass.hpp" />
     <ClInclude Include="Rendering\Shader\Material.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\glext.hpp" />
@@ -99,7 +108,7 @@
     <ClInclude Include="Rendering\Culling\RenderObject.hpp" />
     <ClInclude Include="Rendering\Feature\StaticMeshComponent.hpp" />
     <ClInclude Include="Rendering\Feature\StaticMeshRenderingFeature.hpp" />
-    <ClInclude Include="Rendering\Shader\Shader.h" />
+    <ClInclude Include="Rendering\Shader\Shader.hpp" />
     <ClInclude Include="Rendering\Mesh\VertexFactory.hpp" />
     <ClInclude Include="Rendering\Texture\Texture2D.hpp" />
     <ClInclude Include="Rendering\Mesh\VertexInputLayout.hpp" />
@@ -122,18 +131,19 @@
     <ClCompile Include="Math\Vector4f.cpp" />
     <ClCompile Include="Rendering\Culling\FramePacket.cpp" />
     <ClCompile Include="Rendering\Culling\ViewPacket.cpp" />
+    <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLRenderCommand.cpp" />
     <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLWrapper.cpp" />
     <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLRenderContext.cpp" />
     <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLVertexBuffer.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanCommandBuffer.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanDebug.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanFramebuffer.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanHelper.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanImage.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanRenderContext.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanRenderPass.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanSwapchain.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanVertexBuffer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="frag.spv" />
-    <None Include="vert.spv" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

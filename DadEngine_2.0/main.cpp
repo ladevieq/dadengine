@@ -2,56 +2,57 @@
 #include "Rendering/Rendering.hpp"
 #include "Math/Math.hpp"
 
-#define /*DADOPNEGL*/ DADVULKAN
+#define /*DADOPNEGL//*/ DADVULKAN
+#define TEST
 
 void Tests()
 {
 	//Test::TestTypes();
 	//Test::Test();
 	//Test::Test();
-	//Test::TestTArray();
+	//DadEngine::Core::Test::TestTArray();
 	//Test::TestDictionary();
 	//Test::TestThread();
 	//Test::TestTime();
 	//Test::TestProfile();
 	//Test::TestSerialization();
-	DadEngine::Math::Test::TestMathConstants();
-	DadEngine::Math::Test::TestMathFunctions();
-	DadEngine::Math::Test::TestMatrix2x2();
-	DadEngine::Math::Test::TestMatrix3x3();
-	DadEngine::Math::Test::TestMatrix4x4();
+	//DadEngine::Math::Test::TestMathConstants();
+	//DadEngine::Math::Test::TestMathFunctions();
+	//DadEngine::Math::Test::TestMatrix2x2();
+	//DadEngine::Math::Test::TestMatrix3x3();
+	//DadEngine::Math::Test::TestMatrix4x4();
 }
 
 int main
 {
+#if defined(_DEBUG)
+	Tests();
+#endif
+
 	//Application app(ApplicationInfo{"DadEngine", 1080U, 720U, FALSE });
 	PlatformWindow window("DadEngine", 1080U, 720U, FALSE, FALSE);
 
 	window.ToggleConsole();
 
-	
 
 #if defined(DADOPNEGL)
 	RenderContext* renderContext = new OpenGLRenderContext(window);
-
 	IFile* vertexShaderReader = PlatformFileSystem::CreateFileReader("test.vert", IO_MODE_TEXT);
-	String vertexShaderCode(vertexShaderReader->Size());
-	b8 ret = vertexShaderReader->Read(vertexShaderCode);
 
 	IFile* fragmentShaderReader = PlatformFileSystem::CreateFileReader("test.frag", IO_MODE_TEXT);
-	String fragmentShaderCode(fragmentShaderReader->Size());
-	fragmentShaderReader->Read(fragmentShaderCode);
 #elif defined(DADVULKAN)
 	RenderContext* renderContext = new VulkanRenderContext(window);
+	IFile* vertexShaderReader = PlatformFileSystem::CreateFileReader("test.vert.spv", IO_MODE_BINARY);
 
-	IFile* vertexShaderReader = PlatformFileSystem::CreateFileReader("vert.spv", IO_MODE_BINARY);
+	IFile* fragmentShaderReader = PlatformFileSystem::CreateFileReader("test.frag.spv", IO_MODE_BINARY);
+#endif
+
 	String vertexShaderCode(vertexShaderReader->Size());
 	b8 ret = vertexShaderReader->Read(vertexShaderCode);
 
-	IFile* fragmentShaderReader = PlatformFileSystem::CreateFileReader("frag.spv", IO_MODE_BINARY);
 	String fragmentShaderCode(fragmentShaderReader->Size());
 	fragmentShaderReader->Read(fragmentShaderCode);
-#endif
+
 
 	RawMesh triangle;
 	triangle.m_vertices.Add(RawVertex{ Vector3f{ -0.5f, -0.5f, 0.f }, Vector3f{ 1.0f, 0.0f, 0.0f } });
@@ -63,9 +64,13 @@ int main
 	vertexLayout.Add({ 1U, VertexInputType::VERTEX_INPUT_TYPE_COLOR });
 	uint32 uiStride = 0U;
 
+
+	RenderPass* renderPass = renderContext->GetRenderPass();
+	Framebuffer* framebuffer = nullptr;
 	VertexShader* vertexShader = renderContext->CreateVertexShader(vertexShaderCode.Cstr(), vertexShaderCode.Size(), vertexLayout);
 	FragmentShader* fragmentShader = renderContext->CreateFragmentShader(fragmentShaderCode.Cstr(), fragmentShaderCode.Size());
-	Shader* mainShader = renderContext->CreateShader(vertexShader, nullptr, fragmentShader);
+	Shader* mainShader = renderContext->CreateShader(vertexShader, nullptr, fragmentShader, renderPass);
+	CommandBuffer* cmdBuff = renderContext->CreateCommandBuffer();
 
 	TArray<float> rawPosition;
 	Vertexfactory::Create(triangle, rawPosition, vertexLayout, uiStride);
@@ -82,12 +87,11 @@ int main
 	TArray<RenderObject*> WorldObjects;
 	WorldObjects.Add(meshComponent.m_RenderObjectHandle);
 
-	Tests();
-
 	uint8 bLoop = TRUE;
 	uint32 uiCounter = 0U;
 	PlatformTimer fpsTimer;
 	fpsTimer.Start();
+
 
 	while (bLoop)
 	{
@@ -108,12 +112,24 @@ int main
 		else
 		{
 			//Profile renderProfile ("Rendering");
-			CommandBuffer cmdBuff;
 			ViewPacket view;
 			FramePacket frame;
 			Camera cam;
 
 			renderContext->BeginFrame();
+
+			framebuffer = renderContext->GetBackFramebuffer();
+
+			cmdBuff->BeginRecord();
+			cmdBuff->ClearColor(Color{ 0.0f, 0.0f, 0.0f, 1.0f });
+			cmdBuff->ClearDepthStencil(0.0f, UINT32_MAX);
+			cmdBuff->BeginRenderPass(renderPass, framebuffer);
+			cmdBuff->BindShader(mainShader);
+			cmdBuff->BindVertexBuffer(vb);
+			cmdBuff->DrawVertexBuffer(vb);
+			cmdBuff->EndRenderPass(renderPass);
+			cmdBuff->Present();
+			cmdBuff->EndRecord();
 
 			// Extract visible objects
 			cam.ExtractVisibleObjects(WorldObjects, frame);
@@ -122,11 +138,7 @@ int main
 			frame.Extract();
 
 			// Foreach feature generate the rendering instructions
-			renderFeature.SubmitViewBegin(view, cmdBuff);
-
-			cmdBuff.BindShaderProgram(mainShader);
-			cmdBuff.BindVertexBuffer(vb);
-			cmdBuff.DrawVertexBuffer(vb);
+			//renderFeature.SubmitViewBegin(view, cmdBuff);
 
 
 			if (renderFeatureInfo.SubmitNode == TRUE)
@@ -139,15 +151,14 @@ int main
 				//renderFeature.SubmitNodes();
 			}
 
-			renderFeature.SubmitViewEnd(view, cmdBuff);
+			//renderFeature.SubmitViewEnd(view, cmdBuff);
 
 
 			// Sync rendering and game threads
 			// Exchange extracted datas and rendering commands
 			
 			// Resume threads
-
-			cmdBuff.Execute(renderContext);
+			renderContext->EndFrame();
 
 
 			if (fpsTimer.GetMilliseconds() >= 1000U)

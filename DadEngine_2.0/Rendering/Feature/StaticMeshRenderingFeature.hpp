@@ -39,7 +39,7 @@ namespace DadEngine::Rendering
 
 		void SubmitViewEnd(ViewPacket& _InViewPacket, CommandBuffer& _InCommandBuffer) override final
 		{
-			_InCommandBuffer.Present();
+			//_InCommandBuffer.Present();
 		}
 	};
 }

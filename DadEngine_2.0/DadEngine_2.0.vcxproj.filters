@@ -49,7 +49,6 @@
     <ClInclude Include="Math\Matrix3x3.hpp" />
     <ClInclude Include="Math\Matrix2x2.hpp" />
     <ClInclude Include="Math\AABB.hpp" />
-    <ClInclude Include="Rendering\Shader\Shader.h" />
     <ClInclude Include="Rendering\Shader\Material.hpp" />
     <ClInclude Include="Rendering\Mesh\RawMesh.hpp" />
     <ClInclude Include="Rendering\Mesh\RawVertex.hpp" />
@@ -92,6 +91,16 @@
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanCommandBuffer.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsTextFileIO.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsBinaryFileIO.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLCommandBuffer.hpp" />
+    <ClInclude Include="Rendering\RenderPass.hpp" />
+    <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanRenderPass.hpp" />
+    <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanFramebuffer.hpp" />
+    <ClInclude Include="Rendering\Framebuffer.hpp" />
+    <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanImage.hpp" />
+    <ClInclude Include="Rendering\Image.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLRenderCommand.hpp" />
+    <ClInclude Include="Rendering\Shader\Shader.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLFramebuffer.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -112,9 +121,10 @@
     <ClCompile Include="Core\Debug.cpp" />
     <ClCompile Include="Core\Application.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanVertexBuffer.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="frag.spv" />
-    <None Include="vert.spv" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanFramebuffer.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanRenderPass.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanImage.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanCommandBuffer.cpp" />
+    <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLRenderCommand.cpp" />
   </ItemGroup>
 </Project>

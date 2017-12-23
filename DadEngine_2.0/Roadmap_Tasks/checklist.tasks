@@ -21,6 +21,7 @@ DadEngine:
         ✔ IO stuff @high @done (2017-10-15 10:54:09)
         ☐ Platform dependant RenderContext Creation
         ☐ Window message pump system
+		☐ Debugging API
     ☐ Rendering
         ✔ Render context @done (2017-9-26 00:55:21)
         ☐ OpenGl
@@ -36,10 +37,9 @@ DadEngine:
             ☐ Simple particules
             ☐ Physics calculation
         ☐ Frustum culling
-            ☐ Octree
-        ☐ Rendering debugging API
+            ☐ Octrees
         ☐ Mesh API
-            ☐ Loading (.fbx, .obj, khronos format)
+            ☐ Loading (.fbx, .obj, gltf 2.0)
             ✔ Intermediate storage @done (2017-10-10 00:13:06)
     ☐ Math
         ✔ Matrix @done (2017-10-10 00:13:11)
