@@ -20,11 +20,11 @@ namespace DadEngine::Core//::Containers
 
 		FORCE_INLINE Pair<uint8, Value> Contains(Key _InKeyVal)
 		{
-			for (size_t i = 0U; i < m_Values.Size(); i++)
+			for (size_t i = 0U; i < this->m_Values.Size(); i++)
 			{
-				if (m_Values[(uint32)i].k == _InKeyVal)
+				if (this->m_Values[(uint32)i].k == _InKeyVal)
 				{
-					return Pair<uint8, Value> { TRUE, m_Values[(uint32)i].v };
+					return Pair<uint8, Value> { TRUE, this->m_Values[(uint32)i].v };
 				}
 			}
 
@@ -37,7 +37,7 @@ namespace DadEngine::Core//::Containers
 
 			if (pair.k == FALSE)
 			{
-				m_Values.Add(_InNewItem);
+				this->m_Values.Add(_InNewItem);
 			}
 
 			else
@@ -52,7 +52,7 @@ namespace DadEngine::Core//::Containers
 
 			if (P mathingPair = (Contains(seekedPair).k == TRUE))
 			{
-				mathingPair.k = m_Values[i].k;
+				//mathingPair.k = this->m_Values[i].k;
 
 				return mathingPair;
 			}
@@ -64,7 +64,7 @@ namespace DadEngine::Core//::Containers
 
 		FORCE_INLINE size_t Size () const
 		{
-			return m_Values.Size();
+			return this->m_Values.Size();
 		}
 
 		TArray<P> m_Values;
@@ -72,7 +72,7 @@ namespace DadEngine::Core//::Containers
 
 	namespace Test
 	{
-		FORCE_INLINE void TestDictionary()
+		FORCE_INLINE static void TestDictionary()
 		{
 			TDictionary<uint32, char> testDic;
 

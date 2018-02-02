@@ -1,6 +1,15 @@
 #ifndef __DEFINES_HPP_
 #define __DEFINES_HPP_
 
+// Compiler defines
+#if defined (_MSC_VER)
+#define FORCE_INLINE __forceinline
+#elif defined (__GNUG__)
+#define FORCE_INLINE __attribute__((always_inline))
+#elif defined (__clang__)
+#define FORCE_INLINE __forceinline
+#endif
+
 // Plateform defines
 #if defined (_WIN32) || (_WIN64)
 	#define	WINDOWS
@@ -28,8 +37,5 @@
 	if(!(expr)) {											\
 		DadEngine::Core::LogAssert(msg, __FILE__, __LINE__);\
 		throw; }
-		
-
-#define FORCE_INLINE __forceinline
 
 #endif //__DEFINES_HPP_

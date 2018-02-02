@@ -122,7 +122,7 @@ namespace DadEngine::Core//::Containers
 
 	namespace Test
 	{
-		FORCE_INLINE void TestTArray()
+		FORCE_INLINE static void TestTArray()
 		{
 			TArray<int32> eray;
 			TArray<int32> bray;

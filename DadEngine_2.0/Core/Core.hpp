@@ -22,4 +22,4 @@
 
 using namespace DadEngine::Core;
 
-#endif //!__CORE_HPP_
+#endif //__CORE_HPP_

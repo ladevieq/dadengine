@@ -68,7 +68,7 @@ namespace DadEngine::Core
 
 	namespace Test
 	{
-		FORCE_INLINE void TestThread()
+		FORCE_INLINE static void TestThread()
 		{
 			auto func = []() { while (1) {
 				printf("Hello World!");

@@ -65,13 +65,13 @@ namespace DadEngine::Core
 			TArray<float> floats;
 		};
 
-		SERIALIZATION_CLASS_BEGIN(TestStructSerialization);
+		/*SERIALIZATION_CLASS_BEGIN(TestStructSerialization);
 		SERIALIZATION_CLASS_PROPERTY(TestStructSerialization::a);
 		SERIALIZATION_CLASS_PROPERTY(TestStructSerialization::b);
 		SERIALIZATION_CLASS_PROPERTY(TestStructSerialization::floats);
-		SERIALIZATION_CLASS_END(TestStructSerialization);
+		SERIALIZATION_CLASS_END(TestStructSerialization);*/
 
-		FORCE_INLINE void TestSerialization()
+		FORCE_INLINE static void TestSerialization()
 		{
 			/*Archive ar;
 			MemoryWriter memWriter;
