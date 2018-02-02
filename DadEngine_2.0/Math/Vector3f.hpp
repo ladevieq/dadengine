@@ -95,7 +95,21 @@ namespace DadEngine::Math
 			z += _InVector.z;
 		}
 
+		FORCE_INLINE void operator+=(const Vector3f& _InVector)
+		{
+			x += _InVector.x;
+			y += _InVector.y;
+			z += _InVector.z;
+		}
+
 		FORCE_INLINE void operator-=(Vector3f& _InVector)
+		{
+			x -= _InVector.x;
+			y -= _InVector.y;
+			z -= _InVector.z;
+		}
+
+		FORCE_INLINE void operator-=(const Vector3f& _InVector)
 		{
 			x -= _InVector.x;
 			y -= _InVector.y;

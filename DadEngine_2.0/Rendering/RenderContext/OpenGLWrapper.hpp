@@ -2,11 +2,17 @@
 #define __OPENGL_HELPER_HPP_
 
 #include <Windows.h>
+
+#if defined(DADOPENGL)
 #include <gl/GL.h>
 #include "glext.hpp"
+#elif defined(DADOPENGLES)
+#include <GLES3/gl32.h>
+#endif
+
 #include "wglext.hpp"
 
-#include "../../../Core/Core.hpp"
+#include "../../Core/Core.hpp"
 
 namespace DadEngine::Rendering::OpenGLWrapper
 {
@@ -51,6 +57,7 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 	void __stdcall glAttachShader(GLuint _InProgramID, GLuint _InShaderID);
 
+
 	void __stdcall glDetachShader(GLuint _InProgramID, GLuint _InShaderID);
 
 	void __stdcall glGetShaderiv(GLuint _InShaderID, GLenum _InType, GLint* _OutParams);
@@ -78,6 +85,14 @@ namespace DadEngine::Rendering::OpenGLWrapper
 	void __stdcall glDeleteProgram(GLuint _InProgramID);
 	
 
+	// Uniforms variable functions
+	GLint __stdcall glGetUniformLocation(GLuint _InProgramID, const GLchar* _InName);
+
+	void __stdcall glUniform4fv(GLint _InLocation, GLsizei _InCount, GLfloat* _InValues);
+
+	void __stdcall glUniformMatrix4fv(GLint _InLocation, GLsizei _InCount, GLboolean _InTranspose, const float* _InValue);
+
+
 	// Framebuffer stuff
 	void __stdcall glGenFramebuffers(GLsizei _InFramebufferCount, GLuint* _InFramebuffersIndices);
 
@@ -87,7 +102,7 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 
 
-#if defined(GL_EXT_vertex_array)
+#if defined(GL_EXT_vertex_array) || defined(DADOPENGLES)
 	void __stdcall glDrawArrays(GLenum _InMode, GLint _InFirst, GLsizei _InCount);
 #endif
 

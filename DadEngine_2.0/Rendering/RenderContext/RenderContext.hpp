@@ -42,6 +42,12 @@ namespace DadEngine::Rendering
 		MAX_PIMITIVE_TOPOLOGY,
 	};
 
+	enum ShaderParameterType
+	{
+		SHADER_PARAMETER_TYPE_MATRIX4X4,
+		MAX_SHADER_PARAMETER_TYPE,
+	};
+
 	// CullingMode state -> Per object
 	// FillMode state -> Per object
 	// Viewport state -> Camera

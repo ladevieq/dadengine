@@ -110,16 +110,4 @@ namespace DadEngine::Math
 	{
 		return Vector4f(Abs(_InVector.x), Abs(_InVector.y), Abs(_InVector.z), Abs(_InVector.w));
 	}*/
-
-	namespace Test
-	{
-		void TestMathFunctions()
-		{
-			int64 i = 100000000;
-
-			i = Abs(i);
-
-			i = 0;
-		}
-	}
 }

@@ -202,7 +202,7 @@ namespace DadEngine::Math
 
 	namespace Test
 	{
-		FORCE_INLINE void TestMatrix2x2()
+		FORCE_INLINE static void TestMatrix2x2()
 		{
 			Matrix2x2 m(1, 5, 5, 6);
 			Matrix2x2 n(2, 0, 7, 5);

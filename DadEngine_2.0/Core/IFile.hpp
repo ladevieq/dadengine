@@ -33,4 +33,4 @@ namespace DadEngine::Core
 	};
 }
 
-#endif __IFILE_HPP_
+#endif //__IFILE_HPP_

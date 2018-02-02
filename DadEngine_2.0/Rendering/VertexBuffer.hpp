@@ -32,4 +32,4 @@ namespace DadEngine::Rendering
 	};
 }
 
-#endif//!__VERTEX_BUFFER_HPP_
+#endif//__VERTEX_BUFFER_HPP_

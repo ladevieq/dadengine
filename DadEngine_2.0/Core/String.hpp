@@ -80,11 +80,11 @@ namespace DadEngine::Core
 
 	namespace Test
 	{
-		FORCE_INLINE void TestString()
+		FORCE_INLINE static void TestString()
 		{
 			
 		}
 	}
 }
 
-#endif __STRING_HPP_
+#endif //__STRING_HPP_

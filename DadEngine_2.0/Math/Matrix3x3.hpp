@@ -286,7 +286,7 @@ namespace DadEngine::Math
 
 	namespace Test
 	{
-		FORCE_INLINE void TestMatrix3x3()
+		FORCE_INLINE static void TestMatrix3x3()
 		{
 			Matrix3x3 m(1, 5, 5,
 						6, 3, 7,

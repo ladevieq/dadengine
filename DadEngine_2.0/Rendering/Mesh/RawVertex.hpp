@@ -11,10 +11,10 @@ namespace DadEngine::Rendering
 	{
 		RawVertex() = default;
 
-		RawVertex(Vector3f& _InPosition): Position(_InPosition)
+		RawVertex(const Vector3f& _InPosition): Position(_InPosition)
 		{}
 
-		RawVertex(Vector3f& _InPosition, Vector3f& _InColor0)
+		RawVertex(const Vector3f& _InPosition, const Vector3f& _InColor0)
 			: Position(_InPosition), Color0(_InColor0)
 		{}
 

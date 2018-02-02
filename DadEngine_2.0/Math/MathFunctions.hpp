@@ -56,7 +56,14 @@ namespace DadEngine::Math
 
 	namespace Test
 	{
-		void TestMathFunctions();
+		FORCE_INLINE static void TestMathFunctions()
+		{
+			int64 i = 100000000;
+
+			i = Abs(i);
+
+			i = 0;
+		}
 	}
 }
 

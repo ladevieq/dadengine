@@ -23,13 +23,13 @@ namespace DadEngine::Core
 
 	private:
 
-		const char* m_sProfilename = '\0';
+		const char* m_sProfilename = "\0";
 		PlatformTimer time;
 	};
 
 	namespace Test
 	{
-		FORCE_INLINE void TestProfile() {
+		FORCE_INLINE static void TestProfile() {
 			Profile test("Test");
 
 			for (size_t i = 0; i < 1000000000U; i++)

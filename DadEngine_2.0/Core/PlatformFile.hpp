@@ -7,4 +7,4 @@
 #include "Platform/Windows/WindowsFileSystem.hpp"
 #endif
 
-#endif //!__PLATEFORM_FILE_HPP_
+#endif //__PLATEFORM_FILE_HPP_

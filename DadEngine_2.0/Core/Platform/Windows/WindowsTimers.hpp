@@ -81,7 +81,7 @@ namespace DadEngine::Core
 
 	namespace Test
 	{
-		FORCE_INLINE void TestTime()
+		FORCE_INLINE static void TestTime()
 		{
 			WindowsTimer time;
 
@@ -99,4 +99,4 @@ namespace DadEngine::Core
 
 using PlatformTimer = DadEngine::Core::WindowsTimer;
 
-#endif __WINDOWS_TIMERS_HPP_
+#endif //__WINDOWS_TIMERS_HPP_

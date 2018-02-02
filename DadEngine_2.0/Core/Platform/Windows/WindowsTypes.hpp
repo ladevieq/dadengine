@@ -17,6 +17,10 @@ namespace DadEngine::Core//::Types
 	using b16 = unsigned short;
 	using b8 = unsigned char;
 
+	const uint64 MAX_UINT64 = 0xffffffff;
+	const int64 MAX_INT64	= 0xffffffff;
+	const uint32 MAX_UINT32 = 0xffffffff;
+	const int32 MAX_INT32	= 0xffffffff;
 
 #if defined (_WIN64)
 	using size_t = uint64;
@@ -27,7 +31,7 @@ namespace DadEngine::Core//::Types
 	namespace Test
 	{
 		// Insert assert test here:
-		FORCE_INLINE void TestTypes()
+		FORCE_INLINE static void TestTypes()
 		{
 			/*ASSERT(sizeof(uint64) == 8);
 			ASSERT(sizeof(int64) == 8);

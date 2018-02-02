@@ -23,6 +23,7 @@ namespace DadEngine::Core//::Debug
 			23xxx - Shader / Shader Program Errors
 				23001 Shader compilation error
 				23002 Shader program linking error
+				23003 Depth stencil buffer created with wrong format
 
 		x1xxx - INFORMATION
 		x2xxx - WARNING
@@ -35,6 +36,8 @@ namespace DadEngine::Core//::Debug
 		
 		DEBUG_REPORT_CODE_SHADER_COMPILING_FAILED = 23001,
 		DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_FAILED = 23002,
+		DEBUG_REPORT_CODE_DEPTH_STENCIL_BUFFER_FORMAT_ERROR = 23002,
+
 		MAX_DEBUG_REPORT_CODE = 0xffffffff
 	};
 	using DebugReportCode = uint32;
@@ -55,7 +58,7 @@ namespace DadEngine::Core//::Debug
 		DEBUG_REPORT_CONTEXT_CORE,
 		DEBUG_REPORT_CONTEXT_OPENGL,
 		DEBUG_REPORT_CONTEXT_VULKAN,
-		MAX_DEBUG_REPORT_CONTEXT = 0xffffffff
+		MAX_DEBUG_REPORT_CONTEXT = 0xff
 	};
 	using DebugReportContextFlags = uint8;
 
@@ -97,7 +100,7 @@ namespace DadEngine::Core//::Debug
 
 	namespace Test
 	{
-		FORCE_INLINE void TestDebug()
+		FORCE_INLINE static void TestDebug()
 		{
 			int i = 10;
 			int* ptr = &i;

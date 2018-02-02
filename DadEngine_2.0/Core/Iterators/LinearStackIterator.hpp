@@ -15,11 +15,11 @@ namespace DadEngine::Core
 		~LinearStackIterator() = default;
 
 
-		FORCE_INLINE Iterator<T>& operator++ () { m_ptrMemLocation++; return *this; };
+		FORCE_INLINE Iterator<T>& operator++ () { this->m_ptrMemLocation++; return *this; };
 
-		FORCE_INLINE T& operator* () const { return *m_ptrMemLocation; };
+		FORCE_INLINE T& operator* () const { return *this->m_ptrMemLocation; };
 
-		FORCE_INLINE uint8 operator != (const LinearStackIterator<T>& _InEqual) const { return m_ptrMemLocation != _InEqual.m_ptrMemLocation; };
+		FORCE_INLINE uint8 operator != (const LinearStackIterator<T>& _InEqual) const { return this->m_ptrMemLocation != _InEqual.m_ptrMemLocation; };
 	};
 }
 

@@ -5,8 +5,14 @@
 #include "RenderCommand.hpp"
 #include "CommandBuffer.hpp"
 
+
+#if defined(DADOPENGL)
 #include "RenderContext/OpenGL.hpp"
+#elif defined(DADOPENGLES)
+#include "RenderContext/OpenGLES.hpp"
+#elif defined(DADVULKAN)
 #include "RenderContext/Vulkan.hpp"
+#endif
 
 #include "Culling/Camera.hpp"
 

@@ -14,6 +14,8 @@
 
 #include "Quaternion.hpp"
 
+#include "Transform3D.hpp"
+
 using namespace DadEngine::Math;
 
 #endif // !__MATH_HPP_

@@ -1,6 +1,8 @@
 #ifndef __CONSTANTS_HPP_
 #define __CONSTANTS_HPP_
 
+#include "../Core/Defines.hpp"
+
 #define _PI 3.141592653589793
 #define _2PI 6.283185307179586
 #define _PI2 1.570796326794896
@@ -18,7 +20,7 @@
 
 namespace DadEngine::Math::Test
 {
-	FORCE_INLINE void TestMathConstants()
+	FORCE_INLINE static void TestMathConstants()
 	{
 		double y = DEGTORAD(180.0);
 

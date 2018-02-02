@@ -4,14 +4,22 @@
 #include <Windows.h>
 #include <stdio.h>
 
+#include "../../Defines.hpp"
+#include "../../PlatformTypes.hpp"
+
 namespace DadEngine::Core
 {
+	LRESULT __stdcall WindowProcedure(HWND _InHWND, uint32 _InMsg, WPARAM _InWParam, LPARAM _InLParam);
+
 	class WindowsWindow
 	{
 	public:
 
-		WindowsWindow(const char* _InsWindowName, uint32 _InWidth, uint32 _InHeight, uint8 _InFullscreen, uint8 _InVeticalSync): m_sWindowName(_InsWindowName),
-			m_hInstance(GetModuleHandle(NULL)), m_uiFullscreen(_InFullscreen), m_uiVerticalSync(_InVeticalSync)
+		WindowsWindow(const char* _InsWindowName, uint32 _InWidth, uint32 _InHeight, uint8 _InFullscreen, uint8 _InVeticalSync)
+			: m_sWindowName(_InsWindowName),
+			m_hInstance(GetModuleHandle(NULL)),
+			m_uiFullscreen(_InFullscreen),
+			m_uiVerticalSync(_InVeticalSync)
 		{
 			CreateWindowClass();
 			CreateWindowsWindow(m_uiFullscreen, _InWidth, _InHeight);
@@ -32,48 +40,7 @@ namespace DadEngine::Core
 			}
 		}
 
-
-		static LRESULT __stdcall WindowProcedure(HWND _InHWND, uint32 _InMsg, WPARAM _InWParam, LPARAM _InLParam)
-		{
-			// Change location
-
-			switch (_InMsg)
-			{
-				case WM_SIZE:
-				{
-					//uint32 uiWidth = LOWORD(_InLParam);
-					//uint32 uiHeight = HIWORD(_InLParam);
-
-					//OnSize(_InHWND, uiWidth, uiHeight);
-					//GetClientRect(_InHWND, );
-
-					break;
-				}
-
-				case WM_PAINT:
-					break;
-
-				case WM_CLOSE:
-				{
-					DestroyWindow(_InHWND);
-					break;
-				}
-
-				case WM_QUIT:
-				{
-					PostQuitMessage(0);
-					break;
-				}
-
-				case WM_DESTROY:
-				{
-					PostQuitMessage(0);
-					break;
-				}
-			}
-
-			return DefWindowProc(_InHWND, _InMsg, _InWParam, _InLParam);
-		}
+		void HandleMessages(HWND _InHWND, uint32 _InMsg, WPARAM _InWParam, LPARAM _InLParam);
 		
 		// Move to application
 		FORCE_INLINE void ToggleConsole()
@@ -118,6 +85,8 @@ namespace DadEngine::Core
 		FORCE_INLINE RECT& GetRect() { return m_windowRect; }
 
 		FORCE_INLINE const char* const GetWindowName() { return m_sWindowName; }
+
+		FORCE_INLINE int16 KeyState(int32 _InKeyCode) { return GetAsyncKeyState(_InKeyCode); }
 
 
 	private:

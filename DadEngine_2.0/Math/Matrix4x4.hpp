@@ -190,9 +190,36 @@ namespace DadEngine::Math
 			m_41 = 0.f, m_42 = 0.f, m_43 = 0.f, m_44 = 1.f;
 		}
 
-		FORCE_INLINE void Orthographic();
+		FORCE_INLINE void Orthographic()
+		{
 
-		FORCE_INLINE void Perpespective();
+		}
+
+		FORCE_INLINE void Perpespective(float _InNear, float _InFar, float _InFov, float _InAspectRatio)
+		{
+			float s = 1 / Tan(_InFov * 0.5f);
+			float f = _InFar - _InNear;
+
+			m_11 = s * _InAspectRatio;
+			m_22 = s;
+			m_33 = -(_InFar + _InNear) / f;
+			m_34 = -1.f;
+			m_43 = (-2.f * _InFar * _InNear) / f;
+		}
+
+		FORCE_INLINE void LookAt(Vector3f& _InEyePosition, Vector3f& _InTargetPosition, Vector3f& _InUp)
+		{
+			Vector3f z = (_InEyePosition - _InTargetPosition);
+			z.Normalize();
+			Vector3f x = (_InUp ^ z);
+			x.Normalize();
+			Vector3f y = (z ^ x);
+
+			m_11 = x.x; m_12 = y.x; m_13 = z.x; m_14 = 0.f;
+			m_21 = x.y; m_22 = y.y; m_23 = z.y; m_24 = 0.f;
+			m_31 = x.z; m_32 = y.z; m_33 = z.z; m_34 = 0.f;
+			m_41 = -x.Dot(_InEyePosition); m_42 = -y.Dot(_InEyePosition); m_43 = -z.Dot(_InEyePosition); m_44 = 1.f;
+		}
 
 
 		// Binary math operators
@@ -374,7 +401,7 @@ namespace DadEngine::Math
 
 	namespace Test
 	{
-		FORCE_INLINE void TestMatrix4x4()
+		FORCE_INLINE static void TestMatrix4x4()
 		{
 			Matrix4x4 m(1, 5, 5, 8,
 						6, 3, 7, 9,

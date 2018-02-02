@@ -55,11 +55,37 @@ namespace DadEngine::Math
 			z = temp.w * _InQuat.z + temp.x * _InQuat.y - temp.y * _InQuat.x + temp.z * _InQuat.w;
 		}
 
+		FORCE_INLINE Matrix3x3 GetRotationMatrix()
+		{
+			Matrix3x3 result;
+
+			result.m_11 = 1 - (2 * y * y) - (2 * z * z); result.m_12 = (2 * x * y) - (2 * w * z); result.m_13 = (2 * x * z) + (2 * w * y);
+			result.m_21 = (2 * x * y) + (2 * w * z); result.m_22 = 1 - (2 * x * x) - (2 * z * z); result.m_23 = (2 * y * z) - (2 * w * x);
+			result.m_31 = (2 * x * z) - (2 * w * y); result.m_32 = (2 * y * z) + (2 * w * x); result.m_33 = 1 - (2 * x * x) - (2 * y * y);
+
+			return result;
+		}
+
+		FORCE_INLINE Matrix4x4 GetRotationMatrixExtended()
+		{
+			Matrix4x4 result;
+
+			result.m_11 = 1 - (2 * y * y) - (2 * z * z); result.m_12 = (2 * x * y) - (2 * w * z); result.m_13 = (2 * x * z) + (2 * w * y);
+			result.m_21 = (2 * x * y) + (2 * w * z); result.m_22 = 1 - (2 * x * x) - (2 * z * z); result.m_23 = (2 * y * z) - (2 * w * x);
+			result.m_31 = (2 * x * z) - (2 * w * y); result.m_32 = (2 * y * z) + (2 * w * x); result.m_33 = 1 - (2 * x * x) - (2 * y * y);
+
+			return result;
+		}
+
+
 		float w = 0.f;	// Scalar part
 		float x = 0.f;	// -----------
 		float y = 0.f;	// Complex part
 		float z = 0.f;	// -----------
 	};
+
+
+	static const Quaternion IdentityQuaternion(1.f, 0.f, 0.f, 0.f);
 }
 
 #endif //__QUATERNION_HPP_

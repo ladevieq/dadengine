@@ -4,10 +4,9 @@
 #pragma comment(lib, "OpenGL32.lib")
 
 #include <gl/GL.h>
-#include "OpenGL/glext.hpp"
-#include "OpenGL/wglext.hpp"
+#include "glext.hpp"
+#include "wglext.hpp"
 
-#include "OpenGL/OpenGLWrapper.hpp"
 #include "OpenGL/OpenGLRenderContext.hpp"
 
 #endif //__OPENGL_HPP_

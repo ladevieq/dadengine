@@ -32,4 +32,4 @@ namespace DadEngine::Rendering
 	};
 }
 
-#endif //!__IMAGE_HPP_
+#endif //__IMAGE_HPP_

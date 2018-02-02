@@ -13,7 +13,7 @@ namespace DadEngine::Rendering
 
 		virtual void Extract(FramePacket& _InFramePacket) = 0;
 
-		RenderObject* m_RenderObjectHandle;
+		RenderObject* m_RenderObjectHandle = nullptr;
 	};
 }
 

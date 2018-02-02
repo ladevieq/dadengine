@@ -80,7 +80,7 @@ namespace DadEngine::Core//::Memory
 
 	namespace Test
 	{
-		FORCE_INLINE void TestMemoryManager()
+		FORCE_INLINE static void TestMemoryManager()
 		{
 			uint32* i = nullptr;
 
@@ -97,6 +97,6 @@ namespace DadEngine::Core//::Memory
 
 void* operator new(size_t _InChunkSize);
 
-void operator delete(void * _InMemLocation);
+void operator delete (void * _InMemLocation) noexcept;
 
 #endif //__MEMORYMANAGER_HPP_

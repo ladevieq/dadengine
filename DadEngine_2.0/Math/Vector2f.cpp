@@ -11,6 +11,8 @@ namespace DadEngine::Math
 
 	float Vector2f::Angle(Vector2f& _InVector)
 	{
-		return Acos(Dot(_InVector / (Length() * _InVector.Length())));
+		Vector2f tempVec = _InVector / (Length() * _InVector.Length());
+
+		return Acos(Dot(tempVec));
 	}
 }

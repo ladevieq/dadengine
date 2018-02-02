@@ -5,6 +5,14 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Emscripten|Win32">
+      <Configuration>Emscripten</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Emscripten|x64">
+      <Configuration>Emscripten</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -54,6 +62,11 @@
     <ClInclude Include="Core\TArray.hpp" />
     <ClInclude Include="Core\TDictionary.hpp" />
     <ClInclude Include="Core\Platform\Windows\WindowsTypes.hpp" />
+    <ClInclude Include="Gameplay\Actor.hpp" />
+    <ClInclude Include="Gameplay\CameraManager.hpp" />
+    <ClInclude Include="Gameplay\Gameplay.hpp" />
+    <ClInclude Include="Gameplay\IComponent.hpp" />
+    <ClInclude Include="Gameplay\InputManager.hpp" />
     <ClInclude Include="Math\AABB.hpp" />
     <ClInclude Include="Math\Constants.hpp" />
     <ClInclude Include="Math\Math.hpp" />
@@ -62,6 +75,7 @@
     <ClInclude Include="Math\Matrix3x3.hpp" />
     <ClInclude Include="Math\Matrix4x4.hpp" />
     <ClInclude Include="Math\Quaternion.hpp" />
+    <ClInclude Include="Math\Transform3D.hpp" />
     <ClInclude Include="Math\Vector2f.hpp" />
     <ClInclude Include="Math\Vector3f.hpp" />
     <ClInclude Include="Math\Vector4f.hpp" />
@@ -72,16 +86,19 @@
     <ClInclude Include="Rendering\Culling\FramePacket.hpp" />
     <ClInclude Include="Rendering\Framebuffer.hpp" />
     <ClInclude Include="Rendering\Image.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGLES\OpenGLESRenderContext.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLFramebuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLRenderCommand.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLCommandBuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLFragmentShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLGeometryShader.hpp" />
-    <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLWrapper.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGLWrapper.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLVertexBuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLVertexShader.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGLES.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanCommandBuffer.hpp" />
+    <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanDepthStencilBuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanFragmentShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanFramebuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanGeometryShader.hpp" />
@@ -94,9 +111,9 @@
     <ClInclude Include="Rendering\RenderPass.hpp" />
     <ClInclude Include="Rendering\Shader\Material.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL.hpp" />
-    <ClInclude Include="Rendering\RenderContext\OpenGL\glext.hpp" />
+    <ClInclude Include="Rendering\RenderContext\glext.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLRenderContext.hpp" />
-    <ClInclude Include="Rendering\RenderContext\OpenGL\wglext.hpp" />
+    <ClInclude Include="Rendering\RenderContext\wglext.hpp" />
     <ClInclude Include="Rendering\Mesh\RawMesh.hpp" />
     <ClInclude Include="Rendering\Mesh\RawVertex.hpp" />
     <ClInclude Include="Rendering\RenderCommand.hpp" />
@@ -124,19 +141,26 @@
     <ClCompile Include="Core\Application.cpp" />
     <ClCompile Include="Core\Debug.cpp" />
     <ClCompile Include="Core\Memory\MemoryManager.cpp" />
+    <ClCompile Include="Core\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="Gameplay\CameraManager.cpp" />
+    <ClCompile Include="Gameplay\IComponent.cpp" />
+    <ClCompile Include="Gameplay\InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Math\MathFunctions.cpp" />
     <ClCompile Include="Math\Vector2f.cpp" />
     <ClCompile Include="Math\Vector3f.cpp" />
     <ClCompile Include="Math\Vector4f.cpp" />
+    <ClCompile Include="Rendering\Culling\Camera.cpp" />
     <ClCompile Include="Rendering\Culling\FramePacket.cpp" />
     <ClCompile Include="Rendering\Culling\ViewPacket.cpp" />
+    <ClCompile Include="Rendering\RenderContext\OpenGLES\OpenGLESRenderContext.cpp" />
     <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLRenderCommand.cpp" />
-    <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLWrapper.cpp" />
+    <ClCompile Include="Rendering\RenderContext\OpenGLWrapper.cpp" />
     <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLRenderContext.cpp" />
     <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLVertexBuffer.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanCommandBuffer.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanDebug.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanDepthStencilBuffer.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanFramebuffer.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanHelper.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanImage.cpp" />
@@ -144,6 +168,14 @@
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanRenderPass.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanSwapchain.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanVertexBuffer.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanVertexInputLayout.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test_es.frag" />
+    <None Include="test_es.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -178,6 +210,12 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Emscripten|Win32'">
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Emscripten|x64'">
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
@@ -199,7 +237,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
@@ -215,21 +253,22 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include;$(GLES_SDK)/include;$(EMSCRIPTEN)/system/include;DADOPENGLES</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;DADOPENGLES;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>$(VULKAN_SDK)/Lib/vulkan-1.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(GLES_SDK)/x86-64/</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -247,13 +286,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include;$(GLES_SDK)/include;$(EMSCRIPTEN)/system</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
@@ -261,7 +300,23 @@
       <OptimizeReferences>true</OptimizeReferences>
       <SubSystem>Windows</SubSystem>
       <AdditionalDependencies>$(VULKAN_SDK)/Lib/vulkan-1.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>;$(GLES_SDK)/x86-64</AdditionalLibraryDirectories>
     </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Emscripten|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>; $(GLES_SDK)/Include</AdditionalIncludeDirectories>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>;$(GLES_SDK)/x86-64</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies); libEGL.lib; libGLESv2.lib</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Emscripten|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+    </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

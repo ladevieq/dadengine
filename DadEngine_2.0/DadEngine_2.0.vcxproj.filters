@@ -61,9 +61,7 @@
     <ClInclude Include="Rendering\RenderContext\OpenGL.hpp" />
     <ClInclude Include="Rendering\RenderContext\RenderContext.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkan.hpp" />
-    <ClInclude Include="Rendering\RenderContext\OpenGL\glext.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLRenderContext.hpp" />
-    <ClInclude Include="Rendering\RenderContext\OpenGL\wglext.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanDebug.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanHelper.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanRenderContext.hpp" />
@@ -79,7 +77,6 @@
     <ClInclude Include="Core\PlatformFile.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLVertexShader.hpp" />
-    <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLWrapper.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLGeometryShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLFragmentShader.hpp" />
     <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanVertexShader.hpp" />
@@ -101,6 +98,18 @@
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLRenderCommand.hpp" />
     <ClInclude Include="Rendering\Shader\Shader.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLFramebuffer.hpp" />
+    <ClInclude Include="Rendering\RenderContext\Vulkania\VulkanDepthStencilBuffer.hpp" />
+    <ClInclude Include="Math\Transform3D.hpp" />
+    <ClInclude Include="Gameplay\Actor.hpp" />
+    <ClInclude Include="Gameplay\Gameplay.hpp" />
+    <ClInclude Include="Gameplay\IComponent.hpp" />
+    <ClInclude Include="Gameplay\InputManager.hpp" />
+    <ClInclude Include="Gameplay\CameraManager.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGLES.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGLES\OpenGLESRenderContext.hpp" />
+    <ClInclude Include="Rendering\RenderContext\wglext.hpp" />
+    <ClInclude Include="Rendering\RenderContext\glext.hpp" />
+    <ClInclude Include="Rendering\RenderContext\OpenGLWrapper.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -117,7 +126,6 @@
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanSwapchain.cpp" />
     <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLRenderContext.cpp" />
     <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLVertexBuffer.cpp" />
-    <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLWrapper.cpp" />
     <ClCompile Include="Core\Debug.cpp" />
     <ClCompile Include="Core\Application.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanVertexBuffer.cpp" />
@@ -126,5 +134,21 @@
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanImage.cpp" />
     <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanCommandBuffer.cpp" />
     <ClCompile Include="Rendering\RenderContext\OpenGL\OpenGLRenderCommand.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanDepthStencilBuffer.cpp" />
+    <ClCompile Include="Core\Platform\Windows\WindowsWindow.cpp" />
+    <ClCompile Include="Gameplay\InputManager.cpp" />
+    <ClCompile Include="Gameplay\CameraManager.cpp" />
+    <ClCompile Include="Rendering\Culling\Camera.cpp" />
+    <ClCompile Include="Gameplay\IComponent.cpp" />
+    <ClCompile Include="Rendering\RenderContext\Vulkania\VulkanVertexInputLayout.cpp" />
+    <ClCompile Include="Rendering\RenderContext\OpenGLES\OpenGLESRenderContext.cpp" />
+    <ClCompile Include="Rendering\RenderContext\OpenGLWrapper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test_es.frag" />
+    <None Include="test_es.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
   </ItemGroup>
 </Project>

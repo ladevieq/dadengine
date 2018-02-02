@@ -46,4 +46,4 @@ namespace DadEngine::Rendering
 	};
 }
 
-#endif __COMMAND_BUFFER_HPP_
+#endif //__COMMAND_BUFFER_HPP_

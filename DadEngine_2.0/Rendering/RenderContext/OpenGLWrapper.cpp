@@ -3,6 +3,7 @@
 
 namespace DadEngine::Rendering::OpenGLWrapper
 {
+
 	HMODULE hModule = LoadLibraryA("opengl32.dll");
 
 
@@ -47,7 +48,9 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 	PFNGLCOMPILESHADERPROC PFNglCompileShader = nullptr;
 
+#if defined (DADOPENGL)
 	PFNGLATTACHSHADERPROC PFNglAttachShader = nullptr;
+#endif
 
 	PFNGLGETSHADERIVPROC PFNglGetShaderiv = nullptr;
 
@@ -67,13 +70,22 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 	PFNGLBINDATTRIBLOCATIONPROC PFNglBindAttribLocation = nullptr;
 
+#if defined (DADOPENGL)
 	PFNGLBINDFRAGDATALOCATIONPROC PFNglBindFragDataLocation = nullptr;
+#endif
 
 	PFNGLGETPROGRAMIVPROC PFNglGetProgramiv = nullptr;
 
 	PFNGLGETPROGRAMINFOLOGPROC PFNglGetProgramInfoLog = nullptr;
 
 	PFNGLDELETEPROGRAMPROC PFNglDeleteProgram = nullptr;
+
+	// Uniforms variable functions
+	PFNGLGETUNIFORMLOCATIONPROC PFNglGetUniformLocation = nullptr;
+
+	PFNGLUNIFORM4FVPROC PFNglUniform4fv = nullptr;
+
+	PFNGLUNIFORMMATRIX4FVPROC PFNglUniformMatrix4fv = nullptr;
 
 
 	// Framebuffer stuff
@@ -168,7 +180,9 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 	void __stdcall glAttachShader(GLuint _InProgramID, GLuint _InShaderID)
 	{
+#if defined (DADOPENGL)
 		PFNglAttachShader(_InProgramID, _InShaderID);
+#endif
 	}
 
 	void __stdcall glDetachShader(GLuint _InProgramID, GLuint _InShaderID)
@@ -213,10 +227,14 @@ namespace DadEngine::Rendering::OpenGLWrapper
 		PFNglBindAttribLocation(_InProgramID, _InBindIndex, _InBindName);
 	}
 
+
 	void __stdcall glBindFragDataLocation(GLuint _InProgramID, GLuint _InBindIndex, const char* _InBindName)
 	{
+#if defined (DADOPENGL)
 		PFNglBindFragDataLocation(_InProgramID, _InBindIndex, _InBindName);
+#endif
 	}
+
 
 	void __stdcall glGetProgramiv(GLuint _InProgramID, GLenum _InType, GLint* _OutParams)
 	{
@@ -231,6 +249,22 @@ namespace DadEngine::Rendering::OpenGLWrapper
 	void __stdcall glDeleteProgram(GLuint _InProgramID)
 	{
 		PFNglDeleteProgram(_InProgramID);
+	}
+
+	// Uniforms variable functions
+	GLint __stdcall glGetUniformLocation(GLuint _InProgramID, const GLchar* _InName)
+	{
+		return PFNglGetUniformLocation(_InProgramID, _InName);
+	}
+
+	void __stdcall glUniform4fv(GLint _InLocation, GLsizei _InCount, GLfloat* _InValues)
+	{
+		PFNglUniform4fv(_InLocation, _InCount, _InValues);
+	}
+
+	void __stdcall glUniformMatrix4fv(GLint _InLocation, GLsizei _InCount, GLboolean _InTranspose, const float* _InValue)
+	{
+		PFNglUniformMatrix4fv(_InLocation, _InCount, _InTranspose, _InValue);
 	}
 
 
@@ -253,12 +287,16 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 #if defined(GL_EXT_vertex_array)
 	PFNGLDRAWARRAYSEXTPROC PFNglDrawArrays = nullptr;
+#elif defined(DADOPENGLES)
+	PFNGLDRAWARRAYSPROC PFNglDrawArrays = nullptr;
+#endif
 
 	void __stdcall glDrawArrays(GLenum _InMode, GLint _InFirst, GLsizei _InCount)
 	{
+#if defined(GL_EXT_vertex_array) || defined(DADOPENGLES)
 		PFNglDrawArrays(_InMode, _InFirst, _InCount);
-	}
 #endif
+	}
 
 #if defined(WINDOWS)
 
@@ -337,7 +375,9 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 		PFNglCompileShader = (PFNGLCOMPILESHADERPROC)glLoadFunction("glCompileShader");
 
+#if defined(DADOPENGL)
 		PFNglAttachShader = (PFNGLATTACHSHADERPROC)glLoadFunction("glAttachShader");
+#endif
 
 		PFNglDetachShader = (PFNGLDETACHSHADERPROC)glLoadFunction("glDetachShader");
 
@@ -357,13 +397,22 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 		PFNglBindAttribLocation = (PFNGLBINDATTRIBLOCATIONPROC)glLoadFunction("glBindAttribLocation");
 
+#if defined(DADOPENGL)
 		PFNglBindFragDataLocation = (PFNGLBINDFRAGDATALOCATIONPROC)glLoadFunction("glBindFragDataLocation");
+#endif
 
 		PFNglGetProgramiv = (PFNGLGETPROGRAMIVPROC)glLoadFunction("glGetProgramiv");
 
 		PFNglGetProgramInfoLog = (PFNGLGETPROGRAMINFOLOGPROC)glLoadFunction("glGetProgramInfoLog");
 
 		PFNglDeleteProgram = (PFNGLDELETEPROGRAMPROC)glLoadFunction("glDeleteProgram");
+
+		// Uniforms variable functions
+		PFNglGetUniformLocation = (PFNGLGETUNIFORMLOCATIONPROC)glLoadFunction("glGetUniformLocation");
+
+		PFNglUniform4fv = (PFNGLUNIFORM4FVPROC)glLoadFunction("glUniform4fv");
+
+		PFNglUniformMatrix4fv = (PFNGLUNIFORMMATRIX4FVPROC)glLoadFunction("glUniformMatrix4fv");
 
 
 		// Framebuffer stuff
@@ -381,6 +430,8 @@ namespace DadEngine::Rendering::OpenGLWrapper
 	{
 #if defined(GL_EXT_vertex_array)
 		PFNglDrawArrays = (PFNGLDRAWARRAYSEXTPROC)glLoadFunction("glDrawArrays");
+#elif defined(DADOPENGLES)
+		PFNglDrawArrays = (PFNGLDRAWARRAYSPROC)glLoadFunction("glDrawArrays");
 #endif
 #if defined(WINDOWS) 
 		PFNwglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)glLoadFunction("wglCreateContextAttribsARB");
@@ -393,22 +444,24 @@ namespace DadEngine::Rendering::OpenGLWrapper
 	
 	void glInit()
 	{
+		glLoadStandardFunctions();
+		glLoadExtensionsFunctions();
+
+#ifdef _DEBUG
 		int32 iNumExtensions = 0;
 		int32 iMajor = 0, iMinor = 0;
 
 		glGetIntegerv(GL_MAJOR_VERSION, &iMajor);
 		glGetIntegerv(GL_MINOR_VERSION, &iMinor);
 
-		printf("%s%d%s%d\n", "Version : ", iMajor, ".", iMinor);
+		printf("%s%d%s%d\n", "Higher supported version : ", iMajor, ".", iMinor);
 		glGetIntegerv(GL_NUM_EXTENSIONS, &iNumExtensions);
 		printf("%s%d\n", "Extension count : ", iNumExtensions);
-
-		glLoadStandardFunctions();
-		glLoadExtensionsFunctions();
 
 		for (int32 i = 0; i < iNumExtensions; i++)
 		{
 			printf("%s\n", getStringi(GL_EXTENSIONS, i));
 		}
+#endif
 	}
 }

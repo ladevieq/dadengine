@@ -4,14 +4,17 @@
 
 namespace DadEngine::Core
 {
+	Application* s_App = new Application(ApplicationInfo{ "DadEngine", 1080U, 720U, FALSE, FALSE });
+
 	Application::Application()
 		: m_window(m_AppInfo.m_sApplicationName, m_AppInfo.m_uiWidth, m_AppInfo.m_uiHeight, m_AppInfo.m_bFullscreen, m_AppInfo.m_bVerticalSync)
 	{}
 
-	Application::Application(ApplicationInfo& _InAppInfo)
+	Application::Application(ApplicationInfo _InAppInfo)
 		: m_AppInfo(_InAppInfo),
 		m_window(m_AppInfo.m_sApplicationName, m_AppInfo.m_uiWidth, m_AppInfo.m_uiHeight, m_AppInfo.m_bFullscreen, m_AppInfo.m_bVerticalSync)
-	{}
+	{	
+	}
 
 
 	void Application::Run()
@@ -88,5 +91,10 @@ namespace DadEngine::Core
 				uiCounter++;*/
 			}
 		}
+	}
+
+	Application * Application::GetApp()
+	{
+		return s_App;
 	}
 }

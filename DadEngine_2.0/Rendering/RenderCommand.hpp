@@ -10,4 +10,4 @@ namespace DadEngine::Rendering
 	};
 }
 
-#endif __RENDER_COMMAND_HPP_
+#endif //__RENDER_COMMAND_HPP_
