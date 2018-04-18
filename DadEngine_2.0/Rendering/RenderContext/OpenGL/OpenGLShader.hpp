@@ -39,6 +39,8 @@ namespace DadEngine::Rendering
 				report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
 				report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_ERROR;
 				report.m_uiReportCode = DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_FAILED;
+				report.m_iLine = __LINE__;
+				report.m_sFile = __FILE__;
 				report.m_sMessage = infoLog.GetData();
 				LogDebugReport(report);
 			}
@@ -48,6 +50,8 @@ namespace DadEngine::Rendering
 				report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
 				report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_INFORMATION;
 				report.m_uiReportCode = DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_SUCCEDED;
+				report.m_iLine = __LINE__;
+				report.m_sFile = __FILE__;
 				report.m_sMessage = "Shader program linking succeded";
 				LogDebugReport(report);
 			}

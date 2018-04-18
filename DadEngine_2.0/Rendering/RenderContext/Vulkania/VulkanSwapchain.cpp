@@ -58,7 +58,7 @@ namespace DadEngine::Rendering
 		swapchain_create_info.imageArrayLayers = 1U;
 		swapchain_create_info.imageExtent = m_SwapchainExtent;
 		swapchain_create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		swapchain_create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT; // /!\*
+		swapchain_create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT;
 		swapchain_create_info.presentMode = _InPresentationMode;
 		swapchain_create_info.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR;
 		swapchain_create_info.oldSwapchain = m_Swapchain;

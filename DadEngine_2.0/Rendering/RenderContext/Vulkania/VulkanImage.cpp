@@ -4,8 +4,7 @@
 
 namespace DadEngine::Rendering
 {
-	VulkanImage::VulkanImage(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice,
-		VkPhysicalDeviceMemoryProperties _InPhysicalDeviceMemoryProps,
+	VulkanImage::VulkanImage(VkDevice _InDevice, VkPhysicalDeviceMemoryProperties _InPhysicalDeviceMemoryProps,
 		VkCommandBuffer _InCommandBuffer, VkFormat _InImageFormat,
 		VkImageUsageFlags _InImageUsage, VkImageAspectFlags _InImageAspects,
 		VkImageLayout _InImageLayout, VkExtent2D& _InImageSize,
@@ -77,8 +76,7 @@ namespace DadEngine::Rendering
 			VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
 	}
 
-	VulkanImage::VulkanImage(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice,
-		VkPhysicalDeviceMemoryProperties _InPhysicalDeviceMemoryProps,
+	VulkanImage::VulkanImage(VkDevice _InDevice, VkPhysicalDeviceMemoryProperties _InPhysicalDeviceMemoryProps,
 		VkFormat _InImageFormat, VkImageUsageFlags _InImageUsage,
 		VkImageAspectFlags _InImageAspects, VkExtent2D & _InImageSize,
 		size_t _InImageLayers)

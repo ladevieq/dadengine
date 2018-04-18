@@ -1,10 +1,12 @@
 #include "OpenGLRenderContext.hpp"
 
-#include "glext.hpp"
-#include "wglext.hpp"
-#include "OpenGLWrapper.hpp"
+#include "../OpenGLWrapper.hpp"
 #include "../../Mesh/VertexFactory.hpp"
+
 #include "../../../Math/Math.hpp"
+
+#include "../../../Gameplay/CameraManager.hpp"
+#include "../../../Gameplay/Actor.hpp"
 
 namespace DadEngine::Rendering
 {
@@ -21,7 +23,7 @@ namespace DadEngine::Rendering
 		GL_LINE,
 		GL_POINT
 	};
-
+	
 	OpenGLRenderContext::OpenGLRenderContext(PlatformWindow& _InWindow)
 	{
 		m_HDC = GetDC(_InWindow.GetWindowHandle());
@@ -38,6 +40,7 @@ namespace DadEngine::Rendering
 		SetPixelFormat(m_HDC, pixelFormat, &pxlDescriptor);
 
 		m_renderContext = wglCreateContext(m_HDC);
+		
 		wglMakeCurrent(m_HDC, m_renderContext);
 
 		OpenGLWrapper::glInit();
@@ -83,7 +86,7 @@ namespace DadEngine::Rendering
 
 	void OpenGLRenderContext::Present(CommandBuffer* _InCommandBuffer)
 	{
-		OpenGLWrapper::glBindFrameBuffer(GL_FRAMEBUFFER, 0U);
+		OpenGLWrapper::glBindFrameBuffer(GL_FRAMEBUFFER_DEFAULT, 0U);
 	}
 
 	void OpenGLRenderContext::Draw(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer)
@@ -99,6 +102,41 @@ namespace DadEngine::Rendering
 	void OpenGLRenderContext::BindShaderProgram(Shader* _InShader, CommandBuffer* _InCommandBuffer)
 	{
 		CommandBindShaderProgram((OpenGLCommandBuffer*)_InCommandBuffer, _InShader);
+		Matrix4x4 pers = Gameplay::CameraManager::GetCameraManager()->GetMainCamera()->GetProjectionMatrix();
+		Matrix4x4 view;
+		Vector3f eyePos = Gameplay::CameraManager::GetCameraManager()->GetMainCamera()->m_Owner->GetRelativeLocation();
+		Vector3f targetPosition = Vector3f{ eyePos.x, eyePos.y, -1.f };
+		Vector3f up = Vector3f{ 0.f, 1.f, 0.f };
+		view.LookAt(eyePos, targetPosition, up);
+		Matrix4x4 vp = pers * view;
+
+		int32 location = OpenGLWrapper::glGetUniformLocation(((OpenGLShader*)_InShader)->m_uiProgramID, "MVP");
+		OpenGLWrapper::glUniformMatrix4fv(location, 1, GL_FALSE, ((float*)&vp));
+	}
+
+	void OpenGLRenderContext::SetShaderParameter(Shader* _InShader, const char* _InParameterName, ShaderParameterType _InShaderParameterType, void* _InParam)
+	{
+		int32 location = OpenGLWrapper::glGetUniformLocation(((OpenGLShader*)_InShader)->m_uiProgramID, "MVP");
+
+		switch (_InShaderParameterType)
+		{
+		case SHADER_PARAMETER_TYPE_MATRIX4X4:
+			OpenGLWrapper::glUniformMatrix4fv(location, 1, GL_FALSE, ((float*)_InParam));
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	void BeginRenderPass(RenderPass* _InRenderPass, Framebuffer* _InFrameBuffer, CommandBuffer* _InCommandBuffer)
+	{
+		OpenGLWrapper::glBindFrameBuffer(GL_READ_FRAMEBUFFER, ((OpenGLFramebuffer*)_InFrameBuffer)->m_uiFramebufferIndex);
+	}
+
+	void EndRenderPass(CommandBuffer* _InCommandBuffer)
+	{
+		OpenGLWrapper::glBindFrameBuffer(GL_FRAMEBUFFER_DEFAULT, 0U);
 	}
 
 
@@ -122,7 +160,10 @@ namespace DadEngine::Rendering
 
 
 
-	void OpenGLRenderContext::BeginFrame() {}
+	void OpenGLRenderContext::BeginFrame()
+	{
+		OpenGLWrapper::glBindFrameBuffer(GL_FRAMEBUFFER_DEFAULT, 0U);
+	}
 
 	void OpenGLRenderContext::EndFrame()
 	{
@@ -136,11 +177,6 @@ namespace DadEngine::Rendering
 		}
 
 		SwapBuffers(m_HDC);
-
-		for (OpenGLCommandBuffer* currentCmdBuffer : m_SubmittedCommandBuffers)
-		{
-			currentCmdBuffer->m_Commands.Clear();
-		}
 
 		m_SubmittedCommandBuffers.Clear();
 	}

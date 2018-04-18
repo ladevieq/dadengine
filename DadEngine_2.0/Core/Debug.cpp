@@ -29,10 +29,12 @@ namespace DadEngine::Core
 	*/
 	void LogDebugReport(const DebugReport & _InDebugReport)
 	{
-		printf("[%s] [%s] (%d) : %s\n",
+		printf("[%s] [%s] (%d. %d, %s) : %s\n",// May need change
 			gContextName[_InDebugReport.m_uiContextFlag],
 			gReportTypeName[_InDebugReport.m_uiReportTypeFlag],
 			_InDebugReport.m_uiReportCode,
+			_InDebugReport.m_iLine,
+			_InDebugReport.m_sFile,
 			_InDebugReport.m_sMessage);
 	}
 

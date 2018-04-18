@@ -5,7 +5,7 @@
 #include <vulkan/vulkan.h>
 
 #include "../RenderContext.hpp"
-#include "../../Core/Core.hpp"
+#include "../../../Core/Core.hpp"
 #include "VulkanSwapchain.hpp"
 #include "VulkanHelper.hpp"
 
@@ -13,6 +13,7 @@
 #include "VulkanVertexInputLayout.hpp"
 #include "VulkanShader.hpp"
 #include "VulkanImage.hpp"
+#include "VulkanDepthStencilBuffer.hpp"
 #include "VulkanVertexBuffer.hpp"
 #include "VulkanFramebuffer.hpp"
 #include "VulkanRenderPass.hpp"
@@ -139,7 +140,7 @@ namespace DadEngine::Rendering
 		VkExtent2D m_WindowExtent;
 
 		VulkanImage* m_BackBuffer = nullptr;
-		VulkanImage m_DepthStencilBuffer;
+		VulkanDepthStencilBuffer m_DepthStencilBuffer;
 
 		VulkanRenderPass m_Renderpass;
 		//VkRenderPass m_Renderpass = VK_NULL_HANDLE;

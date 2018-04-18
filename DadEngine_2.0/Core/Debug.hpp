@@ -36,7 +36,7 @@ namespace DadEngine::Core//::Debug
 		
 		DEBUG_REPORT_CODE_SHADER_COMPILING_FAILED = 23001,
 		DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_FAILED = 23002,
-		DEBUG_REPORT_CODE_DEPTH_STENCIL_BUFFER_FORMAT_ERROR = 23002,
+		DEBUG_REPORT_CODE_DEPTH_STENCIL_BUFFER_FORMAT_ERROR = 23003,
 
 		MAX_DEBUG_REPORT_CODE = 0xffffffff
 	};
@@ -84,12 +84,14 @@ namespace DadEngine::Core//::Debug
 		DebugReportContextFlags m_uiContextFlag = MAX_DEBUG_REPORT_CONTEXT;
 		DebugReportTypeFlags m_uiReportTypeFlag = MAX_DEBUG_REPORT_TYPE;
 		DebugReportCode m_uiReportCode = MAX_DEBUG_REPORT_CODE;
+		int32 m_iLine; // May need change
+		const char* m_sFile = nullptr; // May need change
 		const char* m_sMessage = nullptr;
 	};
 
 
 	/*
-		[Context] : [Type] : (Code) : Message
+		[Context] : [Type] : (Code, Line, File) : Message
 	*/
 	void LogDebugReport(const DebugReport& _InDebugReport);
 

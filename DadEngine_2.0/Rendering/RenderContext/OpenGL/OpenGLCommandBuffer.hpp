@@ -14,7 +14,15 @@ namespace DadEngine::Rendering
 			: CommandBuffer(_InRenderContext)
 		{}
 
-		void BeginRecord() override final {}
+		void BeginRecord() override final
+		{
+			for (OpenGLRenderCommand* currentRenderCmd : m_Commands)
+			{
+				delete currentRenderCmd;
+			}
+
+			m_Commands.Clear();
+		}
 
 		void EndRecord() override final { m_ptrRenderContext->SubmitCommandBuffer(this); }
 

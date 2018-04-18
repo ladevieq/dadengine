@@ -3,9 +3,9 @@
 
 #include <Windows.h>
 #include <gl/GL.h>
-#include "OpenGLWrapper.hpp"
 #include "OpenGLVertexBuffer.hpp"
 
+#include "../OpenGLWrapper.hpp"
 #include "../../Color.hpp"
 
 

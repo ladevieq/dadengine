@@ -536,88 +536,13 @@ namespace DadEngine::Rendering
 	{
 		VkFormat format = VulkanHelper::GetSupportDepthStencilFormats(m_PhysicalDevice);
 
-		m_DepthStencilBuffer = VulkanImage(m_Device, m_PhysicalDevice,
-			m_PhysicalDeviceMemoryProperties,
-			format,
-			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT,
-			VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT,
-			m_Swapchain.m_SwapchainExtent, 1U);
+		m_DepthStencilBuffer = VulkanDepthStencilBuffer(m_Device, format,
+			m_Swapchain.m_SwapchainExtent, m_PhysicalDeviceMemoryProperties,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
 	}
 
 	void VulkanRenderContext::CreateRenderpass()
 	{
-		/*VkAttachmentDescription attachments[2] = {};
-		attachments[0].format = m_Swapchain.GetFormat();
-		attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[0].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		attachments[0].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		attachments[0].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		attachments[0].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-
-		attachments[1].format = m_depthStencilBuffer.format;
-		attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-		attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-		attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-		attachments[1].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[1].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-		attachments[1].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-		VkAttachmentReference color_attachement_reference = {};
-		color_attachement_reference.attachment = 0U;
-		color_attachement_reference.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-		VkAttachmentReference depth_stencil_attachement_reference = {};
-		depth_stencil_attachement_reference.attachment = 1U;
-		depth_stencil_attachement_reference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-
-
-		VkSubpassDescription subpass_description = {};
-		subpass_description.flags = 0U;
-		subpass_description.colorAttachmentCount = 1U;
-		subpass_description.pColorAttachments = &color_attachement_reference;
-		subpass_description.pDepthStencilAttachment = &depth_stencil_attachement_reference;
-		subpass_description.inputAttachmentCount = 0U;
-		subpass_description.pInputAttachments = VK_NULL_HANDLE;
-		subpass_description.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-		subpass_description.preserveAttachmentCount = 0U;
-		subpass_description.pPreserveAttachments = VK_NULL_HANDLE;
-
-
-		// Dependency to prepare implicit barrier
-		TArray<VkSubpassDependency> dependencies(2U);
-		dependencies[0U].srcSubpass = VK_SUBPASS_EXTERNAL;
-		dependencies[0U].dstSubpass = 0;
-		dependencies[0U].srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		dependencies[0U].dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependencies[0U].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		dependencies[0U].dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		dependencies[0U].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-		dependencies[1U].srcSubpass = 0;
-		dependencies[1U].dstSubpass = VK_SUBPASS_EXTERNAL;
-		dependencies[1U].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		dependencies[1U].dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		dependencies[1U].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		dependencies[1U].dstAccessMask = VK_ACCESS_MEMORY_READ_BIT;
-		dependencies[1U].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-
-		VkRenderPassCreateInfo renderpass_create_info = {};
-		renderpass_create_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-		renderpass_create_info.pNext = VK_NULL_HANDLE;
-		renderpass_create_info.attachmentCount = 2U;
-		renderpass_create_info.pAttachments = attachments;
-		renderpass_create_info.subpassCount = 1U;
-		renderpass_create_info.pSubpasses = &subpass_description;
-		renderpass_create_info.dependencyCount = 2U;
-		renderpass_create_info.pDependencies = dependencies.GetData();
-		renderpass_create_info.flags = 0U;
-
-		VK_CHECK_RESULT(vkCreateRenderPass(m_Device, &renderpass_create_info, VK_NULL_HANDLE, &m_Renderpas.m_renderpass));*/
 		VulkanImage images[2U] = { m_Swapchain.m_SwapchainImages[0U], m_DepthStencilBuffer };
 
 		m_Renderpass = VulkanRenderPass(m_Device, images, 2U);

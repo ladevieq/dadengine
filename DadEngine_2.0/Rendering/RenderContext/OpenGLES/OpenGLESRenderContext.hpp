@@ -1,30 +1,24 @@
-#ifndef __OPENGL_RENDER_CONTEXT_HPP_
-#define __OPENGL_RENDER_CONTEXT_HPP_
+#ifndef __OPENGLES_RENDER_CONTEXT_HPP_
+#define __OPENGLES_RENDER_CONTEXT_HPP_
 
-#include <Windows.h>
-#include <gl/GL.h>
-#include "../../../Core/Core.hpp"
 #include "../RenderContext.hpp"
-#include "../../Mesh/RawMesh.hpp"
-#include "OpenGLVertexBuffer.hpp"
-#include "OpenGLShader.hpp"
-#include "OpenGLRenderCommand.hpp"
-#include "OpenGLCommandBuffer.hpp"
-#include "OpenGLFramebuffer.hpp"
+
+#include "../OpenGLES.hpp"
 
 
 namespace DadEngine::Rendering
 {
-	class OpenGLRenderContext : public RenderContext
+	class OpenGLESRenderContext : public RenderContext
 	{
 
 	public:
 
-		OpenGLRenderContext(PlatformWindow& _InWindow);
+		OpenGLESRenderContext(PlatformWindow& _InWindow);
 
+		// Commands
 		void ClearColorBuffer(Color& _InClearColor, CommandBuffer* _InCommandBuffer) override final;
 
-		void ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer);
+		void ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer) override final;
 
 		void Present(CommandBuffer* _InCommandBuffer) override final;
 
@@ -34,13 +28,12 @@ namespace DadEngine::Rendering
 
 		void BindShaderProgram(Shader* _InShader, CommandBuffer* _InCommandBuffer) override final;
 
-		void SetShaderParameter(Shader* _InShader, const char* _InParameterName, ShaderParameterType _InParameterType, void* _InParam);
+		void BeginRenderPass(RenderPass* _InRenderPass, Framebuffer* _InFrameBuffer, CommandBuffer* _InCommandBuffer) override final;
 
-		void BeginRenderPass(RenderPass* _InRenderPass, Framebuffer* _InFrameBuffer, CommandBuffer* _InCommandBuffer) override final {};
-
-		void EndRenderPass(CommandBuffer* _InCommandBuffer) override final {};
+		void EndRenderPass(CommandBuffer* _InCommandBuffer) override final;
 
 
+		// State change commands
 		void SetViewport(Viewport& _InViewport, CommandBuffer* _InCommandBuffer) override final;
 
 		void SetCullingMode(CullingMode _InCullingMode, CommandBuffer* _InCommandBuffer) override final;
@@ -48,13 +41,15 @@ namespace DadEngine::Rendering
 		void SetFillMode(FillMode _InFillMode, CommandBuffer* _InCommandBuffer) override final;
 
 
-		Image* GetBackBuffer() override final { return nullptr; }
 
-		Image* GetDepthStencilBuffer() override final { return nullptr; }
+		Image* GetBackBuffer() override final;
 
-		Framebuffer* GetBackFramebuffer() override final { return nullptr; }
+		Image* GetDepthStencilBuffer() override final;
 
-		RenderPass* GetRenderPass() override final { return nullptr; }
+		Framebuffer* GetBackFramebuffer() override final;
+
+		RenderPass* GetRenderPass() override final;
+
 
 
 		void BeginFrame() override final;
@@ -65,24 +60,22 @@ namespace DadEngine::Rendering
 
 
 		VertexBuffer* CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride) override final;
-
 		VertexShader* CreateVertexShader(const char* _InShaderCode, size_t _InShaderCodeSize, TArray<VertexInput>& _InVertexInputLayout) override final;
 		GeometryShader* CreateGeometryShader(const char* _InShaderCode, size_t _InShaderCodeSize) override final;
 		FragmentShader* CreateFragmentShader(const char* _InShaderCode, size_t _InShaderCodeSize) override final;
-
 		Shader* CreateShader(VertexShader* _InVertexShader, GeometryShader* _InGeometryShader, FragmentShader* _InFragmentShader, RenderPass* _InRenderpass) override final;
-
 		CommandBuffer* CreateCommandBuffer() override final;
-		virtual RenderPass* CreateRenderPass(TArray<Image*>& _InImage) override final { return nullptr; }
-		virtual Framebuffer* CreateFramebuffer(Extent2D& _InFramebufferSize, RenderPass* _InRenderPass) override final { return nullptr; }
+		RenderPass* CreateRenderPass(TArray<Image*>& _InImage) override final;
+		Framebuffer* CreateFramebuffer(Extent2D& _InFramebufferSize, RenderPass* _InRenderPass) override final;
+
 
 	private:
 
-		TArray<OpenGLCommandBuffer*> m_SubmittedCommandBuffers;
+		//TArray<OpenGLCommandBuffer*> m_SubmittedCommandBuffers;
 
 		HDC m_HDC = nullptr; // Hardware device context one per rendering thread
 		HGLRC m_renderContext = nullptr; // Hardware render context
 	};
 }
 
-#endif //__OPENGL_RENDER_CONTEXT_HPP_
+#endif //__OPENGLES_RENDER_CONTEXT_HPP_

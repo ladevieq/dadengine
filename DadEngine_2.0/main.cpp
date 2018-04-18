@@ -1,7 +1,7 @@
-#define /*DADOPNEGL*//*DADVULKAN*/ DADOPENGLES
+#define DADOPENGL/*DADVULKAN*/ //DADOPENGLES
 //#define TEST
 
-#define WEB_TARGET
+//#define WEB_TARGET
 #if defined (WEB_TARGET)
 	#include <emscripten/emscripten.h>
 #endif
@@ -148,7 +148,7 @@ int main
 #endif
 	Application::GetApp()->m_window.ToggleConsole();
 
-#if defined(DADOPNEGL)
+#if defined(DADOPENGL)
 	renderContext = new OpenGLRenderContext(Application::GetApp()->m_window);
 
 	vertexShaderReader = PlatformFileSystem::CreateFileReader("test.vert", IO_MODE_TEXT);
