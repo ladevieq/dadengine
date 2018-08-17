@@ -3,17 +3,17 @@
 namespace DadEngine::Rendering
 {
 	VulkanDepthStencilBuffer::VulkanDepthStencilBuffer(VkDevice _InDevice, VkFormat _InDepthStencilFormat,
-		VkExtent2D& _InImageSize, VkPhysicalDeviceMemoryProperties& _InPhysicalDeviceMemoryProps,
-		VkImageUsageFlags _InImageUses)
+		VkExtent2D& _InImageSize, VkPhysicalDevice _InPhysicalDevice,
+		VkImageUsageFlags _InImageUses, VkCommandBuffer _InCommandBuffer)
 		: VulkanImage(_InDevice, _InDepthStencilFormat, _InImageSize,
 			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | _InImageUses)
 	{
 		ChooseAspect();
 
-		CreateDepthStencilBuffer(_InPhysicalDeviceMemoryProps);
+		CreateDepthStencilBuffer(_InPhysicalDevice, _InCommandBuffer);
 	}
 
-	void VulkanDepthStencilBuffer::CreateDepthStencilBuffer(VkPhysicalDeviceMemoryProperties& _InPhysicalDeviceMemoryProps)
+	void VulkanDepthStencilBuffer::CreateDepthStencilBuffer(VkPhysicalDevice _InPhysicalDevice, VkCommandBuffer _InCommandBuffer)
 	{
 		// Image handle creation
 		VkImageCreateInfo image_create_info = {};
@@ -42,7 +42,7 @@ namespace DadEngine::Rendering
 		VkMemoryAllocateInfo memory_allocation_info = {};
 		memory_allocation_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		memory_allocation_info.pNext = VK_NULL_HANDLE;
-		memory_allocation_info.memoryTypeIndex = VulkanHelper::CheckMemoryType(memory_requierements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _InPhysicalDeviceMemoryProps);
+		memory_allocation_info.memoryTypeIndex = VulkanHelper::CheckMemoryTypeIndex(_InPhysicalDevice, memory_requierements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 		memory_allocation_info.allocationSize = memory_requierements.size;
 
 		VK_CHECK_RESULT(vkAllocateMemory(m_Device, &memory_allocation_info, VK_NULL_HANDLE, &m_Memory));
@@ -71,5 +71,7 @@ namespace DadEngine::Rendering
 		m_ImageSubresourceRange.levelCount = 1U;
 
 		VK_CHECK_RESULT(vkCreateImageView(m_Device, &image_view_create_info, VK_NULL_HANDLE, &m_View));
+
+		VulkanHelper::SetImageLayout(_InCommandBuffer, this->m_Image, this->m_CurrentLayout, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT);
 	}
 }

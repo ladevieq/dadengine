@@ -32,7 +32,7 @@ namespace DadEngine::Rendering
 				String infoLog(maxLength);
 				OpenGLWrapper::glGetShaderInfoLog(m_uiShaderID, maxLength, &maxLength, const_cast<GLchar*>(infoLog.Cstr()));
 
-				// TODO get each lines to generates differant messages
+				// TODO: get each lines to generates differant messages
 				report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
 				report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_ERROR;
 				report.m_uiReportCode = DEBUG_REPORT_CODE_SHADER_COMPILING_FAILED;

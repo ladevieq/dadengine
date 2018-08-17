@@ -1,7 +1,12 @@
 #ifndef __VULKAN_SHADER_HPP_
 #define __VULKAN_SHADER_HPP_
 
-#include "../../Mesh/VertexInputLayout.hpp"
+#include "vulkan/vulkan.h"
+
+#include "../../../Math/Math.hpp"
+#include "../../../Gameplay/Gameplay.hpp"
+
+#include "VulkanDebug.hpp"
 #include "VulkanVertexShader.hpp"
 #include "VulkanGeometryShader.hpp"
 #include "VulkanFragmentShader.hpp"
@@ -9,15 +14,82 @@
 
 namespace DadEngine::Rendering
 {
+	class VulkanUBO
+	{
+
+	public:
+		VulkanUBO(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice)
+			: m_bufferSize(sizeof(Matrix4x4))
+		{
+			VulkanHelper::CreateBuffer(_InDevice, m_bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, m_buffer);
+
+			VulkanHelper::AllocateBufferMemory(_InDevice, _InPhysicalDevice, m_buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_memory);
+
+			vkBindBufferMemory(_InDevice, m_buffer, m_memory, 0U);
+
+			m_bufferInfo.buffer = m_buffer;
+			m_bufferInfo.offset = 0;
+			m_bufferInfo.range = VK_WHOLE_SIZE;
+		}
+
+		void UpdateUBO(VkDevice _InDevice, VkDescriptorSet _InDescriptorSet) {
+			Matrix4x4 pers = Gameplay::CameraManager::GetCameraManager()->GetMainCamera()->GetProjectionMatrix();
+			pers.m_22 *= -1;
+			Matrix4x4 view;
+			Vector3f eyePos = Gameplay::CameraManager::GetCameraManager()->GetMainCamera()->m_Owner->GetRelativeLocation();
+			Vector3f targetPosition = Vector3f{ eyePos.x, eyePos.y, -1.f };
+			Vector3f up = Vector3f{ 0.f, 1.f, 0.f };
+			view.LookAt(eyePos, targetPosition, up);
+			Matrix4x4 vp = pers * view;
+
+			// Update UBO content
+			void *data = nullptr;
+			vkMapMemory(_InDevice, m_memory, 0U, m_bufferSize, 0U, &data);
+			DadEngine::Core::MemoryManager::Copy(&vp, data, sizeof(Matrix4x4));
+			vkUnmapMemory(_InDevice, m_memory);
+
+
+			// Update descriptor set content
+			VkWriteDescriptorSet write_descriptor_set = {};
+			write_descriptor_set.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+			write_descriptor_set.pNext = VK_NULL_HANDLE;
+			write_descriptor_set.dstSet = _InDescriptorSet;
+			write_descriptor_set.dstBinding = 0U;
+			write_descriptor_set.dstArrayElement = 0U;
+			write_descriptor_set.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+			write_descriptor_set.descriptorCount = 1U;
+			write_descriptor_set.pBufferInfo = &m_bufferInfo;
+			write_descriptor_set.pImageInfo = VK_NULL_HANDLE;
+			write_descriptor_set.pTexelBufferView = VK_NULL_HANDLE;
+
+			vkUpdateDescriptorSets(_InDevice, 1U, &write_descriptor_set, 0U, VK_NULL_HANDLE);
+		}
+
+		VkDescriptorBufferInfo m_bufferInfo = {};
+		VkBuffer m_buffer = VK_NULL_HANDLE;
+		VkDeviceMemory m_memory = VK_NULL_HANDLE;
+		VkDeviceSize m_bufferSize = 0U;
+	};
+
+
 	// Pipeline object
 	class VulkanShader : public Shader
 	{
 	public:
 
 		VulkanShader(VertexShader* _InVertexShader, GeometryShader* _InGeometryShader, FragmentShader* _InFragmentShader, VkDevice _InDevice,
-			VkRenderPass _InRenderPass, VkPipelineCache _InPipelineCache, VulkanSwapchain& _InSwapchain)
-			: Shader(_InVertexShader, _InGeometryShader, _InFragmentShader)
+			VkPhysicalDevice _InPhysicalDevice, VkRenderPass _InRenderPass, VkPipelineCache _InPipelineCache, VulkanSwapchain& _InSwapchain, VkDescriptorPool _InDescriptorPool)
+			: Shader(_InVertexShader, _InGeometryShader, _InFragmentShader), m_Device(_InDevice), m_ShaderUBO(_InDevice, _InPhysicalDevice)
 		{
+			// Temporary code -------------
+			AddShaderBinding(VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_VERTEX_BIT);
+
+			createDescriptorSetLayout();
+			createDescriptorSet(_InDescriptorPool);
+
+			// !Temporary code -------------
+
+
 			TArray<VkPipelineShaderStageCreateInfo> shader_stage_create_infos;
 
 			if (m_ptrVertexShader != nullptr)
@@ -113,11 +185,9 @@ namespace DadEngine::Rendering
 			viewport.minDepth = 0.f;
 			viewport.maxDepth = 1.f;
 
-			VkRect2D rect;
-			rect.extent.width = _InSwapchain.m_SwapchainExtent.width;
-			rect.extent.height = _InSwapchain.m_SwapchainExtent.height;
-			rect.offset.x = 0;
-			rect.offset.y = 0;
+			VkRect2D scissor;
+			scissor.extent = _InSwapchain.m_SwapchainExtent;
+			scissor.offset = { 0, 0 };
 
 			// Input assembly state
 			VkPipelineInputAssemblyStateCreateInfo input_assembly_state_create_info = {};
@@ -134,7 +204,7 @@ namespace DadEngine::Rendering
 			viewport_state_create_info.viewportCount = 1U;
 			viewport_state_create_info.pViewports = &viewport;
 			viewport_state_create_info.scissorCount = 1U;
-			viewport_state_create_info.pScissors = &rect;
+			viewport_state_create_info.pScissors = &scissor;
 			viewport_state_create_info.flags = 0U;
 
 
@@ -171,7 +241,7 @@ namespace DadEngine::Rendering
 			depth_stencil_state_create_info.pNext = VK_NULL_HANDLE;
 			depth_stencil_state_create_info.depthTestEnable = VK_TRUE;
 			depth_stencil_state_create_info.depthWriteEnable = VK_TRUE;
-			depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+			depth_stencil_state_create_info.depthCompareOp = VK_COMPARE_OP_LESS; // VK_COMPARE_OP_LESS_OR_EQUAL
 			depth_stencil_state_create_info.depthBoundsTestEnable = VK_FALSE;
 			depth_stencil_state_create_info.stencilTestEnable = VK_FALSE;
 			depth_stencil_state_create_info.front = {};
@@ -221,14 +291,13 @@ namespace DadEngine::Rendering
 			VkPipelineLayoutCreateInfo pipeline_layout_create_info = {};
 			pipeline_layout_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
 			pipeline_layout_create_info.pNext = VK_NULL_HANDLE;
-			pipeline_layout_create_info.setLayoutCount = 0U;
-			pipeline_layout_create_info.pSetLayouts = VK_NULL_HANDLE;
+			pipeline_layout_create_info.setLayoutCount = 1U;
+			pipeline_layout_create_info.pSetLayouts = &m_DescriptorSetLayout;
 			pipeline_layout_create_info.pushConstantRangeCount = 0U;
 			pipeline_layout_create_info.pPushConstantRanges = VK_NULL_HANDLE;
 			pipeline_layout_create_info.flags = 0U;
 
-			VkPipelineLayout pipeline_layout;
-			vkCreatePipelineLayout(_InDevice, &pipeline_layout_create_info, VK_NULL_HANDLE, &pipeline_layout);
+			vkCreatePipelineLayout(_InDevice, &pipeline_layout_create_info, VK_NULL_HANDLE, &m_PipelineLayout);
 
 
 			// Graphics pipeline
@@ -246,17 +315,79 @@ namespace DadEngine::Rendering
 			graphics_pipeline_create_info.pDepthStencilState = &depth_stencil_state_create_info;
 			graphics_pipeline_create_info.pColorBlendState = &color_blend_state_create_info;
 			graphics_pipeline_create_info.pDynamicState = (dynamic_states.Size() > 0U) ? &dynamic_state_create_info : VK_NULL_HANDLE;
-			graphics_pipeline_create_info.layout = pipeline_layout;
+			graphics_pipeline_create_info.layout = m_PipelineLayout;
 			graphics_pipeline_create_info.renderPass = _InRenderPass;
 			graphics_pipeline_create_info.subpass = 0U;
 			graphics_pipeline_create_info.basePipelineHandle = VK_NULL_HANDLE;
 			graphics_pipeline_create_info.basePipelineIndex = -1;
 			graphics_pipeline_create_info.flags = 0U;
 
-			vkCreateGraphicsPipelines(_InDevice, _InPipelineCache, 1U, &graphics_pipeline_create_info, VK_NULL_HANDLE, &m_GraphicsPipeline);
+			VK_CHECK_RESULT(vkCreateGraphicsPipelines(_InDevice, _InPipelineCache, 1U, &graphics_pipeline_create_info, VK_NULL_HANDLE, &m_GraphicsPipeline));
 		}
 
+
+		~VulkanShader() {
+			vkDestroyPipelineLayout(m_Device, m_PipelineLayout, VK_NULL_HANDLE);
+			vkDestroyPipeline(m_Device, m_GraphicsPipeline, VK_NULL_HANDLE);
+
+			vkDestroyDescriptorSetLayout(m_Device, m_DescriptorSetLayout, VK_NULL_HANDLE);
+		}
+
+		void AddShaderBinding(VkDescriptorType _InDescriptorType, VkShaderStageFlags _InShaderStagesFlag)
+		{
+			// One binding of the descriptor set
+			VkDescriptorSetLayoutBinding layoutBinding = {};
+			layoutBinding.binding = 0;
+			layoutBinding.descriptorType = _InDescriptorType; // TODO: Rewrite every descriptor type ?
+			layoutBinding.descriptorCount = m_PipelineParameters.Size() + 1U;
+			layoutBinding.stageFlags = _InShaderStagesFlag;
+			layoutBinding.pImmutableSamplers = VK_NULL_HANDLE;
+
+			m_PipelineParameters.Add(layoutBinding);
+		}
+
+		void createDescriptorSetLayout()
+		{
+			VkDescriptorSetLayoutCreateInfo layout_create_info = {};
+			layout_create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+			layout_create_info.pNext = VK_NULL_HANDLE;
+			layout_create_info.bindingCount = m_PipelineParameters.Size();
+			layout_create_info.pBindings = m_PipelineParameters.GetData();
+			layout_create_info.flags = 0U;
+
+			VK_CHECK_RESULT(vkCreateDescriptorSetLayout(m_Device, &layout_create_info, VK_NULL_HANDLE, &m_DescriptorSetLayout));
+		}
+
+		void createDescriptorSet(VkDescriptorPool _InDescritptorPool) {
+			VkDescriptorSetAllocateInfo descriptor_set_allocate_info = {};
+			descriptor_set_allocate_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+			descriptor_set_allocate_info.pNext = VK_NULL_HANDLE;
+			descriptor_set_allocate_info.descriptorPool = _InDescritptorPool;
+			descriptor_set_allocate_info.descriptorSetCount = 1U;
+			descriptor_set_allocate_info.pSetLayouts = &m_DescriptorSetLayout;
+
+			VK_CHECK_RESULT(vkAllocateDescriptorSets(m_Device, &descriptor_set_allocate_info, &m_DescriptorSet));
+		}
+
+		void UpdateUBO()
+		{
+			m_ShaderUBO.UpdateUBO(m_Device, m_DescriptorSet);
+		}
+
+		// Parameters array
+		VulkanUBO m_ShaderUBO;
+
+		TArray<VkDescriptorSetLayoutBinding> m_PipelineParameters; // Basic shader currently use one UBO with basic matrices
+
+		VkDescriptorSetLayout m_DescriptorSetLayout = VK_NULL_HANDLE;
+
+		VkDescriptorSet m_DescriptorSet = VK_NULL_HANDLE;
+
+		VkPipelineLayout m_PipelineLayout = VK_NULL_HANDLE;
+
 		VkPipeline m_GraphicsPipeline = VK_NULL_HANDLE;
+
+		VkDevice m_Device = VK_NULL_HANDLE;
 	};
 }
 

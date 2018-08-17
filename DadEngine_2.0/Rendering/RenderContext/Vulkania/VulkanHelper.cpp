@@ -46,7 +46,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		}
 	}
 
-	void EnumerateDeviceLayersAndExtensions(VkPhysicalDevice& _InPhysicalDevice)
+	void EnumerateDeviceLayersAndExtensions(VkPhysicalDevice _InPhysicalDevice)
 	{
 		uint32 layerPropertiesCount = 0U;
 
@@ -88,7 +88,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		}
 	}
 
-	void EnumerateDevices(VkInstance& _InInstance, TArray<VkPhysicalDevice>& _InPhysicalDevices)
+	void EnumerateDevices(VkInstance _InInstance, TArray<VkPhysicalDevice>& _InPhysicalDevices)
 	{
 		uint32 physicalDevicesCount = 0U;
 
@@ -113,7 +113,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		}
 	}
 
-	uint32 CheckDeviceQueueFamilyProperties(VkPhysicalDevice& _InPhysicalDevice, VkQueueFlags _InFlag)
+	uint32 CheckDeviceQueueFamilyProperties(VkPhysicalDevice _InPhysicalDevice, VkQueueFlags _InFlag)
 	{
 		uint32 queueFamilyPropertyCount = 0U;
 
@@ -134,30 +134,34 @@ namespace DadEngine::Rendering::VulkanHelper
 		return 0U;
 	}
 
-	uint32 CheckMemoryType(uint32 _InMemoryTypeBits, VkFlags _InProperties, VkPhysicalDeviceMemoryProperties& _InPhysicalDeviceMemoryProperties)
-	{
-		for (size_t i = 0; i < 32U; i++)
-		{
-			if ((_InMemoryTypeBits & 1U) == 1U)
-			{
-				if (_InPhysicalDeviceMemoryProperties.memoryTypes[(uint32)i].propertyFlags & _InProperties)
-				{
-					return (uint32)i;
-				}
 
-				else
-				{
-					//LOG_ASSERT(0, "Bad memory type");
+	/*
+		Return the index of the first memory type mathing the requirements
+
+		@_InMemoryTypeBits	flag representing the wanted memory types
+		@_InProperties		flag reprensenting the needed properties on the mem type
+	*/
+	uint32 CheckMemoryTypeIndex(VkPhysicalDevice _InPhysicalDevice, uint32 _InMemoryTypeBits, VkMemoryPropertyFlags _InProperties)
+	{
+		VkPhysicalDeviceMemoryProperties memory_properties;
+		vkGetPhysicalDeviceMemoryProperties(_InPhysicalDevice, &memory_properties);
+
+		// Loop throught the supported memory types
+		for (size_t i = 0; i < memory_properties.memoryTypeCount; i++) {
+			// Check that this mem type match the wanted mem types
+			if ((_InMemoryTypeBits & (1U << i)))
+			{
+				// Check that this mem type has this properties
+				if ((memory_properties.memoryTypes[i].propertyFlags & _InProperties) == _InProperties) {
+					return i;
 				}
 			}
-
-			_InMemoryTypeBits >>= 1U;
 		}
 
 		return 0U;
 	}
 
-	VkSurfaceFormatKHR CheckSurfaceFormats(VkPhysicalDevice& _InPhysicalDevice, VkSurfaceKHR& _InSurface)
+	VkSurfaceFormatKHR CheckSurfaceFormats(VkPhysicalDevice _InPhysicalDevice, VkSurfaceKHR _InSurface)
 	{
 		uint32 uiSurfaceFormatCount = 0U;
 		vkGetPhysicalDeviceSurfaceFormatsKHR(_InPhysicalDevice, _InSurface, &uiSurfaceFormatCount, VK_NULL_HANDLE);
@@ -181,7 +185,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		return surfaceFormats[0];
 	}
 
-	void CreateCommandBuffer(VkDevice& _InDevice, VkCommandPool& _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers)
+	void CreateCommandBuffer(VkDevice _InDevice, VkCommandPool _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers)
 	{
 		VkCommandBufferAllocateInfo command_buffer_allocate_info = {};
 		command_buffer_allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -193,7 +197,21 @@ namespace DadEngine::Rendering::VulkanHelper
 		VK_CHECK_RESULT(vkAllocateCommandBuffers(_InDevice, &command_buffer_allocate_info, _OutCommandBuffers));
 	}
 
-	VkExtent2D GetExtent2D(VkPhysicalDevice & _InPhysicalDevice, VkSurfaceKHR & _InSurface)
+	void CreateBuffer(VkDevice _InDevice, VkDeviceSize _InSize, VkBufferUsageFlags _InBufferUsage, VkBuffer& _OutBuffer) {
+		VkBufferCreateInfo buffer_create_info = {};
+		buffer_create_info.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+		buffer_create_info.pNext = VK_NULL_HANDLE;
+		buffer_create_info.usage = _InBufferUsage;
+		buffer_create_info.size = _InSize;
+		buffer_create_info.queueFamilyIndexCount = 0U;				// Ignored as sharingMode is not VK_SHARING_MODE_CONCURRENT
+		buffer_create_info.pQueueFamilyIndices = VK_NULL_HANDLE;	// Ignored as sharingMode is not VK_SHARING_MODE_CONCURRENT
+		buffer_create_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+		buffer_create_info.flags = 0U;
+
+		VK_CHECK_RESULT(vkCreateBuffer(_InDevice, &buffer_create_info, VK_NULL_HANDLE, &_OutBuffer));
+	}
+
+	VkExtent2D GetExtent2D(VkPhysicalDevice _InPhysicalDevice, VkSurfaceKHR _InSurface)
 	{
 		VkSurfaceCapabilitiesKHR surface_capabilities;
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_InPhysicalDevice, _InSurface, &surface_capabilities);
@@ -201,7 +219,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		return surface_capabilities.currentExtent;
 	}
 
-	VkFormat GetSupportDepthStencilFormats(VkPhysicalDevice& _InPhysicalDevice)
+	VkFormat GetSupportDepthStencilFormats(VkPhysicalDevice _InPhysicalDevice)
 	{
 		TArray<VkFormat> depthStencilFormats;
 		depthStencilFormats.Add(VK_FORMAT_D32_SFLOAT_S8_UINT);
@@ -228,9 +246,9 @@ namespace DadEngine::Rendering::VulkanHelper
 
 
 	// Setting oldlayout to VK_IMAGE_LAYOUT_UNDEFINED invalidates image contents
-	void SetImageLayout(VkCommandBuffer& _InCommandBuffer, VkImage& _InImage,
+	void SetImageLayout(VkCommandBuffer _InCommandBuffer, VkImage _InImage,
 		VkImageLayout _InOldImageLayout, VkImageLayout _InNewImageLayout,
-		VkPipelineStageFlags _InSrcPipilineStageFalgs, VkPipelineStageFlags _InDstPipilineStageFalgs)
+		VkPipelineStageFlags _InSrcPipelineStageFlags, VkPipelineStageFlags _InDstPipelineStageFlags)
 	{
 		VkImageMemoryBarrier image_memory_barrier = {};
 		image_memory_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -288,11 +306,11 @@ namespace DadEngine::Rendering::VulkanHelper
 			break;
 		}
 
-		vkCmdPipelineBarrier(_InCommandBuffer, _InSrcPipilineStageFalgs, _InDstPipilineStageFalgs, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+		vkCmdPipelineBarrier(_InCommandBuffer, _InSrcPipelineStageFlags, _InDstPipelineStageFlags, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 	}
 
-	void SetImageLayout(VkCommandBuffer& _InCommandBuffer, VulkanImage& _InImage, VkImageLayout _InNewImageLayout,
-		VkPipelineStageFlags _InSrcPipilineStageFalgs, VkPipelineStageFlags _InDstPipilineStageFalgs)
+	void SetImageLayout(VkCommandBuffer _InCommandBuffer, VulkanImage& _InImage, VkImageLayout _InNewImageLayout,
+		VkPipelineStageFlags _InSrcPipelineStageFlags, VkPipelineStageFlags _InDstPipelineStageFlags)
 	{
 		VkImageMemoryBarrier image_memory_barrier = {};
 		image_memory_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -350,35 +368,25 @@ namespace DadEngine::Rendering::VulkanHelper
 			break;
 		}
 
-		vkCmdPipelineBarrier(_InCommandBuffer, _InSrcPipilineStageFalgs, _InDstPipilineStageFalgs, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
+		vkCmdPipelineBarrier(_InCommandBuffer, _InSrcPipelineStageFlags, _InDstPipelineStageFlags, 0, 0, NULL, 0, NULL, 1, &image_memory_barrier);
 
 		_InImage.m_CurrentLayout = _InNewImageLayout;
 	}
 
 
-	void AllocateBufferMemory(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice, VkBuffer _InBuffer, VkDeviceMemory& _OutMemory)
+	void AllocateBufferMemory(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice, VkBuffer _InBuffer, VkMemoryPropertyFlags _InMemProperties, VkDeviceMemory& _OutMemory)
 	{
 		VkMemoryRequirements buffer_memory_requirements;
 		vkGetBufferMemoryRequirements(_InDevice, _InBuffer, &buffer_memory_requirements);
 
-		VkPhysicalDeviceMemoryProperties memory_properties;
-		vkGetPhysicalDeviceMemoryProperties(_InPhysicalDevice, &memory_properties);
+		uint32 memIndex = CheckMemoryTypeIndex(_InPhysicalDevice, buffer_memory_requirements.memoryTypeBits, _InMemProperties);
 
-		for (size_t i = 0U; i < (size_t)memory_properties.memoryTypeCount; i++)
-		{
-			if (buffer_memory_requirements.memoryTypeBits & (1 << i) &&
-				memory_properties.memoryTypes[i].propertyFlags & VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT)
-			{
-				VkMemoryAllocateInfo memory_allocate_info = {};
-				memory_allocate_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-				memory_allocate_info.pNext = VK_NULL_HANDLE;
-				memory_allocate_info.allocationSize = buffer_memory_requirements.size;
-				memory_allocate_info.memoryTypeIndex = (uint32)i;
+		VkMemoryAllocateInfo memory_allocate_info = {};
+		memory_allocate_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+		memory_allocate_info.pNext = VK_NULL_HANDLE;
+		memory_allocate_info.allocationSize = buffer_memory_requirements.size;
+		memory_allocate_info.memoryTypeIndex = (uint32)memIndex;
 
-				VK_CHECK_RESULT(vkAllocateMemory(_InDevice, &memory_allocate_info, VK_NULL_HANDLE, &_OutMemory));
-
-				return;
-			}
-		}
+		VK_CHECK_RESULT(vkAllocateMemory(_InDevice, &memory_allocate_info, VK_NULL_HANDLE, &_OutMemory));
 	}
 }

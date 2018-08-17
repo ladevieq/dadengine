@@ -29,41 +29,25 @@ namespace DadEngine::Rendering
 		//m_Attachments.Add(&_InImages, _InImagesCount);
 
 		TArray<VkAttachmentDescription> attachments(_InImagesCount);
-
-		/*for (size_t i = 0U; i < _InImagesCount; i++)
-		{
-			attachments[(uint32)i].format = _InImages[(uint32)i].m_Format;
-			attachments[(uint32)i].samples = VK_SAMPLE_COUNT_1_BIT;
-			attachments[(uint32)i].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;//VK_ATTACHMENT_LOAD_OP_CLEAR;	// Clear the image during load
-			attachments[(uint32)i].storeOp = VK_ATTACHMENT_STORE_OP_STORE;									// Store the render pass result in the buffer
-			attachments[(uint32)i].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-			attachments[(uint32)i].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-			attachments[(uint32)i].initialLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;//_InImages[(uint32)i].m_CurrentLayout;					// Image initial layout, start of the renderpass
-			attachments[(uint32)i].finalLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;						// Image final layout, end of the renderpass
-			attachments[(uint32)i].flags = 0U;
-		}*/
-
-
 		attachments[0U].format = _InImages[0U].m_Format;
 		attachments[0U].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[0U].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;//VK_ATTACHMENT_LOAD_OP_CLEAR;	// Clear the image during load
-		attachments[0U].storeOp = VK_ATTACHMENT_STORE_OP_STORE;									// Store the render pass result in the buffer
+		attachments[0U].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;//VK_ATTACHMENT_LOAD_OP_CLEAR;						// Clear the image during load
+		attachments[0U].storeOp = VK_ATTACHMENT_STORE_OP_STORE;														// Store the render pass result in the buffer
 		attachments[0U].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachments[0U].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[0U].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;//_InImages[(uint32)i].m_CurrentLayout;					// Image initial layout, start of the renderpass
-		attachments[0U].finalLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;						// Image final layout, end of the renderpass
+		attachments[0U].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;//_InImages[(uint32)i].m_CurrentLayout;			// Image initial layout, start of the renderpass
+		attachments[0U].finalLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;		// Image final layout, end of the renderpass
 		attachments[0U].flags = 0U;
 
 		attachments[1U].format = _InImages[1U].m_Format;
 		attachments[1U].samples = VK_SAMPLE_COUNT_1_BIT;
-		attachments[1U].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;//VK_ATTACHMENT_LOAD_OP_CLEAR;	// Clear the image during load
-		attachments[1U].storeOp = VK_ATTACHMENT_STORE_OP_STORE;									// Store the render pass result in the buffer
+		attachments[1U].loadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;//VK_ATTACHMENT_LOAD_OP_CLEAR;						// Clear the image during load
+		attachments[1U].storeOp = VK_ATTACHMENT_STORE_OP_STORE;														// Store the render pass result in the buffer
 		attachments[1U].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
 		attachments[1U].stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-		attachments[1U].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;//_InImages[(uint32)i].m_CurrentLayout;							// Image initial layout, start of the renderpass
-		attachments[1U].finalLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;						// Image final layout, end of the renderpass
+		attachments[1U].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;													// Image initial layout, start of the renderpass, we don't care about the precedent depth stuff so VK_IMAGE_LAYOUT_UNDEFINED
+		attachments[1U].finalLayout = VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL;//VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;		// Image final layout, end of the renderpass
 		attachments[1U].flags = 0U;
-
 
 
 		VkAttachmentReference color_attachement_reference = {};

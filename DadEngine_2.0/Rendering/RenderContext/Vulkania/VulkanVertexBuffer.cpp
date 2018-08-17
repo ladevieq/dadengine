@@ -20,7 +20,7 @@ namespace DadEngine::Rendering
 		VK_CHECK_RESULT(vkCreateBuffer(_InDevice, &buffer_create_info, VK_NULL_HANDLE, &m_Buffer));
 
 
-		VulkanHelper::AllocateBufferMemory(_InDevice, _InPhysicalDevice, m_Buffer, m_Memory);
+		VulkanHelper::AllocateBufferMemory(_InDevice, _InPhysicalDevice, m_Buffer, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, m_Memory);
 
 		VK_CHECK_RESULT(vkBindBufferMemory(_InDevice, m_Buffer, m_Memory, 0U));
 

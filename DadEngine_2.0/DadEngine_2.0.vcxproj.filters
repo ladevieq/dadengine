@@ -110,6 +110,7 @@
     <ClInclude Include="Rendering\RenderContext\wglext.hpp" />
     <ClInclude Include="Rendering\RenderContext\glext.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGLWrapper.hpp" />
+    <ClInclude Include="Rendering\Light\Light.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -147,6 +148,9 @@
   <ItemGroup>
     <None Include="test_es.frag" />
     <None Include="test_es.vert" />
+    <None Include="test_vk.frag" />
+    <None Include="test_vk.vert" />
+    <None Include="test_vk.vert.spv" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />

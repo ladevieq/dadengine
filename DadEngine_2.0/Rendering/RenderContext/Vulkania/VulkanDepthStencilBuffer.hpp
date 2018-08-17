@@ -16,14 +16,14 @@ namespace DadEngine::Rendering
 		VulkanDepthStencilBuffer() = default;
 
 		VulkanDepthStencilBuffer(VkDevice _InDevice, VkFormat _InDepthStencilFormat, VkExtent2D& _InImageSize,
-			VkPhysicalDeviceMemoryProperties& _InPhysicalDeviceMemoryProps, VkImageUsageFlags _InImageUses);
+			VkPhysicalDevice _InPhysicalDevice, VkImageUsageFlags _InImageUses, VkCommandBuffer _InCommandBuffer);
 
 
 	private:
 
 
 		// Contain code similar for each constructor
-		void CreateDepthStencilBuffer(VkPhysicalDeviceMemoryProperties& _InPhysicalDeviceMemoryProps);
+		void CreateDepthStencilBuffer(VkPhysicalDevice _InPhysicalDevice, VkCommandBuffer _InCommandBuffer);
 
 		FORCE_INLINE void ChooseAspect()
 		{

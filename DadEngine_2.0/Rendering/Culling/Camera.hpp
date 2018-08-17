@@ -40,7 +40,7 @@ namespace DadEngine::Rendering
 
 		Camera();
 
-		Camera(::DadEngine::Gameplay::Actor* _InOwner);
+		Camera(DadEngine::Gameplay::Actor* _InOwner);
 
 
 		void ExtractVisibleObjects(TArray<RenderObject*> _InVisibleObjects, FramePacket& _InFramePacket)

@@ -102,6 +102,7 @@ namespace DadEngine::Rendering
 	void OpenGLRenderContext::BindShaderProgram(Shader* _InShader, CommandBuffer* _InCommandBuffer)
 	{
 		CommandBindShaderProgram((OpenGLCommandBuffer*)_InCommandBuffer, _InShader);
+
 		Matrix4x4 pers = Gameplay::CameraManager::GetCameraManager()->GetMainCamera()->GetProjectionMatrix();
 		Matrix4x4 view;
 		Vector3f eyePos = Gameplay::CameraManager::GetCameraManager()->GetMainCamera()->m_Owner->GetRelativeLocation();

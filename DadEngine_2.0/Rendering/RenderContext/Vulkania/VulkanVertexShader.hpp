@@ -1,6 +1,11 @@
 #ifndef __VULKAN_VERTEX_SHADER_HPP_
 #define __VULKAN_VERTEX_SHADER_HPP_
 
+#include <vulkan/vulkan.h>
+
+#include "../../../Core/Core.hpp"
+
+#include "../../Shader/Shader.hpp"
 
 namespace DadEngine::Rendering
 {
@@ -24,7 +29,7 @@ namespace DadEngine::Rendering
 
 		~VulkanVertexShader()
 		{
-			//vkDestroyShaderModule(m_Device, m_ShaderModule, VK_NULL_HANDLE);
+			vkDestroyShaderModule(m_Device, m_ShaderModule, VK_NULL_HANDLE);
 		}
 
 

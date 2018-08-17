@@ -36,8 +36,10 @@ namespace DadEngine::Rendering
 		CreateCommandPool();
 		CreateSetupCommandBuffer();
 
-		m_Swapchain.Initialize(m_Device, m_PhysicalDevice, m_PresentationSurface, m_PresentationMode, _InWindow);
+		m_Swapchain = new VulkanSwapchain();
+		m_Swapchain->Initialize(m_Device, m_PhysicalDevice, m_PresentationSurface, m_PresentationMode, _InWindow);
 
+		CreateDescriptorPool();
 		CreateDepthStencilBuffer();
 		DestroySetupCommandBuffer();
 
@@ -53,6 +55,10 @@ namespace DadEngine::Rendering
 		vkDestroyCommandPool(m_Device, m_GraphicsCommandPool, VK_NULL_HANDLE);
 		vkDestroyCommandPool(m_Device, m_PresentationCommandPool, VK_NULL_HANDLE);
 
+		vkDestroyDescriptorPool(m_Device, m_UBODescriptorPool, VK_NULL_HANDLE);
+
+		delete m_Swapchain;
+
 		for (VkFence currentFence : m_CommandBufferAvailables)
 		{
 			vkDestroyFence(m_Device, currentFence, VK_NULL_HANDLE);
@@ -61,9 +67,10 @@ namespace DadEngine::Rendering
 		vkDestroySemaphore(m_Device, m_ImageAvailableSemaphore, VK_NULL_HANDLE);
 		vkDestroySemaphore(m_Device, m_RenderingFinishedSemaphore, VK_NULL_HANDLE);
 
+		vkDestroyDevice(m_Device, VK_NULL_HANDLE);
+
 		vkDestroySurfaceKHR(m_Instance, m_PresentationSurface, VK_NULL_HANDLE);
 
-		vkDestroyDevice(m_Device, VK_NULL_HANDLE);
 		VulkanDebug::DestroyVulkanDebug(m_Instance);
 		vkDestroyInstance(m_Instance, VK_NULL_HANDLE);
 	}
@@ -166,6 +173,19 @@ namespace DadEngine::Rendering
 	void VulkanRenderContext::BindShaderProgram(Shader* _InShader, CommandBuffer* _InCommandBuffer)
 	{
 		vkCmdBindPipeline(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, ((VulkanShader*)_InShader)->m_GraphicsPipeline);
+
+		((VulkanShader*)_InShader)->UpdateUBO();
+
+		// Also bind shaders params ?
+		vkCmdBindDescriptorSets(
+			((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			((VulkanShader*)_InShader)->m_PipelineLayout,
+			0U,
+			1U,
+			&((VulkanShader*)_InShader)->m_DescriptorSet,
+			0U,
+			VK_NULL_HANDLE);
 	}
 
 	void VulkanRenderContext::BeginRenderPass(RenderPass * _InRenderPass, Framebuffer* _InFrameBuffer, CommandBuffer* _InCommandBuffer)
@@ -175,15 +195,15 @@ namespace DadEngine::Rendering
 		// ------------------------------------------
 		//!\ All the attachments may not be clearable
 		// ------------------------------------------
-		clearValues[0U].color = VkClearColorValue{ 0.f, 0.f, 0.f, 1.f };
-		clearValues[1U].depthStencil = VkClearDepthStencilValue{ 1.f, UINT32_MAX };
+		clearValues[0U].color = VkClearColorValue{ 0.f, 0.1f, 1.0f, 1.f };
+		clearValues[1U].depthStencil = VkClearDepthStencilValue{ 1.f, 0U };
 
 		VkRenderPassBeginInfo render_pass_begin_info = {};
 		render_pass_begin_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 		render_pass_begin_info.pNext = VK_NULL_HANDLE;
 		render_pass_begin_info.framebuffer = ((VulkanFramebuffer*)_InFrameBuffer)->m_Framebuffer;
 		render_pass_begin_info.renderPass = ((VulkanRenderPass*)_InRenderPass)->m_Renderpass;
-		render_pass_begin_info.renderArea = VkRect2D{ { 0, 0 }, m_Swapchain.m_SwapchainExtent };
+		render_pass_begin_info.renderArea = VkRect2D{ { 0, 0 }, m_Swapchain->m_SwapchainExtent };
 
 		render_pass_begin_info.clearValueCount = (uint32)clearValues.Size();
 		render_pass_begin_info.pClearValues = clearValues.GetData();
@@ -239,8 +259,8 @@ namespace DadEngine::Rendering
 	
 	void VulkanRenderContext::BeginFrame()
 	{
-		m_uiNextImage = m_Swapchain.GetNextImageIndex(m_ImageAvailableSemaphore);
-		m_BackBuffer = &m_Swapchain.m_SwapchainImages[m_uiNextImage];
+		m_uiNextImage = m_Swapchain->GetNextImageIndex(m_ImageAvailableSemaphore);
+		m_BackBuffer = &m_Swapchain->m_SwapchainImages[m_uiNextImage];
 
 
 		// Wait for the command buffer to be available
@@ -266,7 +286,7 @@ namespace DadEngine::Rendering
 
 		VK_CHECK_RESULT(vkQueueSubmit(m_GraphicsQueue, 1U, &submit_info, m_CommandBufferAvailables[m_uiNextImage]));
 
-		m_Swapchain.Present(m_GraphicsQueue, m_RenderingFinishedSemaphore, m_uiNextImage);
+		m_Swapchain->Present(m_GraphicsQueue, m_RenderingFinishedSemaphore, m_uiNextImage);
 
 
 		m_SubmittedCommandBuffers.Clear();
@@ -305,7 +325,7 @@ namespace DadEngine::Rendering
 
 	Shader * VulkanRenderContext::CreateShader(VertexShader * _InVertexShader, GeometryShader * _InGeometryShader, FragmentShader * _InFragmentShader, RenderPass* _InRenderpass)
 	{
-		return new VulkanShader(_InVertexShader, _InGeometryShader, _InFragmentShader, m_Device, ((VulkanRenderPass*)_InRenderpass)->m_Renderpass, m_PipelineCache, m_Swapchain);
+		return new VulkanShader(_InVertexShader, _InGeometryShader, _InFragmentShader, m_Device, m_PhysicalDevice, ((VulkanRenderPass*)_InRenderpass)->m_Renderpass, m_PipelineCache, *m_Swapchain, m_UBODescriptorPool);
 	}
 
 	CommandBuffer * VulkanRenderContext::CreateCommandBuffer()
@@ -447,6 +467,23 @@ namespace DadEngine::Rendering
 		VK_CHECK_RESULT(vkCreateCommandPool(m_Device, &presentation_command_pool_create_info, VK_NULL_HANDLE, &m_PresentationCommandPool));
 	}
 
+	void VulkanRenderContext::CreateDescriptorPool()
+	{
+		VkDescriptorPoolSize descriptor_pool_size = {};
+		descriptor_pool_size.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		descriptor_pool_size.descriptorCount = m_Swapchain->m_SwapchainImages.Size();
+
+		VkDescriptorPoolCreateInfo descriptor_pool_create_info = {};
+		descriptor_pool_create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+		descriptor_pool_create_info.pNext = VK_NULL_HANDLE;
+		descriptor_pool_create_info.poolSizeCount = 1U;
+		descriptor_pool_create_info.pPoolSizes = &descriptor_pool_size;
+		descriptor_pool_create_info.maxSets = m_Swapchain->m_SwapchainImages.Size();
+		descriptor_pool_create_info.flags = 0U;
+
+		VK_CHECK_RESULT(vkCreateDescriptorPool(m_Device, &descriptor_pool_create_info, VK_NULL_HANDLE, &m_UBODescriptorPool));
+	}
+
 	void VulkanRenderContext::CreateSetupCommandBuffer()
 	{
 		VulkanHelper::CreateCommandBuffer(m_Device, m_GraphicsCommandPool, 1U, &m_SetupCommandBuffer);
@@ -537,13 +574,13 @@ namespace DadEngine::Rendering
 		VkFormat format = VulkanHelper::GetSupportDepthStencilFormats(m_PhysicalDevice);
 
 		m_DepthStencilBuffer = VulkanDepthStencilBuffer(m_Device, format,
-			m_Swapchain.m_SwapchainExtent, m_PhysicalDeviceMemoryProperties,
-			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT);
+			m_Swapchain->m_SwapchainExtent, m_PhysicalDevice,
+			VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT, m_SetupCommandBuffer);
 	}
 
 	void VulkanRenderContext::CreateRenderpass()
 	{
-		VulkanImage images[2U] = { m_Swapchain.m_SwapchainImages[0U], m_DepthStencilBuffer };
+		VulkanImage images[2U] = { m_Swapchain->m_SwapchainImages[0U], m_DepthStencilBuffer };
 
 		m_Renderpass = VulkanRenderPass(m_Device, images, 2U);
 	}
@@ -561,7 +598,7 @@ namespace DadEngine::Rendering
 
 	void VulkanRenderContext::CreateFences()
 	{
-		m_CommandBufferAvailables.Resize(m_Swapchain.GetImageCount());
+		m_CommandBufferAvailables.Resize(m_Swapchain->GetImageCount());
 
 		for (VkFence& fence : m_CommandBufferAvailables)
 		{
@@ -587,15 +624,15 @@ namespace DadEngine::Rendering
 
 	void VulkanRenderContext::CreateFramebuffers()
 	{
-		m_Framebuffers.Resize(m_Swapchain.GetImageCount());
+		m_Framebuffers.Resize(m_Swapchain->GetImageCount());
 
 		TArray<VkImageView> attachments(2U);
 		attachments[1U] = m_DepthStencilBuffer.m_View;
 
 		for (size_t i = 0U; i < m_Framebuffers.Size(); i++)
 		{
-			attachments[0U] = m_Swapchain.m_SwapchainImages[(uint32)i].m_View;
-			m_Framebuffers[(uint32)i] = VulkanFramebuffer(m_Device, m_Swapchain.m_SwapchainExtent, m_Renderpass, attachments.GetData(), attachments.Size());
+			attachments[0U] = m_Swapchain->m_SwapchainImages[(uint32)i].m_View;
+			m_Framebuffers[(uint32)i] = VulkanFramebuffer(m_Device, m_Swapchain->m_SwapchainExtent, m_Renderpass, attachments.GetData(), attachments.Size());
 		}
 	}
 }

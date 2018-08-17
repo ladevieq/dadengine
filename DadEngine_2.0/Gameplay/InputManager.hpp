@@ -179,7 +179,7 @@ namespace DadEngine::Gameplay
 			{
 				for (KeyCode& currentKey : currentInput->m_KeysCodes)
 				{
-					printf("%d\n", Application::GetApp()->GetWindow().KeyState(currentKey));
+					//printf("%d\n", Application::GetApp()->GetWindow().KeyState(currentKey));
 
 					// Update keys
 					if (/*Application::GetApp()->GetWindow().KeyState(currentKey) & KEY_STATE_KEY_DOWN*/m_Keys[currentKey].m_IsConsumed == FALSE

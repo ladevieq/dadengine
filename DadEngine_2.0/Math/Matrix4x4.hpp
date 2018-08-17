@@ -197,14 +197,15 @@ namespace DadEngine::Math
 
 		FORCE_INLINE void Perpespective(float _InNear, float _InFar, float _InFov, float _InAspectRatio)
 		{
-			float s = 1 / Tan(_InFov * 0.5f);
+			float s = 1 / Tan((_InFov * 0.5f) * (_PI / 180.0f));
 			float f = _InFar - _InNear;
 
-			m_11 = s * _InAspectRatio;
+			m_11 = s;
 			m_22 = s;
-			m_33 = -(_InFar + _InNear) / f;
+			m_33 = -_InFar / f;
 			m_34 = -1.f;
-			m_43 = (-2.f * _InFar * _InNear) / f;
+			m_43 = -(_InFar * _InNear) / f;
+			m_44 = 0.f;
 		}
 
 		FORCE_INLINE void LookAt(Vector3f& _InEyePosition, Vector3f& _InTargetPosition, Vector3f& _InUp)

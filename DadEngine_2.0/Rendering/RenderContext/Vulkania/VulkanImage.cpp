@@ -4,7 +4,7 @@
 
 namespace DadEngine::Rendering
 {
-	VulkanImage::VulkanImage(VkDevice _InDevice, VkPhysicalDeviceMemoryProperties _InPhysicalDeviceMemoryProps,
+	VulkanImage::VulkanImage(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice,
 		VkCommandBuffer _InCommandBuffer, VkFormat _InImageFormat,
 		VkImageUsageFlags _InImageUsage, VkImageAspectFlags _InImageAspects,
 		VkImageLayout _InImageLayout, VkExtent2D& _InImageSize,
@@ -39,7 +39,7 @@ namespace DadEngine::Rendering
 		VkMemoryAllocateInfo memory_allocation_info = {};
 		memory_allocation_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		memory_allocation_info.pNext = VK_NULL_HANDLE;
-		memory_allocation_info.memoryTypeIndex = VulkanHelper::CheckMemoryType(memory_requierements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _InPhysicalDeviceMemoryProps);
+		memory_allocation_info.memoryTypeIndex = VulkanHelper::CheckMemoryTypeIndex(_InPhysicalDevice, memory_requierements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 		memory_allocation_info.allocationSize = memory_requierements.size;
 
 		VK_CHECK_RESULT(vkAllocateMemory(_InDevice, &memory_allocation_info, VK_NULL_HANDLE, &m_Memory));
@@ -76,7 +76,7 @@ namespace DadEngine::Rendering
 			VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT);
 	}
 
-	VulkanImage::VulkanImage(VkDevice _InDevice, VkPhysicalDeviceMemoryProperties _InPhysicalDeviceMemoryProps,
+	VulkanImage::VulkanImage(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice,
 		VkFormat _InImageFormat, VkImageUsageFlags _InImageUsage,
 		VkImageAspectFlags _InImageAspects, VkExtent2D & _InImageSize,
 		size_t _InImageLayers)
@@ -110,7 +110,7 @@ namespace DadEngine::Rendering
 		VkMemoryAllocateInfo memory_allocation_info = {};
 		memory_allocation_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		memory_allocation_info.pNext = VK_NULL_HANDLE;
-		memory_allocation_info.memoryTypeIndex = VulkanHelper::CheckMemoryType(memory_requierements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, _InPhysicalDeviceMemoryProps);
+		memory_allocation_info.memoryTypeIndex = VulkanHelper::CheckMemoryTypeIndex(_InPhysicalDevice, memory_requierements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 		memory_allocation_info.allocationSize = memory_requierements.size;
 
 		VK_CHECK_RESULT(vkAllocateMemory(_InDevice, &memory_allocation_info, VK_NULL_HANDLE, &m_Memory));
@@ -144,9 +144,9 @@ namespace DadEngine::Rendering
 
 	VulkanImage::~VulkanImage()
 	{
-		//vkDestroyImage(m_Device, m_Image, VK_NULL_HANDLE);
-		//vkDestroyImageView(m_Device, m_View, VK_NULL_HANDLE);
+		/*vkDestroyImage(m_Device, m_Image, VK_NULL_HANDLE);
+		vkDestroyImageView(m_Device, m_View, VK_NULL_HANDLE);
 
-		//vkFreeMemory(m_Device, m_Memory, VK_NULL_HANDLE);
+		vkFreeMemory(m_Device, m_Memory, VK_NULL_HANDLE);*/
 	}
 }

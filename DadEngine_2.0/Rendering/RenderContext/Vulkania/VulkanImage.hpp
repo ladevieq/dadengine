@@ -26,12 +26,12 @@ namespace DadEngine::Rendering
 				m_ImageUsage(_InImagUsage)
 		{}
 
-		VulkanImage(VkDevice _InDevice, VkPhysicalDeviceMemoryProperties _InPhysicalDeviceMemoryProps,
+		VulkanImage(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice,
 			VkCommandBuffer _InCommandBuffer, VkFormat _InImageFormat,
 			VkImageUsageFlags _InImageUsage, VkImageAspectFlags _InImageAspects,
 			VkImageLayout _InImageLayout, VkExtent2D& _InImageSize, size_t _InImageLayers);
 
-		VulkanImage(VkDevice _InDevice, VkPhysicalDeviceMemoryProperties _InPhysicalDeviceMemoryProps,
+		VulkanImage(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice,
 			VkFormat _InImageFormat, VkImageUsageFlags _InImageUsage,
 			VkImageAspectFlags _InImageAspects, VkExtent2D& _InImageSize,
 			size_t _InImageLayers);

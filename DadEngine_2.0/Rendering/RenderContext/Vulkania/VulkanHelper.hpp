@@ -12,33 +12,35 @@ namespace DadEngine::Rendering
 
 	namespace VulkanHelper
 	{
-		void EnumerateDevices(VkInstance& _InInstance, TArray<VkPhysicalDevice>& _InPhysicalDevices);
+		void EnumerateDevices(VkInstance _InInstance, TArray<VkPhysicalDevice>& _InPhysicalDevices);
 
 		void EnumerateInstanceLayersAndExtensions();
 
-		void EnumerateDeviceLayersAndExtensions(VkPhysicalDevice& _InPhysicalDevice);
+		void EnumerateDeviceLayersAndExtensions(VkPhysicalDevice _InPhysicalDevice);
 
-		uint32 CheckDeviceQueueFamilyProperties(VkPhysicalDevice& _InPhysicalDevice, VkQueueFlags _InFlag);
+		uint32 CheckDeviceQueueFamilyProperties(VkPhysicalDevice _InPhysicalDevice, VkQueueFlags _InFlag);
 
-		uint32 CheckMemoryType(uint32 _InMemoryTypeBits, VkFlags _InProperties, VkPhysicalDeviceMemoryProperties& _InPhysicalDeviceMemoryProperties);
+		uint32 CheckMemoryTypeIndex(VkPhysicalDevice _InPhysicalDevice, uint32 _InMemoryTypeBits, VkMemoryPropertyFlags _InProperties);
 
-		VkSurfaceFormatKHR CheckSurfaceFormats(VkPhysicalDevice& _InPhysicalDevice, VkSurfaceKHR& _InSurface);
+		VkSurfaceFormatKHR CheckSurfaceFormats(VkPhysicalDevice _InPhysicalDevice, VkSurfaceKHR _InSurface);
 
-		void CreateCommandBuffer(VkDevice& _InDevice, VkCommandPool& _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers);
+		void CreateCommandBuffer(VkDevice _InDevice, VkCommandPool _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers);
 
-		VkExtent2D GetExtent2D(VkPhysicalDevice& _InDevice, VkSurfaceKHR& _InSurface);
+		void CreateBuffer(VkDevice _InDevice, VkDeviceSize _InSize, VkBufferUsageFlags _InBufferUsage, VkBuffer& _OutBuffer);
 
-		VkFormat GetSupportDepthStencilFormats(VkPhysicalDevice& _InDevice);
+		VkExtent2D GetExtent2D(VkPhysicalDevice _InDevice, VkSurfaceKHR _InSurface);
 
-		void SetImageLayout(VkCommandBuffer& _InCommandBuffer, VkImage& _InImage,
+		VkFormat GetSupportDepthStencilFormats(VkPhysicalDevice _InDevice);
+
+		void SetImageLayout(VkCommandBuffer _InCommandBuffer, VkImage _InImage,
 			VkImageLayout _InOldImageLayout, VkImageLayout _InNewImageLayout,
 			VkPipelineStageFlags _InSrcPipilineStageFalgs, VkPipelineStageFlags _InDstPipilineStageFalgs);
 
-		void SetImageLayout(VkCommandBuffer& _InCommandBuffer, VulkanImage& _Image,
+		void SetImageLayout(VkCommandBuffer _InCommandBuffer, VulkanImage& _Image,
 			VkImageLayout _InNewImageLayout, VkPipelineStageFlags _InSrcPipilineStageFalgs,
 			VkPipelineStageFlags _InDstPipilineStageFalgs);
 
-		void AllocateBufferMemory(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice, VkBuffer _InBuffer, VkDeviceMemory& _OutMemory);
+		void AllocateBufferMemory(VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice, VkBuffer _InBuffer, VkMemoryPropertyFlags _InMemProperties, VkDeviceMemory& _OutMemory);
 	}
 }
 

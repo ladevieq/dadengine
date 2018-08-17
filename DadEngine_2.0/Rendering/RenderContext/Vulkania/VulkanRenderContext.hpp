@@ -86,6 +86,8 @@ namespace DadEngine::Rendering
 
 		void CreateCommandPool();
 
+		void CreateDescriptorPool();
+
 		void CreateSetupCommandBuffer();
 
 		void GetQueues(); // Present and Graphics
@@ -128,12 +130,14 @@ namespace DadEngine::Rendering
 		VkCommandPool m_GraphicsCommandPool = VK_NULL_HANDLE;
 		VkCommandPool m_PresentationCommandPool = VK_NULL_HANDLE;
 
+		VkDescriptorPool m_UBODescriptorPool = VK_NULL_HANDLE;
+
 		VkCommandBuffer m_SetupCommandBuffer = VK_NULL_HANDLE;
 		//TArray<VulkanCommandBuffer> m_FinalCommandBuffers;
 
 		TArray<VkCommandBuffer> m_SubmittedCommandBuffers;
 
-		VulkanSwapchain m_Swapchain;
+		VulkanSwapchain* m_Swapchain = nullptr;
 
 		VkSurfaceKHR m_PresentationSurface = VK_NULL_HANDLE;
 

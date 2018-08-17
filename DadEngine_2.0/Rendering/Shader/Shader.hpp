@@ -12,9 +12,9 @@ namespace DadEngine::Rendering
 		{}
 
 		/*
-		0U, VERTEX_INPUT_TYPE_POSITION
-		1U, VERTEX_INPUT_TYPE_COLOR0
-		2U, VERTEX_INPUT_TYPE_NORMAL
+			0U, VERTEX_INPUT_TYPE_POSITION
+			1U, VERTEX_INPUT_TYPE_COLOR0
+			2U, VERTEX_INPUT_TYPE_NORMAL
 		*/
 		TArray<VertexInput> m_vertexInputLayout;
 		const char* m_sCode = nullptr;

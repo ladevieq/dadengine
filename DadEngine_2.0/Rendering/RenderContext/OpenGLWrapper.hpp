@@ -3,12 +3,8 @@
 
 #include <Windows.h>
 
-#if defined(DADOPENGL)
 #include <gl/GL.h>
 #include "glext.hpp"
-#elif defined(DADOPENGLES)
-#include <GLES3/gl32.h>
-#endif
 
 #include "wglext.hpp"
 
@@ -21,7 +17,7 @@ namespace DadEngine::Rendering::OpenGLWrapper
 	*/
 	const GLubyte* __stdcall getStringi(GLenum _InName, GLuint _InIndex);
 
-
+	
 	// Buffer stuff
 	void __stdcall glGenBuffers(GLsizei _InBufferCount, GLuint* _InBuffers);
 

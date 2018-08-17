@@ -86,6 +86,7 @@
     <ClInclude Include="Rendering\Culling\FramePacket.hpp" />
     <ClInclude Include="Rendering\Framebuffer.hpp" />
     <ClInclude Include="Rendering\Image.hpp" />
+    <ClInclude Include="Rendering\Light\Light.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGLES\OpenGLESRenderContext.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLFramebuffer.hpp" />
     <ClInclude Include="Rendering\RenderContext\OpenGL\OpenGLRenderCommand.hpp" />
@@ -173,6 +174,9 @@
   <ItemGroup>
     <None Include="test_es.frag" />
     <None Include="test_es.vert" />
+    <None Include="test_vk.frag" />
+    <None Include="test_vk.vert" />
+    <None Include="test_vk.vert.spv" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
@@ -257,8 +261,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
-      <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include;$(GLES_SDK)/include;$(EMSCRIPTEN)/system/include;DADOPENGLES</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;DADOPENGLES;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include;$(GLES_SDK)/include;</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;_MBCS;DADVULKAN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -293,7 +297,7 @@
       <SDLCheck>true</SDLCheck>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories>$(VULKAN_SDK)/Include;$(GLES_SDK)/include;$(EMSCRIPTEN)/system</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;VK_USE_PLATFORM_WIN32_KHR;DADVULKAN;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

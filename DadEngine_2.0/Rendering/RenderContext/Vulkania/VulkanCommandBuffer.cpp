@@ -20,6 +20,6 @@ namespace DadEngine::Rendering
 
 	VulkanCommandBuffer::~VulkanCommandBuffer()
 	{
-		//vkFreeCommandBuffers(m_Device, m_CommandPool, 1U, &m_CmdBuffer);
+		vkFreeCommandBuffers(m_Device, m_CommandPool, 1U, &m_CmdBuffer);
 	}
 }

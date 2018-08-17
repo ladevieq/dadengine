@@ -19,20 +19,33 @@ DadEngine:
         ✔ Platform dependant stuff @done (03/09/2017 à 22:47:26)
         ✔ Serialization @done (06/09/2017 à 23:03:50)
         ✔ IO stuff @high @done (2017-10-15 10:54:09)
-        ☐ Platform dependant RenderContext Creation
+		☐ Platform independant window creation
+        ☐ Platform independant RenderContext creation
         ☐ Window message pump system
 		☐ Debugging API
     ☐ Rendering
+		☐ Scene class that manage global stuffs
         ✔ Render context @done (2017-9-26 00:55:21)
         ☐ OpenGl
             ☐ Rework VAO and VBO usage
         ☐ Vulkan
+            ☐ Staging buffers
         ☐ DirectX
         ☐ Graphics Pipeline
-            ☐ Shaders iimplementation
+            ✔ Shaders implementation @done (2018-8-17 15:10:26)
+            ☐ Shaders parameters implementation
+                ✔ Uniform variables @done (2018-8-17 15:10:50)
+                ☐ Samplers
+                ☐ Constants
             ☐ Materials
             ☐ Basic shading
             ☐ Shadows
+            ☐ Lights
+            ☐ PBR
+            ☐ Phong
+            ☐ Pipeline stages
+			☐ Forward renderer
+			☐ Deferred renderer
         ☐ Compute pipeline
             ☐ Simple particules
             ☐ Physics calculation
@@ -41,6 +54,8 @@ DadEngine:
         ☐ Mesh API
             ☐ Loading (.fbx, .obj, gltf 2.0)
             ✔ Intermediate storage @done (2017-10-10 00:13:06)
+        ☐ Images
+            ☐ Loading Images
     ☐ Math
         ✔ Matrix @done (2017-10-10 00:13:11)
         ✔ Vectors @done (2017-10-10 00:13:12)
@@ -55,11 +70,17 @@ DadEngine:
         ☐ Cinematic
         ☐ Rigidbody
     ☐ Gameplay API
-        ☐ Actors
-        ☐ Components
+        ✔ Actors @done (2018-2-4 22:26:48)
+        ✔ Components @done (2018-2-4 22:26:51)
         ☐ AI
+        ☐ Inputs
+            ✔ Keybaord Inputs @done (2018-8-17 15:12:13)
+            ☐ Mouse Inputs
     ☐ UI
 
     ☐ Custom shading language @low
         ☐ Syntax
         ☐ Compiler
+
+	☐ Build system
+		☐ CMakeLists
