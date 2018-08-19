@@ -17,7 +17,7 @@ set_property(TARGET PROPERTY CXX_STANDARD_REQUIRED ON)
 add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DDADOPENGLES)
 
 # Needed packages
-find_package(Vulkan REQUIRED)
+find_package(Vulkan)
 find_package(OpenGL REQUIRED)
 
 # Include directories
