@@ -55,4 +55,6 @@ add_executable(DadEngine_2_0 ${SRC})
 
 # Link libs
 target_link_libraries(DadEngine_2_0 ${OPENGL_gl_LIBRARY})
-target_link_libraries(DadEngine_2_0 ${Vulkan_LIBRARY}) 
+if(Vulkan_FOUND)
+	target_link_libraries(DadEngine_2_0 ${Vulkan_LIBRARY}) 
+endif()
