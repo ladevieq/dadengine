@@ -260,3 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 /DadEngine_2.0/CMakeFiles
+/DadEngine_2.0/CMakeCache.txt
+/DadEngine_2.0/cmake_install.cmake
+/DadEngine_2.0/Makefile
