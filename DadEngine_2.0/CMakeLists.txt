@@ -7,8 +7,8 @@ set (DadEngine_2_0_VERSION_MAJOR 2)
 set (DadEngine_2_0_VERSION_MINOR 0)
 
 # Required compiler properties
-SET(CMAKE_C_COMPILER $ENV{EMSCRIPTEN}/emcc)
-SET(CMAKE_CXX_COMPILER $ENV{EMSCRIPTEN}/em++)
+# SET(CMAKE_C_COMPILER $ENV{EMSCRIPTEN}/emcc)
+# SET(CMAKE_CXX_COMPILER $ENV{EMSCRIPTEN}/em++)
 
 set_property(TARGET PROPERTY CXX_STANDARD 17)
 set_property(TARGET PROPERTY CXX_STANDARD_REQUIRED ON)
@@ -46,7 +46,7 @@ include_directories("$ENV{VULKAN_SDK}/Include")
 
 include_directories("$ENV{GLES_SDK}/include")
 
-include_directories("$ENV{EMSCRIPTEN}/system/include")
+# include_directories("$ENV{EMSCRIPTEN}/system/include")
 
 # Add source files
 file(GLOB_RECURSE SRC "*.cpp")
