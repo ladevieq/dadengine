@@ -84,3 +84,6 @@ DadEngine:
 
 	☐ Build system
 		☐ CMakeLists
+	☐ Documentation
+		☐ Add a documentation generator
+		☐ Add documentation to the OpenGL and Vulkan renderers

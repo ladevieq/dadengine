@@ -31,6 +31,13 @@ namespace DadEngine::Core
 		}
 
 
+		// Change the thread priority for the scheduler
+		FORCE_INLINE void ChangePriority(int32 _InThreadPriority) {
+			SetThreadPriority(this->m_ThreadHandle, _InThreadPriority);
+		}
+
+
+		// Start or resume the thread
 		FORCE_INLINE void Resume()
 		{
 			ResumeThread(m_ThreadHandle);
@@ -49,9 +56,13 @@ namespace DadEngine::Core
 		{
 			TerminateThread(m_ThreadHandle, 0U);
 
+			CloseHandle(m_ThreadHandle);
+
 			m_eThreadState = TERMINATED;
 		}
 
+
+		// Execute the thread task
 		static void Work(WindowsThread* _ptrJob)
 		{
 			_ptrJob->m_ptrJobFunction();
@@ -60,7 +71,7 @@ namespace DadEngine::Core
 		}
 
 
-	//private:
+	private:
 		Job m_ptrJobFunction = nullptr;
 		HANDLE m_ThreadHandle = nullptr;
 		ThreadState m_eThreadState = CREATED;
