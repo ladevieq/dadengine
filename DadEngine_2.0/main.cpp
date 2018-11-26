@@ -48,10 +48,17 @@ RenderingFeatureInfo renderFeatureInfo;
 StaticMeshRenderingFeature renderFeature;
 StaticMeshComponent meshComponent;
 
+Actor* player = nullptr;
+Camera* cam = nullptr;
+TArray<RenderObject*> WorldObjects;
+
 uint8 bLoop = TRUE;
 uint32 uiCounter = 0U;
 PlatformTimer fpsTimer;
 
+/*
+ * Inputs
+*/
 struct WInput : Input
 {
 	WInput(Actor* _InPlayer)
@@ -116,8 +123,11 @@ struct AInput : Input
 	Actor* player;
 };
 
-int main
-{
+
+/*
+ * Engine stuff
+*/
+void setupRenderContextAndRederingStuffs() {
 #if defined(_DEBUG)
 	//Tests();
 #endif
@@ -170,110 +180,126 @@ int main
 	renderFeature.Initialize(renderFeatureInfo);
 	renderFeature.AddComponent(&meshComponent);
 
-	Actor player(nullptr);
-	Camera cam(&player);
-	TArray<RenderObject*> WorldObjects;
+	player = new Actor(nullptr);
+	cam = new Camera(player);
 	WorldObjects.Add(meshComponent.m_RenderObjectHandle);
 
-	InputManager::GetInputManager()->m_Inputs.Add(new WInput{ &player});
-	InputManager::GetInputManager()->m_Inputs.Add(new SInput{ &player });
-	InputManager::GetInputManager()->m_Inputs.Add(new AInput{ &player });
-	InputManager::GetInputManager()->m_Inputs.Add(new DInput{ &player });
+	InputManager::GetInputManager()->m_Inputs.Add(new WInput{ player });
+	InputManager::GetInputManager()->m_Inputs.Add(new SInput{ player });
+	InputManager::GetInputManager()->m_Inputs.Add(new AInput{ player });
+	InputManager::GetInputManager()->m_Inputs.Add(new DInput{ player });
 
 	fpsTimer.Start();
+}
+
+void messagePump() {
+	MSG msg = {};
+
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	{
+		if (msg.message == WM_QUIT)
+		{
+			bLoop = FALSE;
+		}
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+}
+
+void updateFpsCounter() {
+	if (fpsTimer.GetMilliseconds() >= 1000U)
+	{
+		//sprintf(name, "%u\0", uiCounter);
+		//printf("%u\n", uiCounter);
+
+		//window.SetWindowTitle(name);
+		fpsTimer.Reset();
+		uiCounter = 0U;
+	}
+
+	uiCounter++;
+}
+
+void renderLoop() {
+	if (bLoop)
+	{
+		InputManager::GetInputManager()->Update();
+
+		/*Matrix4x4 pers = CameraManager::GetCameraManager()->GetMainCamera()->GetProjectionMatrix();
+		Matrix4x4 view;
+		Vector3f eyePos = CameraManager::GetCameraManager()->GetMainCamera()->m_Owner->GetRelativeLocation();
+		Vector3f targetPosition = Vector3f{ eyePos.x, eyePos.y, -1.f };
+		Vector3f up = Vector3f{ 0.f, 1.f, 0.f };
+		view.LookAt(eyePos, targetPosition, up);
+		Matrix4x4 vp = pers * view;
+
+		Vector4f v1 = Vector4f(triangle.m_vertices[0U].Position.x, triangle.m_vertices[0U].Position.y, triangle.m_vertices[0U].Position.z, 1.0);
+		v1 = vp * v1;*/
+
+		//Profile renderProfile ("Rendering");
+		ViewPacket view;
+		FramePacket frame;
+
+		renderContext->BeginFrame();
+
+		framebuffer = renderContext->GetBackFramebuffer();
+
+		cmdBuff->BeginRecord();
+		cmdBuff->ClearColor(Color{ 0.0f, 0.1f, 1.0f, 1.0f });
+		cmdBuff->ClearDepthStencil(1.0f, 0U);
+		cmdBuff->BeginRenderPass(renderPass, framebuffer);
+		cmdBuff->BindShader(mainShader);
+		cmdBuff->BindVertexBuffer(vb);
+		cmdBuff->DrawVertexBuffer(vb);
+		cmdBuff->EndRenderPass(renderPass);
+		cmdBuff->Present();
+		cmdBuff->EndRecord();
+
+		// Extract visible objects
+		//cam.ExtractVisibleObjects(WorldObjects, frame);
+
+		// Extract rendernode / component data
+		//frame.Extract();
+
+		// Foreach feature generate the rendering instructions
+		//renderFeature.SubmitViewBegin(view, cmdBuff);
+
+
+		if (renderFeatureInfo.SubmitNode == TRUE)
+		{
+			//renderFeature.SubmitNode();
+		}
+
+		if (renderFeatureInfo.SubmitNodes == TRUE)
+		{
+			//renderFeature.SubmitNodes();
+		}
+
+		//renderFeature.SubmitViewEnd(view, cmdBuff);
+
+
+		// Sync rendering and game threads
+		// Exchange extracted datas and rendering commands
+
+		// Resume threads
+		renderContext->EndFrame();
+
+		updateFpsCounter();
+	}
+}
+
+
+/*
+ * Main
+*/
+int main {
+	setupRenderContextAndRederingStuffs();
 
 	while (bLoop)
 	{
-		//window.MessagePump();
-		MSG msg = {};
-
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			if (msg.message == WM_QUIT)
-			{
-				bLoop = FALSE;
-			}
-
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-
-		//else
-		{
-			InputManager::GetInputManager()->Update();
-
-			/*Matrix4x4 pers = CameraManager::GetCameraManager()->GetMainCamera()->GetProjectionMatrix();
-			Matrix4x4 view;
-			Vector3f eyePos = CameraManager::GetCameraManager()->GetMainCamera()->m_Owner->GetRelativeLocation();
-			Vector3f targetPosition = Vector3f{ eyePos.x, eyePos.y, -1.f };
-			Vector3f up = Vector3f{ 0.f, 1.f, 0.f };
-			view.LookAt(eyePos, targetPosition, up);
-			Matrix4x4 vp = pers * view;
-
-			Vector4f v1 = Vector4f(triangle.m_vertices[0U].Position.x, triangle.m_vertices[0U].Position.y, triangle.m_vertices[0U].Position.z, 1.0);
-			v1 = vp * v1;*/
-
-			//Profile renderProfile ("Rendering");
-			ViewPacket view;
-			FramePacket frame;
-
-			renderContext->BeginFrame();
-
-			framebuffer = renderContext->GetBackFramebuffer();
-
-			cmdBuff->BeginRecord();
-			cmdBuff->ClearColor(Color{ 0.0f, 0.1f, 1.0f, 1.0f });
-			cmdBuff->ClearDepthStencil(1.0f, 0U);
-			cmdBuff->BeginRenderPass(renderPass, framebuffer);
-			cmdBuff->BindShader(mainShader);
-			cmdBuff->BindVertexBuffer(vb);
-			cmdBuff->DrawVertexBuffer(vb);
-			cmdBuff->EndRenderPass(renderPass);
-			cmdBuff->Present();
-			cmdBuff->EndRecord();
-
-			// Extract visible objects
-			//cam.ExtractVisibleObjects(WorldObjects, frame);
-
-			// Extract rendernode / component data
-			//frame.Extract();
-
-			// Foreach feature generate the rendering instructions
-			//renderFeature.SubmitViewBegin(view, cmdBuff);
-
-
-			if (renderFeatureInfo.SubmitNode == TRUE)
-			{
-				//renderFeature.SubmitNode();
-			}
-
-			if (renderFeatureInfo.SubmitNodes == TRUE)
-			{
-				//renderFeature.SubmitNodes();
-			}
-
-			//renderFeature.SubmitViewEnd(view, cmdBuff);
-
-
-			// Sync rendering and game threads
-			// Exchange extracted datas and rendering commands
-
-			// Resume threads
-			renderContext->EndFrame();
-
-
-			if (fpsTimer.GetMilliseconds() >= 1000U)
-			{
-				//sprintf(name, "%u\0", uiCounter);
-				//printf("%u\n", uiCounter);
-
-				//window.SetWindowTitle(name);
-				fpsTimer.Reset();
-				uiCounter = 0U;
-			}
-
-			uiCounter++;
-		}
+		messagePump();
+		renderLoop();
 	}
 
 	return 0;

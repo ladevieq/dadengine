@@ -4,11 +4,11 @@ namespace DadEngine::Rendering
 {
 	VulkanSwapchain::~VulkanSwapchain()
 	{
-		for (auto image : m_SwapchainImages) {
+		/* for (auto image : m_SwapchainImages) {
 			vkDestroyImageView(m_Device, image.m_View, VK_NULL_HANDLE);
 		}
 
-		DestroySwapchain(m_Device, m_Swapchain, VK_NULL_HANDLE);
+		DestroySwapchain(m_Device, m_Swapchain, VK_NULL_HANDLE); */
 	}
 
 	void VulkanSwapchain::Initialize(VkDevice& _InDevice, VkPhysicalDevice& _InPhysicalDevice, VkSurfaceKHR& _InSurface, VkPresentModeKHR& _InPresentationMode, PlatformWindow& _InWindow)

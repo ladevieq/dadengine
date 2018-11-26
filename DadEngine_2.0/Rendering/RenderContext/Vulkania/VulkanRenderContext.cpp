@@ -8,7 +8,7 @@ namespace DadEngine::Rendering
 	{
 		//VulkanHelper::EnumerateInstanceLayersAndExtensions();
 
-		m_WindowExtent = { (uint32)_InWindow.GetRect().right, (uint32)_InWindow.GetRect().bottom };
+ 		m_WindowExtent = { (uint32)_InWindow.GetRect().right, (uint32)_InWindow.GetRect().bottom };
 
 		CreateInstance(_InWindow);
 
@@ -52,6 +52,8 @@ namespace DadEngine::Rendering
 
 	VulkanRenderContext::~VulkanRenderContext()
 	{
+		vkDeviceWaitIdle(m_Device);
+
 		vkDestroyCommandPool(m_Device, m_GraphicsCommandPool, VK_NULL_HANDLE);
 		vkDestroyCommandPool(m_Device, m_PresentationCommandPool, VK_NULL_HANDLE);
 
@@ -369,10 +371,10 @@ namespace DadEngine::Rendering
 		app_info.pEngineName = "DadEngine";
 
 		TArray<const char*> layersNames;
-		layersNames.Add("VK_LAYER_LUNARG_standard_validation");
-		layersNames.Add("VK_LAYER_LUNARG_core_validation");
-		layersNames.Add("VK_LAYER_LUNARG_object_tracker");
-		layersNames.Add("VK_LAYER_GOOGLE_threading");
+		// layersNames.Add("VK_LAYER_LUNARG_standard_validation");
+		// layersNames.Add("VK_LAYER_LUNARG_core_validation");
+		// layersNames.Add("VK_LAYER_LUNARG_object_tracker");
+		// layersNames.Add("VK_LAYER_GOOGLE_threading");
 
 		TArray<const char*> extensionsNames;
 		extensionsNames.Add("VK_KHR_surface");
