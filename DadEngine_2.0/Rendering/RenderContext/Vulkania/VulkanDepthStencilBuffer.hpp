@@ -47,7 +47,9 @@ namespace DadEngine::Rendering
 			default:
 				LogDebugReport(DebugReport{ DEBUG_REPORT_CONTEXT_VULKAN, DEBUG_REPORT_TYPE_ERROR,
 					DEBUG_REPORT_CODE_DEPTH_STENCIL_BUFFER_FORMAT_ERROR,
-					"Depth stencil buffer have been created with invalid format !" });
+					"Depth stencil buffer have been created with invalid format !",
+					__LINE__,
+					__FILE__});
 				break;
 			}
 		}

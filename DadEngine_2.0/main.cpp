@@ -156,10 +156,11 @@ void setupRenderContextAndRederingStuffs() {
 	renderPass = renderContext->GetRenderPass();
 	cmdBuff = renderContext->CreateCommandBuffer();
 
-	String vertexShaderCode(vertexShaderReader->Size());
+	// We add one because we need the null character
+	String vertexShaderCode(vertexShaderReader->Size() + 1);
 	vertexShaderReader->Read(vertexShaderCode);
 
-	String fragmentShaderCode(fragmentShaderReader->Size());
+	String fragmentShaderCode(fragmentShaderReader->Size() + 1);
 	fragmentShaderReader->Read(fragmentShaderCode);
 
 	vertexLayout.Add({ 0U, VertexInputType::VERTEX_INPUT_TYPE_POSITION });

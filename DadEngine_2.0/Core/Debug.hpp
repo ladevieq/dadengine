@@ -67,11 +67,14 @@ namespace DadEngine::Core//::Debug
 	{
 		DebugReport() = default;
 
-		DebugReport(DebugReportContextFlags _InContextFlag, DebugReportTypeFlags _InReportType, DebugReportCode _InErrorCode, const char* sMessage)
+		DebugReport(DebugReportContextFlags _InContextFlag, DebugReportTypeFlags _InReportType,
+			DebugReportCode _InErrorCode, const char* sMessage, uint32 _InLine, const char* sFileName)
 			: m_uiContextFlag(_InContextFlag),
 				m_uiReportTypeFlag (_InReportType),
 				m_uiReportCode(_InErrorCode),
-				m_sMessage(sMessage)
+				m_sMessage(sMessage),
+				m_iLine(_InLine),
+				m_sFile(sFileName)
 		{}
 
 		/*DebugReport(DebugReportContextFlags _InContextFlag, DebugReportTypeFlags _InReportType, DebugReportCode _InErrorCode, String& sMessage)
@@ -84,7 +87,7 @@ namespace DadEngine::Core//::Debug
 		DebugReportContextFlags m_uiContextFlag = MAX_DEBUG_REPORT_CONTEXT;
 		DebugReportTypeFlags m_uiReportTypeFlag = MAX_DEBUG_REPORT_TYPE;
 		DebugReportCode m_uiReportCode = MAX_DEBUG_REPORT_CODE;
-		int32 m_iLine; // May need change
+		uint32 m_iLine = 0U; // May need change
 		const char* m_sFile = nullptr; // May need change
 		const char* m_sMessage = nullptr;
 	};
