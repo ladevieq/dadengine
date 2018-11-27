@@ -69,6 +69,21 @@ namespace DadEngine::Rendering
 		}
 	};
 
+	struct OpenGLCommandDrawMultiples : public OpenGLRenderCommand
+	{
+		VertexBuffer* m_VertexBuffer = nullptr;
+		int32 m_InstanceCount = 0;
+
+		OpenGLCommandDrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount)
+			: m_VertexBuffer(_InVertexBuffer), m_InstanceCount(_InInstanceCount)
+		{}
+
+		void Execute() override final
+		{
+			OpenGLWrapper::glDrawArrayInstanced(GL_TRIANGLES, 0U, m_VertexBuffer->m_uiVertexCount, m_InstanceCount);
+		}
+	};
+
 	struct OpenGLBindVertexBuffer : public OpenGLRenderCommand
 	{
 		OpenGLVertexBuffer* m_VertexBuffer = nullptr;
@@ -124,6 +139,8 @@ namespace DadEngine::Rendering
 	void CommandClearDepthStencilBuffer(OpenGLCommandBuffer* _InCmdBuffer, double _InClearDepthValue, uint32 _InClearStencilValue);
 
 	void CommandDraw(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer);
+
+	void CommandDrawMultiples(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer, int32 _InInstanceCount);
 
 	void CommandBindVertexBuffer(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer);
 

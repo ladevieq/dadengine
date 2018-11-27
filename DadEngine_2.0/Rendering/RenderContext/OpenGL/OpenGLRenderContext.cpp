@@ -94,6 +94,11 @@ namespace DadEngine::Rendering
 		CommandDraw((OpenGLCommandBuffer*)_InCommandBuffer, _InVertexBuffer);
 	}
 
+	void OpenGLRenderContext::DrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount, CommandBuffer* _InCommandBuffer)
+	{
+		CommandDrawMultiples((OpenGLCommandBuffer*)_InCommandBuffer, _InVertexBuffer, _InInstanceCount);
+	}
+
 	void OpenGLRenderContext::BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer)
 	{
 		CommandBindVertexBuffer((OpenGLCommandBuffer*)_InCommandBuffer, (OpenGLVertexBuffer*)_InVertexBuffer);

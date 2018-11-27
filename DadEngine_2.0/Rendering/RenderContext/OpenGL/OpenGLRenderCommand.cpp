@@ -32,6 +32,11 @@ namespace DadEngine::Rendering
 		_InCmdBuffer->m_Commands.Add(new OpenGLCommandDraw(_InVertexBuffer));
 	}
 
+	void CommandDrawMultiples(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer, int32 _InInstanceCount)
+	{
+		_InCmdBuffer->m_Commands.Add(new OpenGLCommandDrawMultiples(_InVertexBuffer, _InInstanceCount));
+	}
+
 	void CommandBindVertexBuffer(OpenGLCommandBuffer * _InCmdBuffer, VertexBuffer * _InVertexBuffer)
 	{
 		_InCmdBuffer->m_Commands.Add(new OpenGLBindVertexBuffer((OpenGLVertexBuffer*)_InVertexBuffer));

@@ -160,6 +160,11 @@ namespace DadEngine::Rendering
 		vkCmdDraw(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, _InVertexBuffer->m_uiVertexCount, 1U, 0U, 0U);
 	}
 
+	void VulkanRenderContext::DrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount, CommandBuffer* _InCommandBuffer)
+	{
+		vkCmdDraw(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, _InVertexBuffer->m_uiVertexCount, (uint32)_InInstanceCount, 0U, 0U);
+	}
+
 	void VulkanRenderContext::BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer)
 	{
 		VkDeviceSize deviceSize = 0U;

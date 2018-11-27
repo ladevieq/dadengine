@@ -12,7 +12,7 @@ namespace DadEngine::Core
 			//CreateDirectoryExA()
 		}
 
-
+		// Ambiguous we can read and write
 		static IFile* CreateFileReader(const char* _InFilePath, IOMode _InFileFormat)
 		{
 			if (_InFileFormat == IO_MODE_TEXT)
@@ -21,6 +21,7 @@ namespace DadEngine::Core
 				return new PlatformBinaryFile(_InFilePath, IO_MODE_READ);
 		}
 
+		// Ambiguous we can read and write
 		static IFile* CreateTextFileWriter(const char* _InFilePath, IOMode _InFileFormat)
 		{
 			if(_InFileFormat == IO_MODE_TEXT)

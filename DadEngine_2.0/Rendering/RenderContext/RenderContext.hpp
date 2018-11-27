@@ -70,6 +70,8 @@ namespace DadEngine::Rendering
 
 		virtual void Draw(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) = 0;
 
+		virtual void DrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount, CommandBuffer* _InCommandBuffer) = 0;
+
 		virtual void BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) = 0;
 
 		virtual void BindShaderProgram(Shader* _InShader, CommandBuffer* _InCommandBuffer) = 0;

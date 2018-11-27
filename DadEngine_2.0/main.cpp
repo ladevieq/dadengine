@@ -137,8 +137,15 @@ void setupRenderContextAndRederingStuffs() {
 	Application::GetApp()->m_window.SetWindowTitle("OpenGL");
 	renderContext = new OpenGLRenderContext(Application::GetApp()->m_window);
 
-	vertexShaderReader = PlatformFileSystem::CreateFileReader("test.vert", IO_MODE_TEXT);
-	fragmentShaderReader = PlatformFileSystem::CreateFileReader("test.frag", IO_MODE_TEXT);
+	vertexShaderReader = PlatformFileSystem::CreateFileReader("test_multiple.vert", IO_MODE_TEXT);
+	fragmentShaderReader = PlatformFileSystem::CreateFileReader("test_multiple.frag", IO_MODE_TEXT);
+
+	// We add one because we need the null character
+	String vertexShaderCode(vertexShaderReader->Size() + 1);
+	vertexShaderReader->Read(vertexShaderCode);
+
+	String fragmentShaderCode(fragmentShaderReader->Size() + 1);
+	fragmentShaderReader->Read(fragmentShaderCode);
 #elif defined (DADOPENGLES)
 	Application::GetApp()->m_window.SetWindowTitle("OpenGLES");
 	renderContext = new OpenGLESRenderContext(Application::GetApp()->m_window);
@@ -151,17 +158,16 @@ void setupRenderContextAndRederingStuffs() {
 
 	vertexShaderReader = PlatformFileSystem::CreateFileReader("test_vk.vert.spv", IO_MODE_BINARY);
 	fragmentShaderReader = PlatformFileSystem::CreateFileReader("test_vk.frag.spv", IO_MODE_BINARY);
+
+	String vertexShaderCode(vertexShaderReader->Size());
+	vertexShaderReader->Read(vertexShaderCode);
+
+	String fragmentShaderCode(fragmentShaderReader->Size());
+	fragmentShaderReader->Read(fragmentShaderCode);
 #endif
 
 	renderPass = renderContext->GetRenderPass();
 	cmdBuff = renderContext->CreateCommandBuffer();
-
-	// We add one because we need the null character
-	String vertexShaderCode(vertexShaderReader->Size() + 1);
-	vertexShaderReader->Read(vertexShaderCode);
-
-	String fragmentShaderCode(fragmentShaderReader->Size() + 1);
-	fragmentShaderReader->Read(fragmentShaderCode);
 
 	vertexLayout.Add({ 0U, VertexInputType::VERTEX_INPUT_TYPE_POSITION });
 	vertexLayout.Add({ 1U, VertexInputType::VERTEX_INPUT_TYPE_COLOR });
@@ -170,9 +176,12 @@ void setupRenderContextAndRederingStuffs() {
 	fragmentShader = renderContext->CreateFragmentShader(fragmentShaderCode.Cstr(), fragmentShaderCode.Size());
 	mainShader = renderContext->CreateShader(vertexShader, nullptr, fragmentShader, renderPass);
 
-	triangle.m_vertices.Add(RawVertex{ Vector3f{ -0.5f, -0.5f, -1.f }, Vector3f{ 1.0f, 0.0f, 0.0f } });
+	/* triangle.m_vertices.Add(RawVertex{ Vector3f{ -0.5f, -0.5f, -1.f }, Vector3f{ 1.0f, 0.0f, 0.0f } });
 	triangle.m_vertices.Add(RawVertex{ Vector3f{ 0.5f, -0.5f, -1.f }, Vector3f{ 0.0f, 1.0f, 0.0f } });
-	triangle.m_vertices.Add(RawVertex{ Vector3f{ 0.0f, 0.5f, -1.f }, Vector3f{ 0.0f, 0.0f, 1.0f } });
+	triangle.m_vertices.Add(RawVertex{ Vector3f{ 0.0f, 0.5f, -1.f }, Vector3f{ 0.0f, 0.0f, 1.0f } }); */
+	triangle.m_vertices.Add(RawVertex{ Vector3f{ -999.5f, -999.5f, -999.f }, Vector3f{ 1.0f, 0.0f, 0.0f } });
+	triangle.m_vertices.Add(RawVertex{ Vector3f{ -998.5f, -999.5f, -999.f }, Vector3f{ 0.0f, 1.0f, 0.0f } });
+	triangle.m_vertices.Add(RawVertex{ Vector3f{ -999.0f, -998.5f, -999.f }, Vector3f{ 0.0f, 0.0f, 1.0f } });
 
 	Vertexfactory::Create(triangle, rawPosition, vertexLayout, uiStride);
 
@@ -211,10 +220,11 @@ void messagePump() {
 void updateFpsCounter() {
 	if (fpsTimer.GetMilliseconds() >= 1000U)
 	{
-		//sprintf(name, "%u\0", uiCounter);
+		char name[128];
+		sprintf(name, "%u\0", uiCounter);
 		//printf("%u\n", uiCounter);
 
-		//window.SetWindowTitle(name);
+		Application::GetApp()->m_window.SetWindowTitle(name);
 		fpsTimer.Reset();
 		uiCounter = 0U;
 	}
@@ -252,7 +262,7 @@ void renderLoop() {
 		cmdBuff->BeginRenderPass(renderPass, framebuffer);
 		cmdBuff->BindShader(mainShader);
 		cmdBuff->BindVertexBuffer(vb);
-		cmdBuff->DrawVertexBuffer(vb);
+		cmdBuff->DrawVertexBufferMultipleTimes(vb, 100);
 		cmdBuff->EndRenderPass(renderPass);
 		cmdBuff->Present();
 		cmdBuff->EndRecord();

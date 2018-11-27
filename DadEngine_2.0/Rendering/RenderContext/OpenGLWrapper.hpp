@@ -100,6 +100,8 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 #if defined(GL_EXT_vertex_array) || defined(DADOPENGLES)
 	void __stdcall glDrawArrays(GLenum _InMode, GLint _InFirst, GLsizei _InCount);
+
+	void __stdcall glDrawArrayInstanced(GLenum _InMode, GLint _InFirst, GLsizei _InCount, GLsizei _InPrimCount);
 #endif
 
 #if defined(WINDOWS)

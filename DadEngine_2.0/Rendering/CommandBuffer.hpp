@@ -35,6 +35,8 @@ namespace DadEngine::Rendering
 
 		void DrawVertexBuffer(VertexBuffer* _InVertexBuffer) { m_ptrRenderContext->Draw(_InVertexBuffer, this); }
 
+		void DrawVertexBufferMultipleTimes(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount) { m_ptrRenderContext->DrawMultiples(_InVertexBuffer, _InInstanceCount, this); }
+
 		void BeginRenderPass(RenderPass* _InRenderPass, Framebuffer* _InFrameBuffer) { m_ptrRenderContext->BeginRenderPass(_InRenderPass, _InFrameBuffer, this); }
 
 		void EndRenderPass(RenderPass* _InRenderPass) { m_ptrRenderContext->EndRenderPass(this); }

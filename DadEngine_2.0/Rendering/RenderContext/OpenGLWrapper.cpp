@@ -287,16 +287,20 @@ namespace DadEngine::Rendering::OpenGLWrapper
 
 #if defined(GL_EXT_vertex_array)
 	PFNGLDRAWARRAYSEXTPROC PFNglDrawArrays = nullptr;
-#elif defined(DADOPENGLES)
-	PFNGLDRAWARRAYSPROC PFNglDrawArrays = nullptr;
+	PFNGLDRAWARRAYSINSTANCEDEXTPROC PFNglDrawArraysInstanced = nullptr;
 #endif
 
+#if defined(GL_EXT_vertex_array)
 	void __stdcall glDrawArrays(GLenum _InMode, GLint _InFirst, GLsizei _InCount)
 	{
-#if defined(GL_EXT_vertex_array) || defined(DADOPENGLES)
 		PFNglDrawArrays(_InMode, _InFirst, _InCount);
-#endif
 	}
+
+	void __stdcall glDrawArrayInstanced(GLenum _InMode, GLint _InFirst, GLsizei _InCount, GLsizei _InPrimCount)
+	{
+		PFNglDrawArraysInstanced(_InMode, _InFirst, _InCount, _InPrimCount);
+	}
+#endif
 
 #if defined(WINDOWS)
 
@@ -430,6 +434,7 @@ namespace DadEngine::Rendering::OpenGLWrapper
 	{
 #if defined(GL_EXT_vertex_array)
 		PFNglDrawArrays = (PFNGLDRAWARRAYSEXTPROC)glLoadFunction("glDrawArrays");
+		PFNglDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDEXTPROC)glLoadFunction("glDrawArraysInstanced");
 #elif defined(DADOPENGLES)
 		PFNglDrawArrays = (PFNGLDRAWARRAYSPROC)glLoadFunction("glDrawArrays");
 #endif

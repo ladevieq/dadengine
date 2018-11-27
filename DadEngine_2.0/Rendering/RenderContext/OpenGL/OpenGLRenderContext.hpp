@@ -30,6 +30,8 @@ namespace DadEngine::Rendering
 
 		void Draw(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) override final;
 
+		void DrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount, CommandBuffer* _InCommandBuffer) override final;
+
 		void BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) override final;
 
 		void BindShaderProgram(Shader* _InShader, CommandBuffer* _InCommandBuffer) override final;
