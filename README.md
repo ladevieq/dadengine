@@ -1,4 +1,4 @@
-# DadEngine 2.0
+# DadEngine
 
 ## Warning
 As this is a project i'm currently working on, the README file will evolve as the project growth.
