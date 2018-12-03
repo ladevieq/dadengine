@@ -10,6 +10,7 @@ set (DadEngine_VERSION_MINOR 0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+
 #Platforms macros
 add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DDADOPENGL)
 
@@ -29,7 +30,10 @@ add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DDADOPENGL)
 # endif()
 
 add_subdirectory(Core/)
+add_subdirectory(Gameplay/)
+add_subdirectory(Math/)
+add_subdirectory(Rendering)
 
-add_executable(DadEngine main.cpp)
+add_executable(DadEngine WIN32 main.cpp)
 
 target_link_libraries(DadEngine core)

@@ -1,10 +1,7 @@
-//#define DADOPENGL //DADOPENGLES
-//#define DADVULKAN
-
 #include "Core/Core.hpp"
 //#include "Rendering/Rendering.hpp"
-//#include "Math/Math.hpp"
-//#include "Gameplay/Gameplay.hpp"
+#include "Math/Math.hpp"
+#include "Gameplay/Gameplay.hpp"
 //
 //void Tests()
 //{

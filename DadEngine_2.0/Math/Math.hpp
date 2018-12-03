@@ -4,15 +4,15 @@
 #include "Constants.hpp"
 #include "MathFunctions.hpp"
 
-#include "Vector2f.hpp"
-#include "Vector3f.hpp"
-#include "Vector4f.hpp"
+#include "Vector/Vector2f.hpp"
+#include "Vector/Vector3f.hpp"
+#include "Vector/Vector4f.hpp"
 
-#include "Matrix2x2.hpp"
-#include "Matrix3x3.hpp"
-#include "Matrix4x4.hpp"
+#include "Matrix/Matrix2x2.hpp"
+#include "Matrix/Matrix3x3.hpp"
+#include "Matrix/Matrix4x4.hpp"
 
-#include "Quaternion.hpp"
+#include "Quaternion/Quaternion.hpp"
 
 #include "Transform3D.hpp"
 
