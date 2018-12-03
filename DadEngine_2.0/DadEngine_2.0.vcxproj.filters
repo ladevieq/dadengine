@@ -154,5 +154,11 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
+    <Text Include="Core\Iterators\CMakeLits.txt" />
+    <Text Include="Core\Serialization\CMakeLists.txt" />
+    <Text Include="Core\Platform\Windows\CMakeLists.txt" />
+    <Text Include="Core\Platform\CMakeLists.txt" />
+    <Text Include="Core\Memory\CMakeLists.txt" />
+    <Text Include="Core\CMakeLists.txt" />
   </ItemGroup>
 </Project>
