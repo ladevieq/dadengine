@@ -1,0 +1,1 @@
+add_library(vector Vector2f.cpp Vector3f.cpp Vector4f.cpp)
