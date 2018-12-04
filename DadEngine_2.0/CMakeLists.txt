@@ -15,25 +15,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DDADOPENGL)
 
 # Needed packages
-# find_package(Vulkan)
-# find_package(OpenGL REQUIRED)
+find_package(Vulkan)
+find_package(OpenGL REQUIRED)
 
 # Include directories
-# include_directories("$ENV{VULKAN_SDK}/Include")
+include_directories("$ENV{VULKAN_SDK}/Include")
 
 # Add source files
 
 # Link libs
-# target_link_libraries(DadEngine ${OPENGL_gl_LIBRARY})
-# if(Vulkan_FOUND)
-	# target_link_libraries(DadEngine ${Vulkan_LIBRARY}) 
-# endif()
+#target_link_libraries(DadEngine ${OPENGL_gl_LIBRARY})
+#if(Vulkan_FOUND)
+	#target_link_libraries(DadEngine ${Vulkan_LIBRARY}) 
+#endif()
 
 add_subdirectory(Core/)
 add_subdirectory(Gameplay/)
 add_subdirectory(Math/)
-add_subdirectory(Rendering)
+add_subdirectory(Rendering/)
 
 add_executable(DadEngine WIN32 main.cpp)
 
-target_link_libraries(DadEngine core)
+target_link_libraries(DadEngine core gameplay math rendering)
