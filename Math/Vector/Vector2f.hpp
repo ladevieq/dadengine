@@ -1,8 +1,8 @@
 #ifndef __VECTOR2F_HPP_
 #define __VECTOR2F_HPP_
 
-#include "../Core/Core.hpp"
-#include "Constants.hpp"
+#include "../../Core/Core.hpp"
+#include "../Constants.hpp"
 
 namespace DadEngine::Math
 {

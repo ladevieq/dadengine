@@ -259,7 +259,8 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/DadEngine_2.0/CMakeFiles
-/DadEngine_2.0/CMakeCache.txt
-/DadEngine_2.0/cmake_install.cmake
-/DadEngine_2.0/Makefile
+/CMakeFiles
+/CMakeCache.txt
+/cmake_install.cmake
+/Makefile
+/$CONOUT

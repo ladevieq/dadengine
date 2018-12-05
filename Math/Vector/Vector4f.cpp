@@ -1,6 +1,6 @@
 #include "Vector4f.hpp"
 
-#include "MathFunctions.hpp"
+#include "../MathFunctions.hpp"
 
 namespace DadEngine::Math
 {

@@ -1,8 +1,8 @@
 #ifndef __VECTOR4F_HPP_
 #define __VECTOR4F_HPP_
 
-#include "../Core/Core.hpp"
-#include "Constants.hpp"
+#include "../../Core/Core.hpp"
+#include "../Constants.hpp"
 
 namespace DadEngine::Math
 {

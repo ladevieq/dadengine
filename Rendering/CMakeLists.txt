@@ -3,4 +3,4 @@ add_subdirectory(RenderContext/)
 
 add_library(rendering Culling/Camera.cpp Culling/FramePacket.cpp Culling/ViewPacket.cpp RenderContext/OpenGLWrapper.cpp)
 
-target_link_libraries(rendering culling opengl vulkania)
+target_link_libraries(rendering opengl vulkania)
