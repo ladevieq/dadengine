@@ -1,6 +1,6 @@
 # Minimum CMake Version required to build
 cmake_minimum_required(VERSION 3.10)
-project(DadEngine)
+project(DadEngine VERSION 0.1.0)
 
 # Project version number
 set (DadEngine_VERSION_MAJOR 0)

@@ -147,8 +147,8 @@ void setupRenderContextAndRederingStuffs() {
 	Application::GetApp()->m_window.SetWindowTitle("Vulkan");
 	renderContext = new VulkanRenderContext(Application::GetApp()->m_window);
 
-	vertexShaderReader = PlatformFileSystem::CreateFileReader("test_vk.vert.spv", IO_MODE_BINARY);
-	fragmentShaderReader = PlatformFileSystem::CreateFileReader("test_vk.frag.spv", IO_MODE_BINARY);
+	vertexShaderReader = PlatformFileSystem::CreateFileReader("./Data/test_vk.vert.spv", IO_MODE_BINARY);
+	fragmentShaderReader = PlatformFileSystem::CreateFileReader("./Data/test_vk.frag.spv", IO_MODE_BINARY);
 
 	String vertexShaderCode(vertexShaderReader->Size());
 	vertexShaderReader->Read(vertexShaderCode);
