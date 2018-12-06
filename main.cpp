@@ -296,6 +296,8 @@ void renderLoop() {
  * Main
 */
 int main {
+	printf("%s\n", system("cd"));
+
 	setupRenderContextAndRederingStuffs();
 
 	while (bLoop)
