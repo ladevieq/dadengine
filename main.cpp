@@ -134,8 +134,8 @@ void setupRenderContextAndRederingStuffs() {
 	Application::GetApp()->m_window.SetWindowTitle("OpenGL");
 	renderContext = new OpenGLRenderContext(Application::GetApp()->m_window);
 
-	vertexShaderReader = PlatformFileSystem::CreateFileReader("test_multiple.vert", IO_MODE_TEXT);
-	fragmentShaderReader = PlatformFileSystem::CreateFileReader("test_multiple.frag", IO_MODE_TEXT);
+	vertexShaderReader = PlatformFileSystem::CreateFileReader("./Data/test_multiple.vert", IO_MODE_TEXT);
+	fragmentShaderReader = PlatformFileSystem::CreateFileReader("./Data/test_multiple.frag", IO_MODE_TEXT);
 
 	// We add one because we need the null character
 	String vertexShaderCode(vertexShaderReader->Size() + 1);
