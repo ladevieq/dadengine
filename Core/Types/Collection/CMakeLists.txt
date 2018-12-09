@@ -1,0 +1,1 @@
+add_library(collection TArray.cpp TDictionary.cpp)
