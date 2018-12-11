@@ -69,7 +69,7 @@ namespace DadEngine::Core
 
 	namespace Test
     {
-        static void TestThread ()
+        void TestThread ()
         {
             auto func = []() {
                 while (1)

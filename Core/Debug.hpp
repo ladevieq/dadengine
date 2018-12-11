@@ -94,6 +94,11 @@ namespace DadEngine::Core //::Debug
     void LogAssert(const char *const _InMessage, const char *const _InFile, uint32 _InLine);
 
     void Log(const char *const _InMessage);
+
+	namespace Test
+    {
+        void TestDebug();
+    } // namespace Test
 } // namespace DadEngine::Core
 
 // using namespace DadEngine::Core::Debug;

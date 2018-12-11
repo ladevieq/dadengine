@@ -49,6 +49,11 @@ namespace DadEngine::Core//::Memory
 		//static Containers::TArray<MemoryChunk> m_memChunks;
 	};
 
+	namespace Test
+    {
+        void TestMemoryManager();
+    } // namespace Test
+
 };
 
 

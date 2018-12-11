@@ -1,1 +1,1 @@
-add_library(memory MemoryManager.cpp LinearStackAllocator.cpp)
+add_library(memory MemoryManager.cpp)

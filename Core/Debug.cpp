@@ -70,7 +70,7 @@ namespace DadEngine::Core
 
 	namespace Test
     {
-        static void TestDebug()
+        void TestDebug()
         {
             int i = 10;
             int *ptr = &i;

@@ -2,9 +2,6 @@
 
 #include <stdio.h>
 
-#include "../../PlatformTypes.hpp"
-
-
 namespace DadEngine::Core
 {
     void WindowsTimer::Start()
@@ -67,7 +64,7 @@ namespace DadEngine::Core
 
 	namespace Test
     {
-        static void TestTime()
+        void TestTime()
         {
             WindowsTimer time;
 

@@ -19,6 +19,11 @@ namespace DadEngine::Core
 		const char* m_sProfilename = "\0";
 		PlatformTimer time;
 	};
+
+	namespace Test
+    {
+        void TestProfile();
+    } // namespace Test
 }
 
 #endif //__PROFILER_HPP_

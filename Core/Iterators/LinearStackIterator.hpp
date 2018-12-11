@@ -2,6 +2,7 @@
 #define __LINEAR_STACK_ITERATOR_HPP_
 
 #include "Iterator.hpp"
+#include "../Platform/Types.hpp"
 
 
 namespace DadEngine::Core

@@ -40,6 +40,11 @@ namespace DadEngine::Core
         HANDLE m_ThreadHandle = nullptr;
         ThreadState m_eThreadState = CREATED;
     };
+
+	namespace Test
+    {
+        void TestThread();
+    } // namespace Test
 } // namespace DadEngine::Core
 
 #endif //__WINDOWS_THREADS_HPP_

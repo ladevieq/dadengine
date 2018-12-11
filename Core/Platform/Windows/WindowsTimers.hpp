@@ -32,6 +32,11 @@ namespace DadEngine::Core
         LARGE_INTEGER m_StartTime;
         LARGE_INTEGER m_Frequency;
     };
+
+	namespace Test
+    {
+        void TestTime();
+    } // namespace Test
 } // namespace DadEngine::Core
 
 using PlatformTimer = DadEngine::Core::WindowsTimer;

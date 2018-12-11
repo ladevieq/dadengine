@@ -1,69 +1,142 @@
 #ifndef __TARRAY_HPP_
 #define __TARRAY_HPP_
 
-#include "../../Platform/Types.hpp"
-#include "../../Memory/LinearStackAllocator.hpp"
 #include "../../Iterators/LinearStackIterator.hpp"
+#include "../../Memory/LinearStackAllocator.hpp"
+#include "../../Platform/Types.hpp"
 
-namespace DadEngine::Core//::Containers
+namespace DadEngine::Core //::Containers
 {
-    template<typename T, typename Alloc = LinearStackAllocator<T>>
-	class TArray
-	{
+    template <typename T, typename Alloc = LinearStackAllocator<T>>
+    class TArray
+    {
 
-	public:
-		TArray() = default;
+        public:
+        TArray() = default;
 
-		TArray (size_t _InItemCount);
+        TArray(size_t _InItemCount)
+        {
+            m_allocator.Allocate(_InItemCount);
+        }
 
-		TArray (size_t _InItemCount, T _InInitValue);
+        TArray(size_t _InItemCount, T _InInitValue)
+        {
+            m_allocator.Allocate(_InItemCount);
 
-		TArray (T *_InValues, size_t _InItemCount);
+            MemoryManager::Set(m_allocator.m_ptrMemLocation, *(int32 *)&_InInitValue, _InItemCount);
+        }
 
-		~TArray() = default;
+        TArray(T *_InValues, size_t _InItemCount)
+        {
+            m_allocator.Allocate(_InItemCount);
 
+            MemoryManager::Copy(_InValues, m_allocator.m_ptrMemLocation, _InItemCount * sizeof(T));
+        }
 
-		TArray<T, Alloc> &operator= (const TArray &_InCpy);
-
-
-		void Reserve (size_t _InSize);
-
-		void AddCapacity (size_t _InSize);
-
-		void Add (T _InNewItem);
-
-		void Add (T *_InValues, size_t _InItemCount);
-
-		void Resize (size_t _InItemCount);
-		
-		void Clear ();
+        ~TArray() = default;
 
 
-		T &operator[] (uint32 _InIndex);
+        TArray<T, Alloc>& operator=(const TArray &_InCpy)
+        {
+            m_allocator = _InCpy.m_allocator;
+            m_uiLastItemIndex = _InCpy.m_uiLastItemIndex;
 
-		uint8 IsEmpty () const;
-
-		T *GetData () const;
-
-		size_t Size () const;
-
-		T &Last () const;
+            return *this;
+        }
 
 
-		// Iterator
-        LinearStackIterator<T> begin () const;
+        void Reserve(size_t _InSize)
+        {
+            m_allocator.Allocate(_InSize);
+        }
 
-		LinearStackIterator<T> end () const;
+        void AddCapacity(size_t _InSize)
+        {
+            Resize(m_allocator.m_uiCapacity + _InSize);
+        }
+
+        void Add(T _InNewItem)
+        {
+            if (m_uiLastItemIndex >= m_allocator.m_uiCapacity)
+                Resize(m_allocator.m_uiCapacity + 1U);
+
+            m_allocator.m_ptrMemLocation[m_uiLastItemIndex] = _InNewItem;
+            m_uiLastItemIndex++;
+        }
+
+        void Add(T *_InValues, size_t _InItemCount)
+        {
+            if (m_uiLastItemIndex + _InItemCount >= m_allocator.m_uiCapacity)
+                Resize(m_allocator.m_uiCapacity + _InItemCount);
+
+            MemoryManager::Copy(_InValues, m_allocator.m_ptrMemLocation + m_uiLastItemIndex,
+                                _InItemCount * sizeof(T));
+            m_uiLastItemIndex += (uint32)_InItemCount;
+        }
+
+        void Resize(size_t _InItemCount)
+        {
+            m_allocator.Resize(_InItemCount);
+        }
+
+        void Clear()
+        {
+            m_allocator.Deallocate();
+
+            m_uiLastItemIndex = 0U;
+        }
 
 
-	private:
+        T& operator[](uint32 _InIndex)
+        {
+            return m_allocator.m_ptrMemLocation[_InIndex];
+        }
 
-		Alloc m_allocator = Alloc();
+        uint8 IsEmpty() const
+        {
+            return m_uiLastItemIndex == 0 ? TRUE : FALSE;
+        }
 
-		uint32 m_uiLastItemIndex = 0U;
-	};
+        T* GetData() const
+        {
+            return m_allocator.m_ptrMemLocation;
+        }
 
-	//using namespace DadEngine::Core::Containers;
-}
+        size_t Size() const
+        {
+            return m_allocator.m_uiCapacity;
+        }
+
+        T& Last() const
+        {
+            return m_allocator.m_ptrMemLocation[m_allocator.m_uiCapacity - 1U];
+        }
+
+
+        // Iterator
+        LinearStackIterator<T> begin() const
+        {
+            return LinearStackIterator<T>(m_allocator.m_ptrMemLocation, m_allocator.m_uiCapacity);
+        }
+
+        LinearStackIterator<T> end() const
+        {
+            return LinearStackIterator<T>(m_allocator.m_ptrMemLocation + m_allocator.m_uiCapacity, 0U);
+        }
+
+
+        private:
+        Alloc m_allocator = Alloc();
+
+        uint32 m_uiLastItemIndex = 0U;
+    };
+
+    // using namespace DadEngine::Core::Containers;
+
+    namespace Test
+    {
+        void TestTArray();
+    }
+} // namespace DadEngine::Core
 
 #endif //__TARRAY_HPP_

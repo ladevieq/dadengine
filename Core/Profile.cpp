@@ -18,7 +18,7 @@ namespace DadEngine::Core
 
 	namespace Test
     {
-        static void TestProfile()
+        void TestProfile()
         {
             Profile test("Test");
 

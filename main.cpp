@@ -5,14 +5,14 @@
 
 void Tests()
 {
-	//DadEngine::Core::Test::TestTypes();
-	//DadEngine::Core::Test::Test();
-	//DadEngine::Core::Test::Test();
-	/*DadEngine::Core::Test::TestTArray();
+	DadEngine::Core::Test::TestTypes();
+    DadEngine::Core::Test::TestMemoryManager();
+    DadEngine::Core::Test::TestDebug();
+	DadEngine::Core::Test::TestTArray();
 	DadEngine::Core::Test::TestDictionary();
 	DadEngine::Core::Test::TestThread();
 	DadEngine::Core::Test::TestTime();
-	DadEngine::Core::Test::TestProfile();*/
+	DadEngine::Core::Test::TestProfile();
 	DadEngine::Core::Test::TestSerialization();
 	DadEngine::Math::Test::TestMathConstants();
 	DadEngine::Math::Test::TestMathFunctions();

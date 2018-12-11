@@ -27,6 +27,11 @@ namespace DadEngine::Core
 #else
 	using size_t = uint32;
 #endif
+
+    namespace Test
+    {
+        void TestTypes();
+    } // namespace Test
 }
 
 //using namespace DadEngine::Core::Types;

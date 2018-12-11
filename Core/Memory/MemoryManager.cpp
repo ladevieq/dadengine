@@ -45,7 +45,7 @@ namespace DadEngine::Core
 
 	namespace Test
     {
-        static void TestMemoryManager ()
+        void TestMemoryManager ()
         {
             uint32 *i = nullptr;
 

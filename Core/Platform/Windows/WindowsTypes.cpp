@@ -2,8 +2,7 @@
 
 namespace DadEngine::Core::Test
 {
-	// Insert assert test here:
-    static void TestTypes()
+    void TestTypes()
     {
         /*ASSERT(sizeof(uint64) == 8);
         ASSERT(sizeof(int64) == 8);
