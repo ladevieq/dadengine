@@ -1,14 +1,13 @@
 #include "WindowsThreads.hpp"
 
-#include <cstdio>
+#include <stdio.h>
 
-#include "../../Platform/Types.hpp"
 #include "../../Defines.hpp"
 
 namespace DadEngine::Core
 {
 
-    WindowsThread::WindowsThread (uint8 _InStart, Job _InJob)
+    WindowsThread::WindowsThread (uint8_t _InStart, Job _InJob)
     {
         m_ptrJobFunction = _InJob;
 
@@ -28,7 +27,7 @@ namespace DadEngine::Core
 
 
     // Change the thread priority for the scheduler
-    void WindowsThread::ChangePriority (int32 _InThreadPriority)
+    void WindowsThread::ChangePriority (int32_t _InThreadPriority)
     {
         SetThreadPriority (this->m_ThreadHandle, _InThreadPriority);
     }

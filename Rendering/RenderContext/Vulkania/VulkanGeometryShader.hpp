@@ -14,7 +14,7 @@ namespace DadEngine::Rendering
 			VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
 			shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
 			shaderModuleCreateInfo.pNext = VK_NULL_HANDLE;
-			shaderModuleCreateInfo.pCode = (uint32*)_InCompiledShaderCode;
+            shaderModuleCreateInfo.pCode = (uint32_t *)_InCompiledShaderCode;
 			shaderModuleCreateInfo.codeSize = _InShaderCodeSize;
 			shaderModuleCreateInfo.flags = 0U;
 

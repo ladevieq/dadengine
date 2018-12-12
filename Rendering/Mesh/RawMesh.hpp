@@ -13,7 +13,7 @@ namespace DadEngine::Rendering
 		
 	public:
 
-		void Create(const TArray<VertexInput>& _InVerticesLayout, TArray<float>& _OutData, uint32& _OutStride)
+		void Create(const TArray<VertexInput> &_InVerticesLayout, TArray<float> &_OutData, uint32_t &_OutStride)
 		{
 			for (RawVertex& currentVertex : m_vertices)
 			{

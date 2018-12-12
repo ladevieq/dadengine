@@ -1,9 +1,10 @@
 #ifndef __WINDOWS_TIMERS_HPP_
 #define __WINDOWS_TIMERS_HPP_
 
+#include <stdint.h>
+
 #include <Windows.h>
 
-#include "WindowsTypes.hpp"
 
 namespace DadEngine::Core
 {
@@ -19,13 +20,13 @@ namespace DadEngine::Core
 
         void Reset();
 
-        uint64 GetSeconds();
+        uint64_t GetSeconds();
 
-        uint64 GetMilliseconds();
+        uint64_t GetMilliseconds();
 
-        uint64 GetMicroseconds();
+        uint64_t GetMicroseconds();
 
-        uint64 GetNanoseconds();
+        uint64_t GetNanoseconds();
 
 
         private:

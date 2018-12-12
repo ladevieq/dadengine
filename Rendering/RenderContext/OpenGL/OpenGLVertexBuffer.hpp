@@ -15,7 +15,7 @@ namespace DadEngine::Rendering
 
 	public:
 
-		OpenGLVertexBuffer(uint32 _InVertexCount, TArray<VertexInput>& _InVerticesLayout, TArray<float>& _InData, uint32 _InStride);
+		OpenGLVertexBuffer(uint32_t _InVertexCount, TArray<VertexInput> &_InVerticesLayout, TArray<float> &_InData, uint32_t _InStride);
 
 		virtual ~OpenGLVertexBuffer();
 

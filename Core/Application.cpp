@@ -6,7 +6,11 @@ namespace DadEngine::Core
 {
     Application *s_App = new Application(ApplicationInfo{ "DadEngine", 1080U, 720U, FALSE, FALSE });
 
-    ApplicationInfo::ApplicationInfo(const char *sApplicationName, uint32 _uiWidth, uint32 _uiHeight, uint8 _bFullscreen, uint8 _bVerticalSync)
+    ApplicationInfo::ApplicationInfo(const char *sApplicationName,
+                                     uint32_t _uiWidth,
+                                     uint32_t _uiHeight,
+                                     uint8_t _bFullscreen,
+                                     uint8_t _bVerticalSync)
         : m_sApplicationName(sApplicationName), m_uiWidth(_uiWidth), m_uiHeight(_uiHeight), m_bFullscreen(_bFullscreen), m_bVerticalSync(_bVerticalSync)
     {
     }

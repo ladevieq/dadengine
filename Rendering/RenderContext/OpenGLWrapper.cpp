@@ -439,8 +439,8 @@ namespace DadEngine::Rendering::OpenGLWrapper
 		glLoadExtensionsFunctions();
 
 #ifdef _DEBUG
-		int32 iNumExtensions = 0;
-		int32 iMajor = 0, iMinor = 0;
+		int32_t iNumExtensions = 0;
+		int32_t iMajor = 0, iMinor = 0;
 
 		glGetIntegerv(GL_MAJOR_VERSION, &iMajor);
 		glGetIntegerv(GL_MINOR_VERSION, &iMinor);
@@ -449,7 +449,7 @@ namespace DadEngine::Rendering::OpenGLWrapper
 		glGetIntegerv(GL_NUM_EXTENSIONS, &iNumExtensions);
 		printf("%s%d\n", "Extension count : ", iNumExtensions);
 
-		for (int32 i = 0; i < iNumExtensions; i++)
+		for (int32_t i = 0; i < iNumExtensions; i++)
 		{
 			printf("%s\n", getStringi(GL_EXTENSIONS, i));
 		}

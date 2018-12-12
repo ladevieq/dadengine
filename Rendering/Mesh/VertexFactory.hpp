@@ -11,7 +11,7 @@ namespace DadEngine::Rendering
 
 	public:
 
-		static void Create(RawMesh& _InMesh, TArray<float>& _OutData, TArray<VertexInput>& _InVerticesLayout, uint32& _OutStride)
+		static void Create(RawMesh& _InMesh, TArray<float>& _OutData, TArray<VertexInput>& _InVerticesLayout, uint32_t& _OutStride)
 		{
 			_InMesh.Create(_InVerticesLayout, _OutData, _OutStride);
 		}

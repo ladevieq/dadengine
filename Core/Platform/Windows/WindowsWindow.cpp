@@ -2,22 +2,19 @@
 
 #include <Windowsx.h>
 
-#include "../../Application.hpp"
 #include "../../Defines.hpp"
-#include "../../Platform/Types.hpp"
-
 #include "../../../Gameplay/InputManager.hpp"
 
 namespace DadEngine::Core
 {
-	LRESULT WindowProcedure(HWND _InHWND, uint32 _InMsg, WPARAM _InWParam, LPARAM _InLParam)
+	LRESULT WindowProcedure(HWND _InHWND, uint32_t _InMsg, WPARAM _InWParam, LPARAM _InLParam)
 	{
 		Application::GetApp()->m_window.HandleMessages(_InHWND, _InMsg, _InWParam, _InLParam);
 
 		return DefWindowProc(_InHWND, _InMsg, _InWParam, _InLParam);
 	}
 	
-	WindowsWindow::WindowsWindow (const char *_InsWindowName, uint32 _InWidth, uint32 _InHeight, uint8 _InFullscreen, uint8 _InVeticalSync)
+	WindowsWindow::WindowsWindow(const char *_InsWindowName, uint32_t _InWidth, uint32_t _InHeight, uint8_t _InFullscreen, uint8_t _InVeticalSync)
         : m_sWindowName (_InsWindowName), m_hInstance (GetModuleHandle (NULL)),
           m_uiFullscreen (_InFullscreen), m_uiVerticalSync (_InVeticalSync)
     {
@@ -37,7 +34,7 @@ namespace DadEngine::Core
         }
     }
 
-    void WindowsWindow::HandleMessages (HWND _InHWND, uint32 _InMsg, WPARAM _InWParam, LPARAM _InLParam)
+    void WindowsWindow::HandleMessages (HWND _InHWND, uint32_t _InMsg, WPARAM _InWParam, LPARAM _InLParam)
     {
         switch (_InMsg)
         {
@@ -184,7 +181,7 @@ namespace DadEngine::Core
         ASSERT (RegisterClassEx (&m_wndClass));
     }
 
-    void WindowsWindow::CreateWindowsWindow (uint8 _InFullscreen, uint32 _InWidth, uint32 _InHeight)
+    void WindowsWindow::CreateWindowsWindow (uint8_t _InFullscreen, uint32_t _InWidth, uint32_t _InHeight)
     {
         if (_InFullscreen == TRUE)
         {
@@ -198,8 +195,8 @@ namespace DadEngine::Core
             m_dwStyle = WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
         }
 
-        uint32 screenWidth = GetSystemMetrics (SM_CXSCREEN);
-        uint32 screenHeight = GetSystemMetrics (SM_CYSCREEN);
+        uint32_t screenWidth = GetSystemMetrics(SM_CXSCREEN);
+        uint32_t screenHeight = GetSystemMetrics(SM_CYSCREEN);
 
         m_windowRect = { 0, 0, 0, 0 };
 

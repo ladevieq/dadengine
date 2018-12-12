@@ -1,7 +1,8 @@
 #ifndef __TDICTIONARY_HPP_
 #define __TDICTIONARY_HPP_
 
-#include "../../Platform/Types.hpp"
+#include <stdint.h>
+
 #include "TArray.hpp"
 
 
@@ -21,22 +22,22 @@ namespace DadEngine::Core //::Containers
         using P = Pair<Key, Value>;
 
 
-        Pair<uint8, Value> Contains(Key _InKeyVal)
+        Pair<uint8_t, Value> Contains(Key _InKeyVal)
         {
             for (size_t i = 0U; i < this->m_Values.Size(); i++)
             {
-                if (this->m_Values[(uint32)i].k == _InKeyVal)
+                if (this->m_Values[(uint32_t)i].k == _InKeyVal)
                 {
-                    return Pair<uint8, Value>{ TRUE, this->m_Values[(uint32)i].v };
+                    return Pair<uint8_t, Value>{ TRUE, this->m_Values[(uint32_t)i].v };
                 }
             }
 
-            return Pair<uint8, Value>{ FALSE };
+            return Pair<uint8_t, Value>{ FALSE };
         }
 
         void Add(P _InNewItem)
         {
-            Pair<uint8, Value> pair = Contains(_InNewItem.k);
+            Pair<uint8_t, Value> pair = Contains(_InNewItem.k);
 
             if (pair.k == FALSE)
             {

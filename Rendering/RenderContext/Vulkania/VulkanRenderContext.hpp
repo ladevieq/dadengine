@@ -30,13 +30,15 @@ namespace DadEngine::Rendering
 
 		void ClearColorBuffer(Color& _InClearColor, CommandBuffer* _InCommandBuffer) override final;
 
-		void ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer) override final;
+		void ClearDepthStencilBuffer(float _InDepthValue,
+                                     uint32_t _InStencilValue,
+                                     CommandBuffer *_InCommandBuffer) override final;
 
 		void Present(CommandBuffer* _InCommandBuffer) override final;
 
 		void Draw(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) override final;
 
-		void DrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount, CommandBuffer* _InCommandBuffer) override final;
+		void DrawMultiples(VertexBuffer* _InVertexBuffer, int32_t _InInstanceCount, CommandBuffer* _InCommandBuffer) override final;
 
 		void BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) override final;
 
@@ -70,7 +72,10 @@ namespace DadEngine::Rendering
 		void SubmitCommandBuffer(CommandBuffer* _InCommandBuffer) override final;
 
 
-		VertexBuffer* CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride) override final;
+		VertexBuffer *CreateVertexBuffer(uint32_t _InVertexCount,
+                                         TArray<float> &_InData,
+                                         TArray<VertexInput> &_InVertexLayout,
+                                         uint32_t _InVerticesStride) override final;
 		VertexShader* CreateVertexShader(const char* _InShaderCode, size_t _InShaderCodeSize, TArray<VertexInput>& _InVertexInputLayout) override final;
 		GeometryShader* CreateGeometryShader(const char* _InShaderCode, size_t _InShaderCodeSize) override final;
 		FragmentShader* CreateFragmentShader(const char* _InShaderCode, size_t _InShaderCodeSize) override final;
@@ -113,8 +118,8 @@ namespace DadEngine::Rendering
 		void CreateFramebuffers();
 
 
-		uint32 m_uiGraphicsQueueFamilyIndex = 0U;
-		uint32 m_uiPresentationsQueueFamilyIndex = 0U;
+		uint32_t m_uiGraphicsQueueFamilyIndex = 0U;
+        uint32_t m_uiPresentationsQueueFamilyIndex = 0U;
 
 		VkInstance m_Instance = VK_NULL_HANDLE;
 		VkDevice m_Device = VK_NULL_HANDLE; // Logical device
@@ -158,7 +163,7 @@ namespace DadEngine::Rendering
 
 		TArray<VulkanFramebuffer> m_Framebuffers;
 
-		uint32 m_uiNextImage = 0U;
+		uint32_t m_uiNextImage = 0U;
 	};
 }
 

@@ -1,8 +1,9 @@
 #ifndef __LINEAR_STACK_ITERATOR_HPP_
 #define __LINEAR_STACK_ITERATOR_HPP_
 
+#include <stdint.h>
+
 #include "Iterator.hpp"
-#include "../Platform/Types.hpp"
 
 
 namespace DadEngine::Core
@@ -23,7 +24,7 @@ namespace DadEngine::Core
 
 		T& operator* () const { return *this->m_ptrMemLocation; };
 
-		uint8 operator != (const LinearStackIterator<T>& _InEqual) const { return this->m_ptrMemLocation != _InEqual.m_ptrMemLocation; };
+		uint8_t operator != (const LinearStackIterator<T>& _InEqual) const { return this->m_ptrMemLocation != _InEqual.m_ptrMemLocation; };
 	};
 }
 

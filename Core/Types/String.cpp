@@ -1,9 +1,8 @@
 #include "String.hpp"
 
-//#include <string.h>
-//
-//#include "../Memory/MemoryManager.hpp"
-//#include "Collection/TArray.hpp"
+#include <string.h>
+
+#include "../Memory/MemoryManager.hpp"
 
 
 namespace DadEngine::Core
@@ -44,7 +43,7 @@ namespace DadEngine::Core
 
         m_string.Resize(currentSize + appendSize);
 
-        MemoryManager::Copy((void *)_InNewString.Cstr(), &m_string[(uint32)currentSize - 1U], appendSize);
+        MemoryManager::Copy((void *)_InNewString.Cstr(), &m_string[(uint32_t)currentSize - 1U], appendSize);
     }
 
     void String::Append(const char *_InNewCString)
@@ -54,7 +53,7 @@ namespace DadEngine::Core
 
         m_string.Resize(currentSize + appendSize);
 
-        MemoryManager::Copy((void *)_InNewCString, &m_string[(uint32)currentSize - 1U], appendSize);
+        MemoryManager::Copy((void *)_InNewCString, &m_string[(uint32_t)currentSize - 1U], appendSize);
     }
 
     const char *String::Cstr() const
@@ -69,7 +68,7 @@ namespace DadEngine::Core
 
     namespace Test
     {
-        FORCE_INLINE static void TestString()
+        void TestString()
         {
         }
     } // namespace Test

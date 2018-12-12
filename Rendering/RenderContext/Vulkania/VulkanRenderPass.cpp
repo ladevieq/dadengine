@@ -75,11 +75,11 @@ namespace DadEngine::Rendering
 		VkRenderPassCreateInfo renderpass_create_info = {};
 		renderpass_create_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 		renderpass_create_info.pNext = VK_NULL_HANDLE;
-		renderpass_create_info.attachmentCount = (uint32)attachments.Size();
+        renderpass_create_info.attachmentCount = (uint32_t)attachments.Size();
 		renderpass_create_info.pAttachments = attachments.GetData();
 		renderpass_create_info.subpassCount = 1U;
 		renderpass_create_info.pSubpasses = &subpass_description;
-		renderpass_create_info.dependencyCount = (uint32)dependencies.Size();
+        renderpass_create_info.dependencyCount = (uint32_t)dependencies.Size();
 		renderpass_create_info.pDependencies = dependencies.GetData();
 		renderpass_create_info.flags = 0U;
 

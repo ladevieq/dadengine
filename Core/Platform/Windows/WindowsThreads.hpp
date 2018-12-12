@@ -1,10 +1,10 @@
 #ifndef __WINDOWS_THREADS_HPP_
 #define __WINDOWS_THREADS_HPP_
 
+#include <stdint.h>
 #include <Windows.h>
 
 #include "../ThreadsStates.hpp"
-#include "WindowsTypes.hpp"
 
 
 namespace DadEngine::Core
@@ -14,13 +14,13 @@ namespace DadEngine::Core
         public:
         using Job = void (*)(void);
 
-        WindowsThread(uint8 _InStart, Job _InJob);
+        WindowsThread(uint8_t _InStart, Job _InJob);
 
         ~WindowsThread();
 
 
         // Change the thread priority for the scheduler
-        void ChangePriority(int32 _InThreadPriority);
+        void ChangePriority(int32_t _InThreadPriority);
 
 
         // Start or resume the thread

@@ -1,7 +1,6 @@
 #ifndef __PLATEFORM_FILE_HPP_
 #define __PLATEFORM_FILE_HPP_
 
-#include "../Defines.hpp"
 
 #if defined (WINDOWS)
 #include "Windows/WindowsTextFileIO.hpp"

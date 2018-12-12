@@ -3,7 +3,6 @@
 #include <stdio.h>
 
 #include "Defines.hpp"
-#include "Platform/Types.hpp"
 
 
 namespace DadEngine::Core
@@ -33,7 +32,7 @@ namespace DadEngine::Core
                 DebugReportTypeFlags _InReportType,
                 DebugReportCode _InErrorCode,
                 const char *sMessage,
-                uint32 _InLine,
+                uint32_t _InLine,
                 const char *sFileName)
         : m_uiContextFlag(_InContextFlag), m_uiReportTypeFlag(_InReportType),
           m_uiReportCode(_InErrorCode), m_sMessage(sMessage), m_iLine(_InLine), m_sFile(sFileName)
@@ -56,7 +55,7 @@ namespace DadEngine::Core
 	}
 
 
-	void LogAssert(const char* const _InMessage, const char* const _InFile, uint32 _InLine)
+	void LogAssert(const char* const _InMessage, const char* const _InFile, uint32_t _InLine)
 	{
 		printf("[%s, %s, %u]: %s\n", "Assertion", _InFile, _InLine, _InMessage);
 	}

@@ -2,12 +2,12 @@
 
 namespace DadEngine::Core
 {
-    Archive::Archive(TArray<uint8> &_InData, b8 _InReading)
+    Archive::Archive(TArray<uint8_t> &_InData, uint8_t _InReading)
 		: m_Data(_InData)
     {
     }
 
-    TArray<uint8> &Archive::GetData()
+    TArray<uint8_t> &Archive::GetData()
     {
         return m_Data;
     }

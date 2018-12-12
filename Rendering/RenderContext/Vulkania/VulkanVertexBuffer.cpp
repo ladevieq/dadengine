@@ -2,7 +2,12 @@
 
 namespace DadEngine::Rendering
 {
-	VulkanVertexBuffer::VulkanVertexBuffer(uint32 _InVertexCount, TArray<VertexInput>& _InVerticesInputLayout, TArray<float>& _InData, uint32 _InStride, VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice)
+    VulkanVertexBuffer::VulkanVertexBuffer(uint32_t _InVertexCount,
+                                           TArray<VertexInput> &_InVerticesInputLayout,
+                                           TArray<float> &_InData,
+                                           uint32_t _InStride,
+                                           VkDevice _InDevice,
+                                           VkPhysicalDevice _InPhysicalDevice)
 		: VertexBuffer(_InVertexCount, _InVerticesInputLayout, _InData, _InStride), m_Device(_InDevice)
 	{
 		size_t BufferSize = _InData.Size() * sizeof(_InData[0U]);
@@ -14,7 +19,7 @@ namespace DadEngine::Rendering
 		buffer_create_info.pQueueFamilyIndices = VK_NULL_HANDLE;
 		buffer_create_info.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
 		buffer_create_info.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		buffer_create_info.size = (uint64)BufferSize;
+		buffer_create_info.size = (uint64_t)BufferSize;
 		buffer_create_info.flags = 0U;
 
 		VK_CHECK_RESULT(vkCreateBuffer(_InDevice, &buffer_create_info, VK_NULL_HANDLE, &m_Buffer));

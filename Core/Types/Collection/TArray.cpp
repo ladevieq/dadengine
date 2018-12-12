@@ -1,9 +1,6 @@
 #include "TArray.hpp"
-#include <stdio.h>
 
-#include "../../Platform/Types.hpp";
-#include "../../Memory/LinearStackAllocator.hpp"
-#include "../../Iterators/LinearStackIterator.hpp"
+#include <stdio.h>
 
 
 namespace DadEngine::Core //::Containers
@@ -12,8 +9,8 @@ namespace DadEngine::Core //::Containers
     {
         void TestTArray()
         {
-            TArray<int32> eray;
-            TArray<int32> bray;
+            TArray<int32_t> eray;
+            TArray<int32_t> bray;
 
             eray.Add(10);
             eray.Add(20);
@@ -27,7 +24,7 @@ namespace DadEngine::Core //::Containers
 
             bray = eray;
 
-            for (int32 i : eray)
+            for (int32_t i : eray)
             {
                 printf("%d\n", i);
             }

@@ -6,7 +6,7 @@ namespace DadEngine::Rendering::VulkanHelper
 {
 	void EnumerateInstanceLayersAndExtensions()
 	{
-		uint32 layerPropertiesCount = 0U;
+        uint32_t layerPropertiesCount = 0U;
 
 		vkEnumerateInstanceLayerProperties(&layerPropertiesCount, VK_NULL_HANDLE);
 
@@ -18,7 +18,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		{
 			printf("%s: %s\n", currentLayerProperties.layerName, currentLayerProperties.description);
 
-			uint32 extensionPropertiesCount = 0U;
+			uint32_t extensionPropertiesCount = 0U;
 
 			vkEnumerateInstanceExtensionProperties(currentLayerProperties.layerName, &extensionPropertiesCount, VK_NULL_HANDLE);
 
@@ -32,7 +32,7 @@ namespace DadEngine::Rendering::VulkanHelper
 			}
 		}
 
-		uint32 extensionPropertiesCount = 0U;
+		uint32_t extensionPropertiesCount = 0U;
 
 		vkEnumerateInstanceExtensionProperties(NULL, &extensionPropertiesCount, VK_NULL_HANDLE);
 
@@ -48,7 +48,7 @@ namespace DadEngine::Rendering::VulkanHelper
 
 	void EnumerateDeviceLayersAndExtensions(VkPhysicalDevice _InPhysicalDevice)
 	{
-		uint32 layerPropertiesCount = 0U;
+        uint32_t layerPropertiesCount = 0U;
 
 		vkEnumerateDeviceLayerProperties(_InPhysicalDevice, &layerPropertiesCount, VK_NULL_HANDLE);
 
@@ -60,7 +60,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		{
 			printf("%s: %s\n", currentLayerProperties.layerName, currentLayerProperties.description);
 
-			uint32 extensionPropertiesCount = 0U;
+			uint32_t extensionPropertiesCount = 0U;
 
 			vkEnumerateDeviceExtensionProperties(_InPhysicalDevice, currentLayerProperties.layerName, &extensionPropertiesCount, VK_NULL_HANDLE);
 
@@ -74,7 +74,7 @@ namespace DadEngine::Rendering::VulkanHelper
 			}
 		}
 
-		uint32 extensionPropertiesCount = 0U;
+		uint32_t extensionPropertiesCount = 0U;
 
 		vkEnumerateDeviceExtensionProperties(_InPhysicalDevice, NULL, &extensionPropertiesCount, VK_NULL_HANDLE);
 
@@ -90,7 +90,7 @@ namespace DadEngine::Rendering::VulkanHelper
 
 	void EnumerateDevices(VkInstance _InInstance, TArray<VkPhysicalDevice>& _InPhysicalDevices)
 	{
-		uint32 physicalDevicesCount = 0U;
+        uint32_t physicalDevicesCount = 0U;
 
 		vkEnumeratePhysicalDevices(_InInstance, &physicalDevicesCount, VK_NULL_HANDLE);
 
@@ -113,9 +113,9 @@ namespace DadEngine::Rendering::VulkanHelper
 		}
 	}
 
-	uint32 CheckDeviceQueueFamilyProperties(VkPhysicalDevice _InPhysicalDevice, VkQueueFlags _InFlag)
+	uint32_t CheckDeviceQueueFamilyProperties(VkPhysicalDevice _InPhysicalDevice, VkQueueFlags _InFlag)
 	{
-		uint32 queueFamilyPropertyCount = 0U;
+        uint32_t queueFamilyPropertyCount = 0U;
 
 		vkGetPhysicalDeviceQueueFamilyProperties(_InPhysicalDevice, &queueFamilyPropertyCount, VK_NULL_HANDLE);
 
@@ -125,9 +125,10 @@ namespace DadEngine::Rendering::VulkanHelper
 
 		for (size_t i = 0U; i < queueFamilyProperties.Size(); i++)
 		{
-			if (queueFamilyProperties[(uint32)i].queueCount > 0 && queueFamilyProperties[(uint32)i].queueFlags & _InFlag)
+            if (queueFamilyProperties[(uint32_t)i].queueCount > 0 &&
+                queueFamilyProperties[(uint32_t)i].queueFlags & _InFlag)
 			{
-				return (uint32)i;
+                return (uint32_t)i;
 			}
 		}
 
@@ -141,7 +142,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		@_InMemoryTypeBits	flag representing the wanted memory types
 		@_InProperties		flag reprensenting the needed properties on the mem type
 	*/
-	uint32 CheckMemoryTypeIndex(VkPhysicalDevice _InPhysicalDevice, uint32 _InMemoryTypeBits, VkMemoryPropertyFlags _InProperties)
+    uint32_t CheckMemoryTypeIndex(VkPhysicalDevice _InPhysicalDevice, uint32_t _InMemoryTypeBits, VkMemoryPropertyFlags _InProperties)
 	{
 		VkPhysicalDeviceMemoryProperties memory_properties;
 		vkGetPhysicalDeviceMemoryProperties(_InPhysicalDevice, &memory_properties);
@@ -153,7 +154,7 @@ namespace DadEngine::Rendering::VulkanHelper
 			{
 				// Check that this mem type has this properties
 				if ((memory_properties.memoryTypes[i].propertyFlags & _InProperties) == _InProperties) {
-					return i;
+					return (uint32_t)i;
 				}
 			}
 		}
@@ -163,7 +164,7 @@ namespace DadEngine::Rendering::VulkanHelper
 
 	VkSurfaceFormatKHR CheckSurfaceFormats(VkPhysicalDevice _InPhysicalDevice, VkSurfaceKHR _InSurface)
 	{
-		uint32 uiSurfaceFormatCount = 0U;
+        uint32_t uiSurfaceFormatCount = 0U;
 		vkGetPhysicalDeviceSurfaceFormatsKHR(_InPhysicalDevice, _InSurface, &uiSurfaceFormatCount, VK_NULL_HANDLE);
 
 		TArray<VkSurfaceFormatKHR> surfaceFormats(uiSurfaceFormatCount);
@@ -185,7 +186,7 @@ namespace DadEngine::Rendering::VulkanHelper
 		return surfaceFormats[0];
 	}
 
-	void CreateCommandBuffer(VkDevice _InDevice, VkCommandPool _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers)
+	void CreateCommandBuffer(VkDevice _InDevice, VkCommandPool _InCommandPool, uint32_t _InCount, VkCommandBuffer *_OutCommandBuffers)
 	{
 		VkCommandBufferAllocateInfo command_buffer_allocate_info = {};
 		command_buffer_allocate_info.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -379,13 +380,14 @@ namespace DadEngine::Rendering::VulkanHelper
 		VkMemoryRequirements buffer_memory_requirements;
 		vkGetBufferMemoryRequirements(_InDevice, _InBuffer, &buffer_memory_requirements);
 
-		uint32 memIndex = CheckMemoryTypeIndex(_InPhysicalDevice, buffer_memory_requirements.memoryTypeBits, _InMemProperties);
+		uint32_t memIndex =
+        CheckMemoryTypeIndex(_InPhysicalDevice, buffer_memory_requirements.memoryTypeBits, _InMemProperties);
 
 		VkMemoryAllocateInfo memory_allocate_info = {};
 		memory_allocate_info.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 		memory_allocate_info.pNext = VK_NULL_HANDLE;
 		memory_allocate_info.allocationSize = buffer_memory_requirements.size;
-		memory_allocate_info.memoryTypeIndex = (uint32)memIndex;
+        memory_allocate_info.memoryTypeIndex = (uint32_t)memIndex;
 
 		VK_CHECK_RESULT(vkAllocateMemory(_InDevice, &memory_allocate_info, VK_NULL_HANDLE, &_OutMemory));
 	}

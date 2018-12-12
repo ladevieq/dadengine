@@ -1,6 +1,7 @@
 #include "WindowsMemory.hpp"
 
 #include <stdio.h>
+#include <Windows.h>
 
 
 namespace DadEngine::Core

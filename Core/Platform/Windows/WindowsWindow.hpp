@@ -1,26 +1,31 @@
 #ifndef __WINDOWS_WINDOW_HPP_
 #define __WINDOWS_WINDOW_HPP_
 
+#include <stdint.h>
+
 #include <Windows.h>
 
-#include "WindowsTypes.hpp"
 
 namespace DadEngine::Core
 {
-	LRESULT __stdcall WindowProcedure(HWND _InHWND, uint32 _InMsg, WPARAM _InWParam, LPARAM _InLParam);
+	LRESULT __stdcall WindowProcedure(HWND _InHWND, uint32_t _InMsg, WPARAM _InWParam, LPARAM _InLParam);
 
 	class WindowsWindow
 	{
 	public:
 
-		WindowsWindow (const char *_InsWindowName, uint32 _InWidth, uint32 _InHeight, uint8 _InFullscreen, uint8 _InVeticalSync);
+		WindowsWindow(const char *_InsWindowName, uint32_t _InWidth, uint32_t _InHeight, uint8_t _InFullscreen, uint8_t _InVeticalSync);
 
 		~WindowsWindow() = default;
 
 
 		void MessagePump ();
 
-		void HandleMessages(HWND _InHWND, uint32 _InMsg, WPARAM _InWParam, LPARAM _InLParam);
+		void HandleMessages(HWND _InHWND,
+                            uint32_t // Move to application
+                            _InMsg,
+                            WPARAM _InWParam,
+                            LPARAM _InLParam);
 		
 		// Move to application
         void ToggleConsole ();
@@ -42,27 +47,27 @@ namespace DadEngine::Core
 
 		HWND GetWindowHandle() const { return m_windowHandle; }
 
-		uint8 GetFullscreen() { return m_uiFullscreen; }
+		uint8_t GetFullscreen() { return m_uiFullscreen; }
 
-		uint8 GetVerticalSync() { return m_uiVerticalSync; }
+		uint8_t GetVerticalSync() { return m_uiVerticalSync; }
 
 		RECT& GetRect() { return m_windowRect; }
 
 		const char* const GetWindowName() { return m_sWindowName; }
 
-		int16 KeyState(int32 _InKeyCode) { return GetAsyncKeyState(_InKeyCode); }
+		int16_t KeyState(int32_t _InKeyCode) { return GetAsyncKeyState(_InKeyCode); }
 
 
 	private:
 
 		void CreateWindowClass ();
 
-		void CreateWindowsWindow (uint8 _InFullscreen, uint32 _InWidth, uint32 _InHeight);
+		void CreateWindowsWindow(uint8_t _InFullscreen, uint32_t _InWidth, uint32_t _InHeight);
 
 
-		uint8 m_uiConsoleEnabled = FALSE;
-		uint8 m_uiFullscreen = FALSE;
-		uint8 m_uiVerticalSync = FALSE;
+		uint8_t m_uiConsoleEnabled = FALSE;
+        uint8_t m_uiFullscreen = FALSE;
+        uint8_t m_uiVerticalSync = FALSE;
 		DWORD m_dwExStyle;
 		DWORD m_dwStyle;
 		WNDCLASSEX m_wndClass = {};

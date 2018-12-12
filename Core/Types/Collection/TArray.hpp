@@ -1,9 +1,11 @@
 #ifndef __TARRAY_HPP_
 #define __TARRAY_HPP_
 
+#include <stdint.h>
+
+#include "../../Defines.hpp"
 #include "../../Iterators/LinearStackIterator.hpp"
 #include "../../Memory/LinearStackAllocator.hpp"
-#include "../../Platform/Types.hpp"
 
 namespace DadEngine::Core //::Containers
 {
@@ -23,7 +25,7 @@ namespace DadEngine::Core //::Containers
         {
             m_allocator.Allocate(_InItemCount);
 
-            MemoryManager::Set(m_allocator.m_ptrMemLocation, *(int32 *)&_InInitValue, _InItemCount);
+            MemoryManager::Set(m_allocator.m_ptrMemLocation, *(int32_t *)&_InInitValue, _InItemCount);
         }
 
         TArray(T *_InValues, size_t _InItemCount)
@@ -36,7 +38,7 @@ namespace DadEngine::Core //::Containers
         ~TArray() = default;
 
 
-        TArray<T, Alloc>& operator=(const TArray &_InCpy)
+        TArray<T, Alloc> &operator=(const TArray &_InCpy)
         {
             m_allocator = _InCpy.m_allocator;
             m_uiLastItemIndex = _InCpy.m_uiLastItemIndex;
@@ -71,7 +73,7 @@ namespace DadEngine::Core //::Containers
 
             MemoryManager::Copy(_InValues, m_allocator.m_ptrMemLocation + m_uiLastItemIndex,
                                 _InItemCount * sizeof(T));
-            m_uiLastItemIndex += (uint32)_InItemCount;
+            m_uiLastItemIndex += (uint32_t)_InItemCount;
         }
 
         void Resize(size_t _InItemCount)
@@ -87,17 +89,17 @@ namespace DadEngine::Core //::Containers
         }
 
 
-        T& operator[](uint32 _InIndex)
+        T &operator[](uint32_t _InIndex)
         {
             return m_allocator.m_ptrMemLocation[_InIndex];
         }
 
-        uint8 IsEmpty() const
+        uint8_t IsEmpty() const
         {
             return m_uiLastItemIndex == 0 ? TRUE : FALSE;
         }
 
-        T* GetData() const
+        T *GetData() const
         {
             return m_allocator.m_ptrMemLocation;
         }
@@ -107,7 +109,7 @@ namespace DadEngine::Core //::Containers
             return m_allocator.m_uiCapacity;
         }
 
-        T& Last() const
+        T &Last() const
         {
             return m_allocator.m_ptrMemLocation[m_allocator.m_uiCapacity - 1U];
         }
@@ -128,7 +130,7 @@ namespace DadEngine::Core //::Containers
         private:
         Alloc m_allocator = Alloc();
 
-        uint32 m_uiLastItemIndex = 0U;
+        uint32_t m_uiLastItemIndex = 0U;
     };
 
     // using namespace DadEngine::Core::Containers;

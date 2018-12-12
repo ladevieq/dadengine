@@ -21,7 +21,7 @@ namespace DadEngine::Rendering
 		AcquireNextImage = (PFN_vkAcquireNextImageKHR)vkGetDeviceProcAddr(_InDevice, "vkAcquireNextImageKHR");
 		QueuePresent = (PFN_vkQueuePresentKHR)vkGetDeviceProcAddr(_InDevice, "vkQueuePresentKHR");
 
-		uint32 supportedPresentationModesCount = 0U;
+		uint32_t supportedPresentationModesCount = 0U;
 
 		vkGetPhysicalDeviceSurfacePresentModesKHR(_InPhysicalDevice, _InSurface, &supportedPresentationModesCount, VK_NULL_HANDLE);
 
@@ -33,7 +33,7 @@ namespace DadEngine::Rendering
 		m_surfaceFormat = VulkanHelper::CheckSurfaceFormats(_InPhysicalDevice, _InSurface);
 
 		// Check surface capabilities
-		uint32 m_uiImageCount = 0U;
+        uint32_t m_uiImageCount = 0U;
 		VkSurfaceCapabilitiesKHR surface_capabilities;
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_InPhysicalDevice, _InSurface, &surface_capabilities);
 
@@ -76,7 +76,7 @@ namespace DadEngine::Rendering
 
 		VK_CHECK_RESULT(CreateSwapchain(_InDevice, &swapchain_create_info, VK_NULL_HANDLE, &m_Swapchain));
 
-		uint32 imageCount = 0U;
+		uint32_t imageCount = 0U;
 		GetSwapchainImages(m_Device, m_Swapchain, &imageCount, VK_NULL_HANDLE);
 
 		TArray<VkImage> images(imageCount);
@@ -97,21 +97,28 @@ namespace DadEngine::Rendering
 			VkImageViewCreateInfo image_view_create_info = {};
 			image_view_create_info.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 			image_view_create_info.pNext = VK_NULL_HANDLE;
-			image_view_create_info.image = images[(uint32)i];
+            image_view_create_info.image = images[(uint32_t)i];
 			image_view_create_info.format = m_surfaceFormat.format;
 			image_view_create_info.viewType = VK_IMAGE_VIEW_TYPE_2D;
 			image_view_create_info.components = { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G , VK_COMPONENT_SWIZZLE_B , VK_COMPONENT_SWIZZLE_A };
 			image_view_create_info.subresourceRange = image_subresource_range;
 			image_view_create_info.flags = 0U;
 
-			VK_CHECK_RESULT(vkCreateImageView(m_Device, &image_view_create_info, VK_NULL_HANDLE, &imageViews[(uint32)i]));
+			VK_CHECK_RESULT(vkCreateImageView(m_Device, &image_view_create_info, VK_NULL_HANDLE,
+                                              &imageViews[(uint32_t)i]));
 
-			m_SwapchainImages[(uint32)i] = { m_Device, images[(uint32)i] , imageViews[(uint32)i], VK_NULL_HANDLE, m_surfaceFormat.format, m_SwapchainExtent, image_subresource_range };
+			m_SwapchainImages[(uint32_t)i] = { m_Device,
+                                             images[(uint32_t)i],
+                                             imageViews[(uint32_t)i],
+                                             VK_NULL_HANDLE,
+                                             m_surfaceFormat.format,
+                                             m_SwapchainExtent,
+                                             image_subresource_range };
 		}
 	}
 
 
-	void VulkanSwapchain::Present(VkQueue& _InQueue, VkSemaphore& _InRenderingFinishedSemaphore, uint32 _InImageIndex)
+	void VulkanSwapchain::Present(VkQueue &_InQueue, VkSemaphore &_InRenderingFinishedSemaphore, uint32_t _InImageIndex)
 	{
 		VkPresentInfoKHR present_info = {};
 		present_info.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -127,9 +134,9 @@ namespace DadEngine::Rendering
 	}
 
 
-	uint32 VulkanSwapchain::GetNextImageIndex(VkSemaphore& _InImageAvailableSemaphore)
+	uint32_t VulkanSwapchain::GetNextImageIndex(VkSemaphore &_InImageAvailableSemaphore)
 	{
-		uint32 uiImageIndex = 0U;
+        uint32_t uiImageIndex = 0U;
 
 		// Need at least fence or semaphore
 		AcquireNextImage(m_Device, m_Swapchain, UINT64_MAX, _InImageAvailableSemaphore, VK_NULL_HANDLE, &uiImageIndex);

@@ -10,14 +10,14 @@
 
 namespace DadEngine::Rendering
 {
-	uint32 OpenGLCullingMode[] =
+    uint32_t OpenGLCullingMode[] =
 	{
 		GL_FRONT,
 		GL_BACK,
 		GL_FRONT_AND_BACK
 	};
 
-	uint32 OpenGLFillMode[] =
+	uint32_t OpenGLFillMode[] =
 	{
 		GL_FILL,
 		GL_LINE,
@@ -36,7 +36,7 @@ namespace DadEngine::Rendering
 		pxlDescriptor.iPixelType = PFD_TYPE_RGBA;
 		pxlDescriptor.nVersion = 1U;
 
-		int32 pixelFormat = ChoosePixelFormat(m_HDC, &pxlDescriptor);
+		int32_t pixelFormat = ChoosePixelFormat(m_HDC, &pxlDescriptor);
 		SetPixelFormat(m_HDC, pixelFormat, &pxlDescriptor);
 
 		m_renderContext = wglCreateContext(m_HDC);
@@ -58,7 +58,7 @@ namespace DadEngine::Rendering
 		m_renderContext = OpenGLWrapper::wglCreateContextAttribsARB(m_HDC, NULL, Attributes);
 		wglMakeCurrent(m_HDC, m_renderContext);
 
-		int32 iMajor = 0, iMinor = 0;
+		int32_t iMajor = 0, iMinor = 0;
 
 		glGetIntegerv(GL_MAJOR_VERSION, &iMajor);
 		glGetIntegerv(GL_MINOR_VERSION, &iMinor);
@@ -79,7 +79,7 @@ namespace DadEngine::Rendering
 		CommandClearColorBuffer((OpenGLCommandBuffer*)_InCommandBuffer, _InClearColor);
 	}
 
-	void OpenGLRenderContext::ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer)
+	void OpenGLRenderContext::ClearDepthStencilBuffer(float _InDepthValue, uint32_t _InStencilValue, CommandBuffer* _InCommandBuffer)
 	{
 		CommandClearDepthStencilBuffer((OpenGLCommandBuffer*)_InCommandBuffer, (double)_InDepthValue, _InStencilValue);
 	}
@@ -94,7 +94,7 @@ namespace DadEngine::Rendering
 		CommandDraw((OpenGLCommandBuffer*)_InCommandBuffer, _InVertexBuffer);
 	}
 
-	void OpenGLRenderContext::DrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount, CommandBuffer* _InCommandBuffer)
+	void OpenGLRenderContext::DrawMultiples(VertexBuffer* _InVertexBuffer, int32_t _InInstanceCount, CommandBuffer* _InCommandBuffer)
 	{
 		CommandDrawMultiples((OpenGLCommandBuffer*)_InCommandBuffer, _InVertexBuffer, _InInstanceCount);
 	}
@@ -116,13 +116,13 @@ namespace DadEngine::Rendering
 		view.LookAt(eyePos, targetPosition, up);
 		Matrix4x4 vp = pers * view;
 
-		int32 location = OpenGLWrapper::glGetUniformLocation(((OpenGLShader*)_InShader)->m_uiProgramID, "MVP");
+		int32_t location = OpenGLWrapper::glGetUniformLocation(((OpenGLShader*)_InShader)->m_uiProgramID, "MVP");
 		OpenGLWrapper::glUniformMatrix4fv(location, 1, GL_FALSE, ((float*)&vp));
 	}
 
 	void OpenGLRenderContext::SetShaderParameter(Shader* _InShader, const char* _InParameterName, ShaderParameterType _InShaderParameterType, void* _InParam)
 	{
-		int32 location = OpenGLWrapper::glGetUniformLocation(((OpenGLShader*)_InShader)->m_uiProgramID, "MVP");
+		int32_t location = OpenGLWrapper::glGetUniformLocation(((OpenGLShader*)_InShader)->m_uiProgramID, "MVP");
 
 		switch (_InShaderParameterType)
 		{
@@ -194,7 +194,10 @@ namespace DadEngine::Rendering
 
 
 
-	VertexBuffer * OpenGLRenderContext::CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride)
+	VertexBuffer *OpenGLRenderContext::CreateVertexBuffer(uint32_t _InVertexCount,
+                                                          TArray<float> &_InData,
+                                                          TArray<VertexInput> &_InVertexLayout,
+                                                          uint32_t _InVerticesStride)
 	{
 		return new OpenGLVertexBuffer(_InVertexCount, _InVertexLayout, _InData, _InVerticesStride);
 	}

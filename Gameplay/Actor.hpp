@@ -7,6 +7,8 @@
 
 namespace DadEngine::Gameplay
 {
+    class IComponent;
+
 	class Actor
 	{
 

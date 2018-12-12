@@ -2,7 +2,11 @@
 
 namespace DadEngine::Rendering
 {
-	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32 _InVertexCount, TArray<VertexInput>& _InVerticesLayout, TArray<float>& _InData, uint32 _InStride):
+    OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t _InVertexCount,
+                                           TArray<VertexInput> &_InVerticesLayout,
+                                           TArray<float> &_InData,
+                                           uint32_t _InStride)
+        :
 		VertexBuffer(_InVertexCount, _InVerticesLayout, _InData, _InStride)
 	{
 		OpenGLWrapper::glGenVertexArrays(1U, &m_uiArrayIndex);

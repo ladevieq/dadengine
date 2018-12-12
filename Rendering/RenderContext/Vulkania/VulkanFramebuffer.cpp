@@ -13,7 +13,7 @@ namespace DadEngine::Rendering
 		VkFramebufferCreateInfo framebuffer_create_info = {};
 		framebuffer_create_info.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
 		framebuffer_create_info.pNext = VK_NULL_HANDLE;
-		framebuffer_create_info.attachmentCount = (uint32)_InImageCount;
+        framebuffer_create_info.attachmentCount = (uint32_t)_InImageCount;
 		framebuffer_create_info.pAttachments = _InViewImages;
 		framebuffer_create_info.renderPass = _InRenderPass.m_Renderpass;
 		framebuffer_create_info.width = _InFramebufferSize.width;

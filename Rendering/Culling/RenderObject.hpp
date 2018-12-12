@@ -17,7 +17,7 @@ namespace DadEngine::Rendering
 			m_renderComponentHandle = _InComponent;
 		}
 
-		uint8 m_bVisible = TRUE;
+		uint8_t m_bVisible = TRUE;
 
 		RenderComponent* m_renderComponentHandle;
 	};

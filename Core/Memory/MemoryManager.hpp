@@ -1,7 +1,7 @@
 #ifndef __MEMORYMANAGER_HPP_
 #define __MEMORYMANAGER_HPP_
 
-#include "../Platform/Types.hpp"
+#include <stdint.h>
 
 
 namespace DadEngine::Core//::Memory
@@ -28,7 +28,7 @@ namespace DadEngine::Core//::Memory
 
         static void Copy (void *_InSrc, void *_InDst, size_t _InCpySize);
 
-        static void Set (void *_InDst, int32 _InValue, size_t _InCpySize);
+        static void Set(void *_InDst, int32_t _InValue, size_t _InCpySize);
 
 		static void GetMemoryInfo();
 

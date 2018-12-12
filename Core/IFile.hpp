@@ -1,13 +1,16 @@
 #ifndef __IFILE_HPP_
 #define __IFILE_HPP_
 
-#include "Platform/Types.hpp"
-#include "Types/String.hpp"
+#include <stdint.h>
+
+// #include "Types/String.hpp"
 
 
 namespace DadEngine::Core
 {
-	enum IOMode : uint8
+	class String;
+
+	enum IOMode : uint8_t
 	{
 		IO_MODE_READ = 0x1,
 		IO_MODE_WRITE = 0x2,
@@ -17,17 +20,17 @@ namespace DadEngine::Core
 		MAX_IO_MODE = 0xff
 	};
 
-	using IOModeFlag = uint8;
+	using IOModeFlag = uint8_t;
 
 	struct IFile
 	{
-		virtual b8 OpenRead(const char* _InFilePath) = 0;
-		virtual b8 Read(uint8* _InDst, size_t _InBytesToRead) = 0;
-		virtual b8 Read(String& _InDst) = 0;
+		virtual uint8_t OpenRead(const char* _InFilePath) = 0;
+		virtual uint8_t Read(uint8_t* _InDst, size_t _InBytesToRead) = 0;
+		virtual uint8_t Read(String& _InDst) = 0;
 
-		virtual b8 OpenWrite(const char* _InFilePath) = 0;
-		virtual b8 Write(uint8* _InSrc, size_t _InBytesToWrite) = 0;
-		virtual b8 Write(String& _InDst) = 0;
+		virtual uint8_t OpenWrite(const char* _InFilePath) = 0;
+		virtual uint8_t Write(uint8_t* _InSrc, size_t _InBytesToWrite) = 0;
+		virtual uint8_t Write(String& _InDst) = 0;
 
 		virtual void Close() = 0;
 

@@ -24,13 +24,13 @@ namespace DadEngine::Rendering
 
 		void ClearColorBuffer(Color& _InClearColor, CommandBuffer* _InCommandBuffer) override final;
 
-		void ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer);
+		void ClearDepthStencilBuffer(float _InDepthValue, uint32_t _InStencilValue, CommandBuffer *_InCommandBuffer);
 
 		void Present(CommandBuffer* _InCommandBuffer) override final;
 
 		void Draw(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) override final;
 
-		void DrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount, CommandBuffer* _InCommandBuffer) override final;
+		void DrawMultiples(VertexBuffer* _InVertexBuffer, int32_t _InInstanceCount, CommandBuffer* _InCommandBuffer) override final;
 
 		void BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) override final;
 
@@ -66,7 +66,10 @@ namespace DadEngine::Rendering
 		void SubmitCommandBuffer(CommandBuffer* _InCommandBuffer) override final;
 
 
-		VertexBuffer* CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride) override final;
+		VertexBuffer *CreateVertexBuffer(uint32_t _InVertexCount,
+                                         TArray<float> &_InData,
+                                         TArray<VertexInput> &_InVertexLayout,
+                                         uint32_t _InVerticesStride) override final;
 
 		VertexShader* CreateVertexShader(const char* _InShaderCode, size_t _InShaderCodeSize, TArray<VertexInput>& _InVertexInputLayout) override final;
 		GeometryShader* CreateGeometryShader(const char* _InShaderCode, size_t _InShaderCodeSize) override final;

@@ -11,13 +11,13 @@ namespace DadEngine::Rendering
 
 	public:
 
-		VertexBuffer(uint32 _InVertexCount, TArray<VertexInput>& _InVerticesLayout, uint32 _InStride)
+		VertexBuffer(uint32_t _InVertexCount, TArray<VertexInput> &_InVerticesLayout, uint32_t _InStride)
 			:	m_uiVertexCount(_InVertexCount),
 				m_verticesLayout(_InVerticesLayout),
 				m_uiVertexLayoutStride(_InStride)
 		{}
 
-		VertexBuffer(uint32 _InVertexCount, TArray<VertexInput>& _InVerticesLayout, TArray<float>& _InData, uint32 _InStride)
+		VertexBuffer(uint32_t _InVertexCount, TArray<VertexInput> &_InVerticesLayout, TArray<float> &_InData, uint32_t _InStride)
 			:	m_uiVertexCount(_InVertexCount),
 				m_verticesLayout(_InVerticesLayout),
 				m_Data(_InData),
@@ -25,8 +25,8 @@ namespace DadEngine::Rendering
 		{}
 
 
-		uint32 m_uiVertexCount = 0U;
-		uint32 m_uiVertexLayoutStride = 0U;
+		uint32_t m_uiVertexCount = 0U;
+        uint32_t m_uiVertexLayoutStride = 0U;
 		TArray<VertexInput> m_verticesLayout;
 		TArray<float> m_Data;
 	};

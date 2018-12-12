@@ -1,13 +1,12 @@
 #ifndef __WINDOWS_FILE_SYSTEM_HPP_
 #define __WINDOWS_FILE_SYSTEM_HPP_
 
-#include "WindowsTypes.hpp"
-
+#include <stdint.h>
 
 namespace DadEngine::Core
 {
     struct IFile;
-    enum IOMode: uint8;
+    enum IOMode: uint8_t;
 
     struct WindowsFileSystem
     {

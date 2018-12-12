@@ -24,7 +24,7 @@ namespace DadEngine::Rendering
 		}
 
 
-		uint32 m_uiFramebufferIndex = 0U;
+		uint32_t m_uiFramebufferIndex = 0U;
 
 	private:
 

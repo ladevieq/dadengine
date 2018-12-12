@@ -22,7 +22,7 @@ namespace DadEngine::Rendering
 		_InCmdBuffer->m_Commands.Add(new OpenGLCommandClearColorBuffer(_InClearColorValue));
 	}
 
-	void CommandClearDepthStencilBuffer(OpenGLCommandBuffer* _InCmdBuffer, double _InClearDepthValue, uint32 _InClearStencilValue)
+	void CommandClearDepthStencilBuffer(OpenGLCommandBuffer *_InCmdBuffer, double _InClearDepthValue, uint32_t _InClearStencilValue)
 	{
 		_InCmdBuffer->m_Commands.Add(new OpenGLCommandClearDepthStencilBuffer(_InClearDepthValue, _InClearStencilValue));
 	}
@@ -32,7 +32,7 @@ namespace DadEngine::Rendering
 		_InCmdBuffer->m_Commands.Add(new OpenGLCommandDraw(_InVertexBuffer));
 	}
 
-	void CommandDrawMultiples(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer, int32 _InInstanceCount)
+	void CommandDrawMultiples(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer, int32_t _InInstanceCount)
 	{
 		_InCmdBuffer->m_Commands.Add(new OpenGLCommandDrawMultiples(_InVertexBuffer, _InInstanceCount));
 	}

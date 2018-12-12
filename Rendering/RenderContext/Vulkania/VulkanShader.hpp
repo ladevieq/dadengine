@@ -136,7 +136,7 @@ namespace DadEngine::Rendering
 			VkVertexInputBindingDescription vertices_input_binding;
 			TArray<VkVertexInputAttributeDescription> vertices_input_attribute(m_ptrVertexShader->m_vertexInputLayout.Size());
 			size_t offset = 0U;
-			uint32 stride;
+            uint32_t stride;
 
 			VertexInput::GetLayoutStride(m_ptrVertexShader->m_vertexInputLayout, stride);
 
@@ -148,15 +148,17 @@ namespace DadEngine::Rendering
 			for (size_t i = 0U; i < m_ptrVertexShader->m_vertexInputLayout.Size(); i++)
 			{
 				size_t size;
-				uint32 count;
+                uint32_t count;
 
-				m_ptrVertexShader->m_vertexInputLayout[(uint32)i].GetInputTypeInfo(size, count);
+				m_ptrVertexShader->m_vertexInputLayout[(uint32_t)i].GetInputTypeInfo(size, count);
 
 				// Attributes
-				vertices_input_attribute[(uint32)i].binding = 0U;
-				vertices_input_attribute[(uint32)i].location = m_ptrVertexShader->m_vertexInputLayout[(uint32)i].uiIndex;
-				vertices_input_attribute[(uint32)i].format = VertexInputTypeFormat(m_ptrVertexShader->m_vertexInputLayout[(uint32)i].uiVertexInputType);
-				vertices_input_attribute[(uint32)i].offset = (uint32)offset;
+                vertices_input_attribute[(uint32_t)i].binding = 0U;
+                vertices_input_attribute[(uint32_t)i].location =
+                m_ptrVertexShader->m_vertexInputLayout[(uint32_t)i].uiIndex;
+                vertices_input_attribute[(uint32_t)i].format =
+                VertexInputTypeFormat(m_ptrVertexShader->m_vertexInputLayout[(uint32_t)i].uiVertexInputType);
+                vertices_input_attribute[(uint32_t)i].offset = (uint32_t)offset;
 
 				offset += size;
 			}
@@ -167,7 +169,8 @@ namespace DadEngine::Rendering
 			vertex_input_state_create_info.pNext = VK_NULL_HANDLE;
 			vertex_input_state_create_info.vertexBindingDescriptionCount = 1U;
 			vertex_input_state_create_info.pVertexBindingDescriptions = &vertices_input_binding;
-			vertex_input_state_create_info.vertexAttributeDescriptionCount = (uint32)vertices_input_attribute.Size();
+            vertex_input_state_create_info.vertexAttributeDescriptionCount =
+				(uint32_t)vertices_input_attribute.Size();
 			vertex_input_state_create_info.pVertexAttributeDescriptions = vertices_input_attribute.GetData();
 			vertex_input_state_create_info.flags = 0U;
 
@@ -214,7 +217,7 @@ namespace DadEngine::Rendering
 			{
 				dynamic_state_create_info.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
 				dynamic_state_create_info.pNext = VK_NULL_HANDLE;
-				dynamic_state_create_info.dynamicStateCount = (uint32)dynamic_states.Size();
+                dynamic_state_create_info.dynamicStateCount = (uint32_t)dynamic_states.Size();
 				dynamic_state_create_info.pDynamicStates = dynamic_states.GetData();
 				dynamic_state_create_info.flags = 0U;
 			}
@@ -304,7 +307,7 @@ namespace DadEngine::Rendering
 			VkGraphicsPipelineCreateInfo graphics_pipeline_create_info = {};
 			graphics_pipeline_create_info.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 			graphics_pipeline_create_info.pNext = VK_NULL_HANDLE;
-			graphics_pipeline_create_info.stageCount = (uint32)shader_stage_create_infos.Size();
+            graphics_pipeline_create_info.stageCount = (uint32_t)shader_stage_create_infos.Size();
 			graphics_pipeline_create_info.pStages = shader_stage_create_infos.GetData();
 			graphics_pipeline_create_info.pVertexInputState = &vertex_input_state_create_info;
 			graphics_pipeline_create_info.pInputAssemblyState = &input_assembly_state_create_info;
@@ -339,7 +342,7 @@ namespace DadEngine::Rendering
 			VkDescriptorSetLayoutBinding layoutBinding = {};
 			layoutBinding.binding = 0;
 			layoutBinding.descriptorType = _InDescriptorType; // TODO: Rewrite every descriptor type ?
-			layoutBinding.descriptorCount = (uint32)m_PipelineParameters.Size() + 1U;
+            layoutBinding.descriptorCount = (uint32_t)m_PipelineParameters.Size() + 1U;
 			layoutBinding.stageFlags = _InShaderStagesFlag;
 			layoutBinding.pImmutableSamplers = VK_NULL_HANDLE;
 
@@ -351,7 +354,7 @@ namespace DadEngine::Rendering
 			VkDescriptorSetLayoutCreateInfo layout_create_info = {};
 			layout_create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 			layout_create_info.pNext = VK_NULL_HANDLE;
-            layout_create_info.bindingCount = (uint32)m_PipelineParameters.Size ();
+            layout_create_info.bindingCount = (uint32_t)m_PipelineParameters.Size();
 			layout_create_info.pBindings = m_PipelineParameters.GetData();
 			layout_create_info.flags = 0U;
 

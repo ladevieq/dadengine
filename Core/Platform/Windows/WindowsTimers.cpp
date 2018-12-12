@@ -19,7 +19,7 @@ namespace DadEngine::Core
         Start();
     }
 
-    uint64 WindowsTimer::GetSeconds()
+    uint64_t WindowsTimer::GetSeconds()
     {
         LARGE_INTEGER EndingTime;
 
@@ -29,7 +29,7 @@ namespace DadEngine::Core
         return EndingTime.QuadPart / m_Frequency.QuadPart;
     }
 
-	uint64 WindowsTimer::GetMilliseconds()
+	uint64_t WindowsTimer::GetMilliseconds()
     {
         LARGE_INTEGER EndingTime;
 
@@ -40,7 +40,7 @@ namespace DadEngine::Core
         return EndingTime.QuadPart / m_Frequency.QuadPart;
     }
 
-    uint64 WindowsTimer::GetMicroseconds()
+    uint64_t WindowsTimer::GetMicroseconds()
     {
         LARGE_INTEGER EndingTime;
 
@@ -51,7 +51,7 @@ namespace DadEngine::Core
         return EndingTime.QuadPart / m_Frequency.QuadPart;
     }
 
-	uint64 WindowsTimer::GetNanoseconds()
+	uint64_t WindowsTimer::GetNanoseconds()
     {
         LARGE_INTEGER EndingTime;
 

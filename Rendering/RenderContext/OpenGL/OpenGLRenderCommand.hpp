@@ -41,9 +41,9 @@ namespace DadEngine::Rendering
 	struct OpenGLCommandClearDepthStencilBuffer : public OpenGLRenderCommand
 	{
 		double m_ClearDepthValue = 0.0;
-		uint32 m_ClearStencilValue = 0U;
+        uint32_t m_ClearStencilValue = 0U;
 
-		OpenGLCommandClearDepthStencilBuffer(double _InClearDepthValue, uint32 _InClearStencilValue)
+		OpenGLCommandClearDepthStencilBuffer(double _InClearDepthValue, uint32_t _InClearStencilValue)
 			: m_ClearDepthValue(_InClearDepthValue), m_ClearStencilValue(_InClearStencilValue)
 		{}
 
@@ -73,9 +73,9 @@ namespace DadEngine::Rendering
 	struct OpenGLCommandDrawMultiples : public OpenGLRenderCommand
 	{
 		VertexBuffer* m_VertexBuffer = nullptr;
-		int32 m_InstanceCount = 0;
+		int32_t m_InstanceCount = 0;
 
-		OpenGLCommandDrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount)
+		OpenGLCommandDrawMultiples(VertexBuffer* _InVertexBuffer, int32_t _InInstanceCount)
 			: m_VertexBuffer(_InVertexBuffer), m_InstanceCount(_InInstanceCount)
 		{}
 
@@ -103,7 +103,7 @@ namespace DadEngine::Rendering
 
 			for (VertexInput input : m_VertexBuffer->m_verticesLayout)
 			{
-				uint32 count;
+                uint32_t count;
 				size_t size;
 
 				input.GetInputTypeInfo(size, count);
@@ -137,11 +137,13 @@ namespace DadEngine::Rendering
 
 	void CommandClearColorBuffer(OpenGLCommandBuffer* _InCmdBuffer, Color& _InClearColorValue);
 
-	void CommandClearDepthStencilBuffer(OpenGLCommandBuffer* _InCmdBuffer, double _InClearDepthValue, uint32 _InClearStencilValue);
+	void CommandClearDepthStencilBuffer(OpenGLCommandBuffer *_InCmdBuffer,
+                                        double _InClearDepthValue,
+                                        uint32_t _InClearStencilValue);
 
 	void CommandDraw(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer);
 
-	void CommandDrawMultiples(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer, int32 _InInstanceCount);
+	void CommandDrawMultiples(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer, int32_t _InInstanceCount);
 
 	void CommandBindVertexBuffer(OpenGLCommandBuffer* _InCmdBuffer, VertexBuffer* _InVertexBuffer);
 

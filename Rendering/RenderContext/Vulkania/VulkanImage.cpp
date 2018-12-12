@@ -26,7 +26,7 @@ namespace DadEngine::Rendering
 		image_create_info.usage = _InImageUsage;
 		image_create_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		image_create_info.imageType = VK_IMAGE_TYPE_2D;
-		image_create_info.extent = { _InImageSize.width, _InImageSize.height, (uint32)_InImageLayers };
+        image_create_info.extent = { _InImageSize.width, _InImageSize.height, (uint32_t)_InImageLayers };
 		image_create_info.flags = 0U;
 
 		VK_CHECK_RESULT(vkCreateImage(_InDevice, &image_create_info, VK_NULL_HANDLE, &m_Image));
@@ -97,7 +97,7 @@ namespace DadEngine::Rendering
 		image_create_info.usage = _InImageUsage;
 		image_create_info.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		image_create_info.imageType = VK_IMAGE_TYPE_2D;
-		image_create_info.extent = { _InImageSize.width, _InImageSize.height, (uint32)_InImageLayers };
+        image_create_info.extent = { _InImageSize.width, _InImageSize.height, (uint32_t)_InImageLayers };
 		image_create_info.flags = 0U;
 
 		VK_CHECK_RESULT(vkCreateImage(_InDevice, &image_create_info, VK_NULL_HANDLE, &m_Image));

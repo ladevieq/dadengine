@@ -8,7 +8,7 @@ namespace DadEngine::Rendering
 	{
 		//VulkanHelper::EnumerateInstanceLayersAndExtensions();
 
- 		m_WindowExtent = { (uint32)_InWindow.GetRect().right, (uint32)_InWindow.GetRect().bottom };
+ 		m_WindowExtent = { (uint32_t)_InWindow.GetRect().right, (uint32_t)_InWindow.GetRect().bottom };
 
 		CreateInstance(_InWindow);
 
@@ -106,7 +106,7 @@ namespace DadEngine::Rendering
 			m_BackBuffer->m_CurrentLayout, &color, 1U, &m_BackBuffer->m_ImageSubresourceRange);
 	}
 
-	void VulkanRenderContext::ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer)
+	void VulkanRenderContext::ClearDepthStencilBuffer(float _InDepthValue, uint32_t _InStencilValue, CommandBuffer *_InCommandBuffer)
 	{
 		VkImageMemoryBarrier image_memory_barrier_from_depth_to_clear = {};
 		image_memory_barrier_from_depth_to_clear.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -160,9 +160,10 @@ namespace DadEngine::Rendering
 		vkCmdDraw(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, _InVertexBuffer->m_uiVertexCount, 1U, 0U, 0U);
 	}
 
-	void VulkanRenderContext::DrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount, CommandBuffer* _InCommandBuffer)
+	void VulkanRenderContext::DrawMultiples(VertexBuffer* _InVertexBuffer, int32_t _InInstanceCount, CommandBuffer* _InCommandBuffer)
 	{
-		vkCmdDraw(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, _InVertexBuffer->m_uiVertexCount, (uint32)_InInstanceCount, 0U, 0U);
+        vkCmdDraw(((VulkanCommandBuffer *)_InCommandBuffer)->m_CmdBuffer,
+                  _InVertexBuffer->m_uiVertexCount, (uint32_t)_InInstanceCount, 0U, 0U);
 	}
 
 	void VulkanRenderContext::BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer)
@@ -212,7 +213,7 @@ namespace DadEngine::Rendering
 		render_pass_begin_info.renderPass = ((VulkanRenderPass*)_InRenderPass)->m_Renderpass;
 		render_pass_begin_info.renderArea = VkRect2D{ { 0, 0 }, m_Swapchain->m_SwapchainExtent };
 
-		render_pass_begin_info.clearValueCount = (uint32)clearValues.Size();
+		render_pass_begin_info.clearValueCount = (uint32_t)clearValues.Size();
 		render_pass_begin_info.pClearValues = clearValues.GetData();
 
 		vkCmdBeginRenderPass(((VulkanCommandBuffer*)_InCommandBuffer)->m_CmdBuffer, &render_pass_begin_info, VK_SUBPASS_CONTENTS_INLINE);
@@ -254,7 +255,7 @@ namespace DadEngine::Rendering
 
 	Framebuffer *VulkanRenderContext::GetBackFramebuffer()
 	{
-		return &m_Framebuffers[(uint32)m_uiNextImage];
+        return &m_Framebuffers[(uint32_t)m_uiNextImage];
 	}
 
 	RenderPass * VulkanRenderContext::GetRenderPass()
@@ -284,7 +285,7 @@ namespace DadEngine::Rendering
 		submit_info.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 		submit_info.pNext = VK_NULL_HANDLE;
 		submit_info.pCommandBuffers = m_SubmittedCommandBuffers.GetData();
-		submit_info.commandBufferCount = (uint32)m_SubmittedCommandBuffers.Size();
+        submit_info.commandBufferCount = (uint32_t)m_SubmittedCommandBuffers.Size();
 		submit_info.waitSemaphoreCount = 1U;
 		submit_info.pWaitSemaphores = &m_ImageAvailableSemaphore;
 		submit_info.signalSemaphoreCount = 1U;
@@ -310,7 +311,10 @@ namespace DadEngine::Rendering
 	
 
 
-	VertexBuffer * VulkanRenderContext::CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride)
+	VertexBuffer *VulkanRenderContext::CreateVertexBuffer(uint32_t _InVertexCount,
+                                                          TArray<float> &_InData,
+                                                          TArray<VertexInput> &_InVertexLayout,
+                                                          uint32_t _InVerticesStride)
 	{
 		return new VulkanVertexBuffer(_InVertexCount, _InVertexLayout, _InData, _InVerticesStride, m_Device, m_PhysicalDevice);
 	}
@@ -355,7 +359,7 @@ namespace DadEngine::Rendering
 
 		for (size_t i = 0U; i < ((VulkanRenderPass*)_InRenderPass)->m_Attachments.Size(); i++)
 		{
-			views[(uint32)i] = ((VulkanRenderPass*)_InRenderPass)->m_Attachments[(uint32)i]->m_View;
+            views[(uint32_t)i] = ((VulkanRenderPass *)_InRenderPass)->m_Attachments[(uint32_t)i]->m_View;
 		}
 
 		return new VulkanFramebuffer(m_Device, *((VkExtent2D*)&_InFramebufferSize), *(VulkanRenderPass*)_InRenderPass,
@@ -389,9 +393,9 @@ namespace DadEngine::Rendering
 		VkInstanceCreateInfo instance_create_info = {};
 		instance_create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 		instance_create_info.pNext = VK_NULL_HANDLE;
-		instance_create_info.enabledLayerCount = (uint32)layersNames.Size();
+        instance_create_info.enabledLayerCount = (uint32_t)layersNames.Size();
 		instance_create_info.ppEnabledLayerNames = layersNames.GetData();
-		instance_create_info.enabledExtensionCount = (uint32)extensionsNames.Size();
+        instance_create_info.enabledExtensionCount = (uint32_t)extensionsNames.Size();
 		instance_create_info.ppEnabledExtensionNames = extensionsNames.GetData();
 		instance_create_info.pApplicationInfo = &app_info;
 		instance_create_info.flags = 0U;
@@ -442,11 +446,11 @@ namespace DadEngine::Rendering
 		VkDeviceCreateInfo device_create_info = {};
 		device_create_info.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 		device_create_info.pNext = VK_NULL_HANDLE;
-		device_create_info.queueCreateInfoCount = (uint32)device_queue_create_info.Size();
+        device_create_info.queueCreateInfoCount = (uint32_t)device_queue_create_info.Size();
 		device_create_info.pQueueCreateInfos = device_queue_create_info.GetData();
-		device_create_info.enabledExtensionCount = (uint32)extensionsNames.Size();
+		device_create_info.enabledExtensionCount = (uint32_t)extensionsNames.Size();
 		device_create_info.ppEnabledExtensionNames = extensionsNames.GetData();
-		device_create_info.enabledLayerCount = (uint32)layersNames.Size();
+		device_create_info.enabledLayerCount = (uint32_t)layersNames.Size();
 		device_create_info.ppEnabledLayerNames = layersNames.GetData();
 		device_create_info.pEnabledFeatures = &physical_device_features;
 		device_create_info.flags = NULL;
@@ -478,14 +482,14 @@ namespace DadEngine::Rendering
 	{
 		VkDescriptorPoolSize descriptor_pool_size = {};
 		descriptor_pool_size.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		descriptor_pool_size.descriptorCount = m_Swapchain->m_SwapchainImages.Size();
+		descriptor_pool_size.descriptorCount = (uint32_t)m_Swapchain->m_SwapchainImages.Size();
 
 		VkDescriptorPoolCreateInfo descriptor_pool_create_info = {};
 		descriptor_pool_create_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		descriptor_pool_create_info.pNext = VK_NULL_HANDLE;
 		descriptor_pool_create_info.poolSizeCount = 1U;
 		descriptor_pool_create_info.pPoolSizes = &descriptor_pool_size;
-		descriptor_pool_create_info.maxSets = m_Swapchain->m_SwapchainImages.Size();
+		descriptor_pool_create_info.maxSets = (uint32_t)m_Swapchain->m_SwapchainImages.Size();
 		descriptor_pool_create_info.flags = 0U;
 
 		VK_CHECK_RESULT(vkCreateDescriptorPool(m_Device, &descriptor_pool_create_info, VK_NULL_HANDLE, &m_UBODescriptorPool));
@@ -526,7 +530,7 @@ namespace DadEngine::Rendering
 			presentModes.Add(VK_PRESENT_MODE_IMMEDIATE_KHR);
 		}
 
-		uint32 queueFamilyPropertyCount = 0U;
+		uint32_t queueFamilyPropertyCount = 0U;
 		vkGetPhysicalDeviceQueueFamilyProperties(m_PhysicalDevice, &queueFamilyPropertyCount, VK_NULL_HANDLE);
 
 		TArray<VkQueueFamilyProperties> queueFamilyProperties(queueFamilyPropertyCount);
@@ -538,12 +542,13 @@ namespace DadEngine::Rendering
 			{
 				VkBool32 presentationSupported = VK_FALSE;
 
-				vkGetPhysicalDeviceSurfaceSupportKHR(m_PhysicalDevice, (uint32)j, m_PresentationSurface, &presentationSupported);
+				vkGetPhysicalDeviceSurfaceSupportKHR(m_PhysicalDevice, (uint32_t)j,
+                                                     m_PresentationSurface, &presentationSupported);
 
 				if (presentationSupported == VK_TRUE)
 				{
-					m_uiPresentationsQueueFamilyIndex = (uint32)j;
-					m_PresentationMode = presentModes[(uint32)i];
+                    m_uiPresentationsQueueFamilyIndex = (uint32_t)j;
+                    m_PresentationMode = presentModes[(uint32_t)i];
 					return;
 				}
 			}
@@ -638,8 +643,9 @@ namespace DadEngine::Rendering
 
 		for (size_t i = 0U; i < m_Framebuffers.Size(); i++)
 		{
-			attachments[0U] = m_Swapchain->m_SwapchainImages[(uint32)i].m_View;
-			m_Framebuffers[(uint32)i] = VulkanFramebuffer(m_Device, m_Swapchain->m_SwapchainExtent, m_Renderpass, attachments.GetData(), attachments.Size());
+            attachments[0U] = m_Swapchain->m_SwapchainImages[(uint32_t)i].m_View;
+            m_Framebuffers[(uint32_t)i] = VulkanFramebuffer(m_Device, m_Swapchain->m_SwapchainExtent, m_Renderpass,
+                                                            attachments.GetData(), attachments.Size());
 		}
 	}
 }

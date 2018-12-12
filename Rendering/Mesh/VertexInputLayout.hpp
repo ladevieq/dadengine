@@ -16,10 +16,10 @@ namespace DadEngine::Rendering
 
 	struct VertexInput
 	{
-		uint8 uiIndex = 0U;
+		uint8_t uiIndex = 0U;
 		VertexInputType uiVertexInputType;
 
-		FORCE_INLINE void GetInputTypeInfo(size_t& _OutInputTypeSize, uint32& _OutInputTypeElementCount)
+		FORCE_INLINE void GetInputTypeInfo(size_t& _OutInputTypeSize, uint32_t& _OutInputTypeElementCount)
 		{
 			switch (uiVertexInputType)
 			{
@@ -42,18 +42,18 @@ namespace DadEngine::Rendering
 			}
 		}
 
-		FORCE_INLINE static void GetLayoutStride(TArray<VertexInput>& _InVertexLayout, uint32& _OutStride)
+		FORCE_INLINE static void GetLayoutStride(TArray<VertexInput> &_InVertexLayout, uint32_t &_OutStride)
 		{
 			_OutStride = 0U;
 
 			for (VertexInput vi : _InVertexLayout)
 			{
 				size_t size;
-				uint32 count;
+                uint32_t count;
 
 				vi.GetInputTypeInfo(size, count);
 
-				_OutStride += (uint32)size;
+				_OutStride += (uint32_t)size;
 			}
 		}
 	};

@@ -1,7 +1,6 @@
 #ifndef __ARCHIVE_HPP_
 #define __ARCHIVE_HPP_
 
-#include "../Platform/Types.hpp"
 #include "../Types/Collection/TArray.hpp"
 
 
@@ -14,11 +13,11 @@ namespace DadEngine::Core
 
         public:
         Archive() = default;
-        Archive(TArray<uint8> &_InData, b8 _InReading);
+        Archive(TArray<uint8_t> &_InData, uint8_t _InReading);
 
-        TArray<uint8> &GetData();
+        TArray<uint8_t> &GetData();
 
-        virtual void Serialize(void *_InValue, int32 _InSize) = 0;
+        virtual void Serialize(void *_InValue, int32_t _InSize) = 0;
 
 
         private:
@@ -48,10 +47,10 @@ namespace DadEngine::Core
         }
 
         protected:
-        TArray<uint8> m_Data;
+        TArray<uint8_t> m_Data;
 
-        uint32 m_uiOffset = 0U;
-        b8 m_bIsReading : 1;
+        uint32_t m_uiOffset = 0U;
+        uint8_t m_bIsReading : 1;
     };
 
     namespace Test

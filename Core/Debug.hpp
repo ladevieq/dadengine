@@ -1,7 +1,7 @@
 #ifndef __DEBUG_HPP_
 #define __DEBUG_HPP_
 
-#include "Platform/Types.hpp"
+#include <stdint.h>
 
 namespace DadEngine::Core //::Debug
 {
@@ -24,7 +24,7 @@ namespace DadEngine::Core //::Debug
         x2xxx - WARNING
         x3xxx - ERROR
     */
-    enum DEBUG_REPORT_CODE : uint32
+    enum DEBUG_REPORT_CODE : uint32_t
     {
         DEBUG_REPORT_CODE_SHADER_COMPILING_SUCCEDED = 21001,
         DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_SUCCEDED = 21002,
@@ -35,27 +35,27 @@ namespace DadEngine::Core //::Debug
 
         MAX_DEBUG_REPORT_CODE = 0xffffffff
     };
-    using DebugReportCode = uint32;
+    using DebugReportCode = uint32_t;
 
 
-    enum DEBUG_REPORT_TYPE : uint8
+    enum DEBUG_REPORT_TYPE : uint8_t
     {
         DEBUG_REPORT_TYPE_INFORMATION,
         DEBUG_REPORT_TYPE_WARNING,
         DEBUG_REPORT_TYPE_ERROR,
         MAX_DEBUG_REPORT_TYPE = 0xff
     };
-    using DebugReportTypeFlags = uint8;
+    using DebugReportTypeFlags = uint8_t;
 
 
-    enum DEBUG_REPORT_CONTEXT : uint8
+    enum DEBUG_REPORT_CONTEXT : uint8_t
     {
         DEBUG_REPORT_CONTEXT_CORE,
         DEBUG_REPORT_CONTEXT_OPENGL,
         DEBUG_REPORT_CONTEXT_VULKAN,
         MAX_DEBUG_REPORT_CONTEXT = 0xff
     };
-    using DebugReportContextFlags = uint8;
+    using DebugReportContextFlags = uint8_t;
 
 
     struct DebugReport
@@ -66,7 +66,7 @@ namespace DadEngine::Core //::Debug
                     DebugReportTypeFlags _InReportType,
                     DebugReportCode _InErrorCode,
                     const char *sMessage,
-                    uint32 _InLine,
+                    uint32_t _InLine,
                     const char *sFileName);
 
         /*DebugReport(DebugReportContextFlags _InContextFlag,
@@ -80,7 +80,7 @@ namespace DadEngine::Core //::Debug
         DebugReportContextFlags m_uiContextFlag = MAX_DEBUG_REPORT_CONTEXT;
         DebugReportTypeFlags m_uiReportTypeFlag = MAX_DEBUG_REPORT_TYPE;
         DebugReportCode m_uiReportCode = MAX_DEBUG_REPORT_CODE;
-        uint32 m_iLine = 0U; // May need change
+        uint32_t m_iLine = 0U; // May need change
         const char *m_sFile = nullptr; // May need change
         const char *m_sMessage = nullptr;
     };
@@ -91,7 +91,7 @@ namespace DadEngine::Core //::Debug
     */
     void LogDebugReport(const DebugReport &_InDebugReport);
 
-    void LogAssert(const char *const _InMessage, const char *const _InFile, uint32 _InLine);
+    void LogAssert(const char *const _InMessage, const char *const _InFile, uint32_t _InLine);
 
     void Log(const char *const _InMessage);
 

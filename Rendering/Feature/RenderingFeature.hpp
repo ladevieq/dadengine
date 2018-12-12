@@ -11,8 +11,8 @@ namespace DadEngine::Rendering
 {
 	struct RenderingFeatureInfo
 	{
-		uint8 SubmitNode : 1;
-		uint8 SubmitNodes : 1;
+		uint8_t SubmitNode : 1;
+		uint8_t SubmitNodes : 1;
 	};
 
 	template<typename T>

@@ -8,12 +8,12 @@ namespace DadEngine::Core
 
 	public:
 
-		MemoryReader(TArray<uint8>& _InData) : Archive(_InData, TRUE) {}
+		MemoryReader(TArray<uint8_t>& _InData) : Archive(_InData, TRUE) {}
 
 
 	private:
 
-		FORCE_INLINE void Serialize(void* _InValue, int32 _InSize) override final
+		void Serialize(void* _InValue, int32_t _InSize) override final
 		{
 			MemoryManager::Copy(&m_Data[m_uiOffset], _InValue, _InSize);
 

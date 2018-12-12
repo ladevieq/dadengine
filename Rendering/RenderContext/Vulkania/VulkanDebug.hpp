@@ -11,8 +11,8 @@
 namespace DadEngine::Rendering::VulkanDebug
 {
 	VkBool32 VKAPI_PTR MessageCallback(VkDebugReportFlagsEXT _InFlag, VkDebugReportObjectTypeEXT _InObjectType,
-		uint64 _InSrcObject, size_t _InMemoryLocation,
-		int32 _InMessageCode, const char* _inPrefixLayer,
+		uint64_t _InSrcObject, size_t _InMemoryLocation,
+		int32_t _InMessageCode, const char* _inPrefixLayer,
 		const char* _InMessage, void* _InUserData);
 
 	void InitializeVulkanDebug(VkInstance& _InInstance);

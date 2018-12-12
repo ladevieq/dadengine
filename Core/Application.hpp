@@ -1,23 +1,27 @@
 #ifndef __APPLICATION_HPP_
 #define __APPLICATION_HPP_
 
-#include "Platform/Types.hpp"
+#include <stdint.h>
+
+#include "Defines.hpp"
 #include "Platform/Window.hpp"
 
 
 namespace DadEngine::Core
 {
+    // class PlatformWindow;
+
 	struct ApplicationInfo
     {
         ApplicationInfo() = default;
 
-        ApplicationInfo(const char *sApplicationName, uint32 _uiWidth, uint32 _uiHeight, uint8 _bFullscreen, uint8 _bVerticalSync);
+        ApplicationInfo(const char *sApplicationName, uint32_t _uiWidth, uint32_t _uiHeight, uint8_t _bFullscreen, uint8_t _bVerticalSync);
 
         const char *m_sApplicationName = nullptr;
-        uint32 m_uiWidth = 800U;
-        uint32 m_uiHeight = 600U;
-        uint8 m_bFullscreen = 0U;
-        uint8 m_bVerticalSync = 0U;
+        uint32_t m_uiWidth = 800U;
+        uint32_t m_uiHeight = 600U;
+        uint8_t m_bFullscreen = 0U;
+        uint8_t m_bVerticalSync = 0U;
     };
 
     class Application
@@ -44,7 +48,7 @@ namespace DadEngine::Core
         PlatformWindow m_window;
         // Rendering::RenderContext* m_renderContext = nullptr;
 
-        uint8 m_bLoop = TRUE;
+        uint8_t m_bLoop = TRUE;
     };
 } // namespace DadEngine::Core
 

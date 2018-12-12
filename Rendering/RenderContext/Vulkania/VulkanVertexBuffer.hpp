@@ -14,7 +14,12 @@ namespace DadEngine::Rendering
 
 	public:
 
-		VulkanVertexBuffer(uint32 _InVertexCount, TArray<VertexInput>& _InVerticesInputLayout, TArray<float>& _InData, uint32 _InStride, VkDevice _InDevice, VkPhysicalDevice _InPhysicalDevice);
+		VulkanVertexBuffer(uint32_t _InVertexCount,
+                       TArray<VertexInput> &_InVerticesInputLayout,
+                       TArray<float> &_InData,
+                       uint32_t _InStride,
+                       VkDevice _InDevice,
+                       VkPhysicalDevice _InPhysicalDevice);
 
 		~VulkanVertexBuffer();
 

@@ -1,6 +1,7 @@
 #ifndef __MEMORY_WRITER_HPP_
 #define __MEMORY_WRITER_HPP_
 
+
 namespace DadEngine::Core
 {
 	class MemoryWriter : public Archive
@@ -13,7 +14,7 @@ namespace DadEngine::Core
 
 	private:
 
-		FORCE_INLINE void Serialize(void* _InValue, int32 _InSize) override final
+		void Serialize(void* _InValue, int32_t _InSize) override final
 		{
 			m_Data.AddCapacity(_InSize);
 

@@ -7,8 +7,8 @@ namespace DadEngine::Rendering
 {
 	struct Extent2D
 	{
-		uint32 width;
-		uint32 height;
+        uint32_t width;
+        uint32_t height;
 	};
 
 	class Image

@@ -4,7 +4,7 @@
 
 namespace DadEngine::Core
 {
-	using uint64 = unsigned long long;
+	/* using uint64 = unsigned long long;
 	using int64 = long long;
 	using uint32 = unsigned int;
 	using int32 = int;
@@ -27,7 +27,7 @@ namespace DadEngine::Core
 #else
 	using size_t = uint32;
 #endif
-
+	*/
     namespace Test
     {
         void TestTypes();

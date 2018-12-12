@@ -18,13 +18,18 @@ namespace DadEngine::Rendering
 
 		void EnumerateDeviceLayersAndExtensions(VkPhysicalDevice _InPhysicalDevice);
 
-		uint32 CheckDeviceQueueFamilyProperties(VkPhysicalDevice _InPhysicalDevice, VkQueueFlags _InFlag);
+		uint32_t CheckDeviceQueueFamilyProperties(VkPhysicalDevice _InPhysicalDevice, VkQueueFlags _InFlag);
 
-		uint32 CheckMemoryTypeIndex(VkPhysicalDevice _InPhysicalDevice, uint32 _InMemoryTypeBits, VkMemoryPropertyFlags _InProperties);
+		uint32_t CheckMemoryTypeIndex(VkPhysicalDevice _InPhysicalDevice,
+                                    uint32_t _InMemoryTypeBits,
+                                    VkMemoryPropertyFlags _InProperties);
 
 		VkSurfaceFormatKHR CheckSurfaceFormats(VkPhysicalDevice _InPhysicalDevice, VkSurfaceKHR _InSurface);
 
-		void CreateCommandBuffer(VkDevice _InDevice, VkCommandPool _InCommandPool, uint32 _InCount, VkCommandBuffer* _OutCommandBuffers);
+		void CreateCommandBuffer(VkDevice _InDevice,
+                                 VkCommandPool _InCommandPool,
+                                 uint32_t _InCount,
+                                 VkCommandBuffer *_OutCommandBuffers);
 
 		void CreateBuffer(VkDevice _InDevice, VkDeviceSize _InSize, VkBufferUsageFlags _InBufferUsage, VkBuffer& _OutBuffer);
 

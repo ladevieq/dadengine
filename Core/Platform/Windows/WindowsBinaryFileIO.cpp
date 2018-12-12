@@ -1,9 +1,7 @@
 #include "WindowsBinaryFileIO.hpp"
 
-#include <stdio.h>
-
+#include "../../Defines.hpp"
 #include "../../Debug.hpp"
-#include "../../Platform/Types.hpp"
 #include "../../Types/String.hpp"
 
 namespace DadEngine::Core
@@ -33,40 +31,40 @@ namespace DadEngine::Core
     }
 
 
-    b8 WindowsBinaryFile::OpenRead (const char *_InFilePath)
+    uint8_t WindowsBinaryFile::OpenRead(const char *_InFilePath)
     {
         m_fileHandle = fopen (_InFilePath, "rb");
 
         return m_fileHandle != nullptr;
     }
 
-    b8 WindowsBinaryFile::Read (uint8 *_InDst, size_t _InBytesToRead)
+    uint8_t WindowsBinaryFile::Read(uint8_t *_InDst, size_t _InBytesToRead)
     {
         size_t size = fread (_InDst, 1U, _InBytesToRead, m_fileHandle);
         return size == _InBytesToRead;
     }
 
-    b8 WindowsBinaryFile::Read (String &_InDst)
+    uint8_t WindowsBinaryFile::Read(String &_InDst)
     {
-        size_t size = fread ((void *)_InDst.Cstr (), sizeof (uint8), _InDst.Size (), m_fileHandle);
+        size_t size = fread((void *)_InDst.Cstr(), sizeof(uint8_t), _InDst.Size(), m_fileHandle);
         return size == _InDst.Size ();
     }
 
 
-    b8 WindowsBinaryFile::OpenWrite (const char *_InFilePath)
+    uint8_t WindowsBinaryFile::OpenWrite(const char *_InFilePath)
     {
         m_fileHandle = fopen (_InFilePath, "wb");
 
         return m_fileHandle != nullptr;
     }
 
-    b8 WindowsBinaryFile::Write (uint8 *_InSrc, size_t _InBytesToWrite)
+    uint8_t WindowsBinaryFile::Write(uint8_t *_InSrc, size_t _InBytesToWrite)
     {
         size_t size = fwrite (_InSrc, 1U, _InBytesToWrite, m_fileHandle);
         return size == _InBytesToWrite;
     }
 
-    b8 WindowsBinaryFile::Write (String &_InDst)
+    uint8_t WindowsBinaryFile::Write(String &_InDst)
     {
         size_t size = fread ((void *)_InDst.Cstr (), 1U, _InDst.Size (), m_fileHandle);
         return size == _InDst.Size ();
@@ -79,14 +77,14 @@ namespace DadEngine::Core
 
     size_t WindowsBinaryFile::Size ()
     {
-        int64 pos;
+        int64_t pos;
         size_t size = 0U;
         fgetpos (m_fileHandle, &pos);
         fseek (m_fileHandle, 0, SEEK_END);
 
         size = (size_t)ftell (m_fileHandle);
 
-        fseek (m_fileHandle, (int32)pos, SEEK_SET);
+        fseek (m_fileHandle, (int32_t)pos, SEEK_SET);
 
         return size;
     }

@@ -29,12 +29,15 @@ namespace DadEngine::Rendering
 		void Initialize(VkDevice& _InDevice, VkPhysicalDevice& _InPhysicalDevice, VkSurfaceKHR& _InSurface, VkPresentModeKHR& _InPresentationMode, PlatformWindow& _InWindow);
 
 
-		void Present(VkQueue& _InQueue, VkSemaphore& _InRenderingFinishedSemaphore, uint32 _InImageIndex);
+		void Present(VkQueue &_InQueue, VkSemaphore &_InRenderingFinishedSemaphore, uint32_t _InImageIndex);
 
 
-		uint32 GetNextImageIndex(VkSemaphore& _InImageAvailableSemaphore);
+		uint32_t GetNextImageIndex(VkSemaphore &_InImageAvailableSemaphore);
 
-		FORCE_INLINE uint32 GetImageCount() { return (uint32)m_SwapchainImages.Size(); }
+		FORCE_INLINE uint32_t GetImageCount()
+        {
+            return (uint32_t)m_SwapchainImages.Size();
+        }
 
 		FORCE_INLINE VkFormat GetFormat() { return m_surfaceFormat.format; }
 
@@ -42,7 +45,7 @@ namespace DadEngine::Rendering
 		TArray<VulkanImage> m_SwapchainImages;
 
 		VkExtent2D m_SwapchainExtent;
-		uint32 m_uiPresentQueueFamilyIndex = 0U;
+        uint32_t m_uiPresentQueueFamilyIndex = 0U;
 
 	private:
 

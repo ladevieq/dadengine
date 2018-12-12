@@ -12,10 +12,10 @@ namespace DadEngine::Rendering
 {
 	struct Viewport
 	{
-		int32 x;
-		int32 y;
-		int32 width;
-		int32 height;
+        int32_t x;
+        int32_t y;
+        int32_t width;
+        int32_t height;
 		//Extent2D extend;
 	};
 
@@ -64,13 +64,17 @@ namespace DadEngine::Rendering
 		// Commands
 		virtual void ClearColorBuffer(Color& _InClearColor, CommandBuffer* _InCommandBuffer) = 0;
 
-		virtual void ClearDepthStencilBuffer(float _InDepthValue, uint32 _InStencilValue, CommandBuffer* _InCommandBuffer) = 0;
+		virtual void ClearDepthStencilBuffer(float _InDepthValue,
+                                             uint32_t _InStencilValue,
+                                             CommandBuffer *_InCommandBuffer) = 0;
 
 		virtual void Present(CommandBuffer* _InCommandBuffer) = 0;
 
 		virtual void Draw(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) = 0;
 
-		virtual void DrawMultiples(VertexBuffer* _InVertexBuffer, int32 _InInstanceCount, CommandBuffer* _InCommandBuffer) = 0;
+		virtual void DrawMultiples(VertexBuffer *_InVertexBuffer,
+                                   int32_t _InInstanceCount,
+                                   CommandBuffer *_InCommandBuffer) = 0;
 
 		virtual void BindVertexBuffer(VertexBuffer* _InVertexBuffer, CommandBuffer* _InCommandBuffer) = 0;
 
@@ -107,7 +111,10 @@ namespace DadEngine::Rendering
 		virtual void SubmitCommandBuffer(CommandBuffer* _InCommandBuffer) = 0;
 
 
-		virtual VertexBuffer* CreateVertexBuffer(uint32 _InVertexCount, TArray<float>& _InData, TArray<VertexInput>& _InVertexLayout, uint32 _InVerticesStride) = 0;
+		virtual VertexBuffer *CreateVertexBuffer(uint32_t _InVertexCount,
+                                                 TArray<float> &_InData,
+                                                 TArray<VertexInput> &_InVertexLayout,
+                                                 uint32_t _InVerticesStride) = 0;
 		virtual VertexShader* CreateVertexShader(const char* _InShaderCode, size_t _InShaderCodeSize, TArray<VertexInput>& _InVertexInputLayout) = 0;
 		virtual GeometryShader* CreateGeometryShader(const char* _InShaderCode, size_t _InShaderCodeSize) = 0;
 		virtual FragmentShader* CreateFragmentShader(const char* _InShaderCode, size_t _InShaderCodeSize) = 0;

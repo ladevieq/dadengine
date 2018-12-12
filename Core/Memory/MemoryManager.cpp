@@ -1,10 +1,10 @@
 #include "MemoryManager.hpp"
 
 #include <malloc.h>
+#include <memory.h>
 
 #include "../Defines.hpp"
 #include "../Platform/Memory.hpp"
-#include "../Platform/Types.hpp"
 
 namespace DadEngine::Core
 {
@@ -32,7 +32,7 @@ namespace DadEngine::Core
         //(uint8 [_InCpySize])_InSrc
     }
 
-    void MemoryManager::Set (void *_InDst, int32 _InValue, size_t _InCpySize)
+    void MemoryManager::Set (void *_InDst, int32_t _InValue, size_t _InCpySize)
     {
         ASSERT (_InDst);
         memset (_InDst, _InValue, _InCpySize);
@@ -47,9 +47,9 @@ namespace DadEngine::Core
     {
         void TestMemoryManager ()
         {
-            uint32 *i = nullptr;
+            uint32_t *i = nullptr;
 
-            i = new uint32;
+            i = new uint32_t;
 
             ASSERT (i);
 
