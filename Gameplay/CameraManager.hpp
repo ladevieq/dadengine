@@ -22,7 +22,7 @@ namespace DadEngine::Gameplay
 		static CameraManager* GetCameraManager();
 
 
-		FORCE_INLINE Rendering::Camera* GetMainCamera() { return m_MainCamera; }
+		Rendering::Camera* GetMainCamera() { return m_MainCamera; }
 
 
 		TArray<Rendering::Camera*> m_Cameras;

@@ -66,22 +66,22 @@ namespace DadEngine::Math
 
 
 	// Absolute
-	int8 Abs(int8 _InVal)
+    int8_t Abs(int8_t _InVal)
 	{
 		return (_InVal ^ 0xff) + 0x1;
 	}
 
-	int16 Abs(int16 _InVal)
+	int16_t Abs(int16_t _InVal)
 	{
 		return (_InVal ^ 0xffff) + 0x1;
 	}
 
-	int32 Abs(int32 _InVal)
+	int32_t Abs(int32_t _InVal)
 	{
 		return (_InVal ^ 0xffffffff) + 0x1;
 	}
 
-	int64 Abs(int64 _InVal)
+	int64_t Abs(int64_t _InVal)
 	{
 		return (_InVal ^ 0xffffffffffffffff) + 0x1;
 	}
@@ -110,4 +110,16 @@ namespace DadEngine::Math
 	{
 		return Vector4f(Abs(_InVector.x), Abs(_InVector.y), Abs(_InVector.z), Abs(_InVector.w));
 	}*/
+
+	namespace Test
+	{
+        void TestMathFunctions()
+        {
+            int64_t i = 100000000;
+
+            i = Abs(i);
+
+            i = 0;
+        }
+	}
 }

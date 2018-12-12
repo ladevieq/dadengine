@@ -1,8 +1,6 @@
 #ifndef __VECTOR4F_HPP_
 #define __VECTOR4F_HPP_
 
-#include "../../Core/Core.hpp"
-#include "../Constants.hpp"
 
 namespace DadEngine::Math
 {
@@ -13,120 +11,47 @@ namespace DadEngine::Math
 
 		Vector4f() = default;
 
-		Vector4f(float _InX, float _InY, float _InZ, float _InW)
-		{
-			x = _InX;
-			y = _InY;
-			z = _InZ;
-			w = _InW;
-		}
+		Vector4f(float _InX, float _InY, float _InZ, float _InW);
 
 
 		// Standard vector functions
-		FORCE_INLINE void Normalize()
-		{
-			float length = Length();
-
-			LOG_ASSERT(length > FLOAT_EPSILON, "Vector length is null");
-
-			*this /= length;
-		}
+        void Normalize();
 
 		float Length();
 
-		FORCE_INLINE float SqLength()
-		{
-			return x * x + y * y + z * z;
-		}
+		float SqLength();
 
 		float Angle(Vector4f& _InVector);
 
-		FORCE_INLINE float Dot(Vector4f& _InVector)
-		{
-			return x * _InVector.x + y * _InVector.y + z * _InVector.z;
-		}
+		float Dot(Vector4f &_InVector);
 
-		FORCE_INLINE Vector4f& Lerp(Vector4f& _InFrom, Vector4f& _InTo, float _InFactor)
-		{
-			x = _InFrom.x + _InFactor * (_InTo.x - _InFrom.x);
-			y = _InFrom.y + _InFactor * (_InTo.y - _InFrom.y);
-			z = _InFrom.z + _InFactor * (_InTo.z - _InFrom.z);
-			w = _InFrom.w + _InFactor * (_InTo.w - _InFrom.w);
-		}
+		Vector4f Lerp(Vector4f &_InFrom, Vector4f &_InTo, float _InFactor);
 
 		// Unary operators
-		FORCE_INLINE Vector4f operator-()
-		{
-			return Vector4f(-x, -y, -z, -w);
-		}
+        Vector4f operator-();
 
 		// Binary math operators
-		FORCE_INLINE Vector4f operator+(Vector4f& _InVector)
-		{
-			return Vector4f(x + _InVector.x, y + _InVector.y, z + _InVector.z, w + _InVector.w);
-		}
+        Vector4f operator+(Vector4f &_InVector);
 
-		FORCE_INLINE Vector4f operator-(Vector4f& _InVector)
-		{
-			return Vector4f(x - _InVector.x, y - _InVector.y, z - _InVector.z, w + _InVector.w);
-		}
+		Vector4f operator-(Vector4f &_InVector);
 
-		FORCE_INLINE Vector4f operator*(float _InVal)
-		{
-			return Vector4f(x *_InVal, y * _InVal, z * _InVal, w + _InVal);
-		}
+		Vector4f operator*(float _InVal);
 
-		FORCE_INLINE Vector4f operator/(float _InVal)
-		{
-			return Vector4f(x / _InVal, y / _InVal, z / _InVal, w / _InVal);
-		}
+		Vector4f operator/(float _InVal);
 
-		FORCE_INLINE Vector4f operator^(Vector4f& _InVector)
-		{
-			return Vector4f(y * _InVector.z - z * _InVector.y,
-							z * _InVector.x - x * _InVector.z,
-							x * _InVector.y - y * _InVector.x,
-							x * _InVector.y - y * _InVector.x);
-		}
+		Vector4f operator^(Vector4f &_InVector);
 
 
 		// Binary assignement math operators
-		FORCE_INLINE void operator+=(Vector4f& _InVector)
-		{
-			x += _InVector.x;
-			y += _InVector.y;
-			z += _InVector.z;
-		}
+        void operator+=(Vector4f &_InVector);
 
-		FORCE_INLINE void operator-=(Vector4f& _InVector)
-		{
-			x -= _InVector.x;
-			y -= _InVector.y;
-			z -= _InVector.z;
-		}
+		void operator-=(Vector4f &_InVector);
 
-		FORCE_INLINE void operator*=(float _InVal)
-		{
-			x -= _InVal;
-			y -= _InVal;
-			z -= _InVal;
-		}
+		void operator*=(float _InVal);
 
-		FORCE_INLINE void operator/=(float _InVal)
-		{
-			x /= _InVal;
-			y /= _InVal;
-			z /= _InVal;
-		}
+		void operator/=(float _InVal);
 
-		FORCE_INLINE void operator^=(Vector4f& _InVector)
-		{
-			Vector4f temp = *this;
-
-			x = temp.y * _InVector.z - temp.z * _InVector.y,
-			y = temp.z * _InVector.x - temp.x * _InVector.z,
-			z = temp.x * _InVector.y - temp.y * _InVector.x;
-		}
+		void operator^=(Vector4f &_InVector);
 
 
 		float x = 0.f;

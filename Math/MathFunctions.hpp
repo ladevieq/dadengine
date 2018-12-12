@@ -36,13 +36,13 @@ namespace DadEngine::Math
 	void Clamp();
 
 	// Absolute
-	int8 Abs(int8 _InVal);
+    int8_t Abs(int8_t _InVal);
 
-	int16 Abs(int16 _InVal);
+	int16_t Abs(int16_t _InVal);
 
-	int32 Abs(int32 _InVal);
+	int32_t Abs(int32_t _InVal);
 
-	int64 Abs(int64 _InVal);
+	int64_t Abs(int64_t _InVal);
 
 	float Abs(float _InVal);
 
@@ -56,14 +56,7 @@ namespace DadEngine::Math
 
 	namespace Test
 	{
-		FORCE_INLINE static void TestMathFunctions()
-		{
-			int64 i = 100000000;
-
-			i = Abs(i);
-
-			i = 0;
-		}
+        void TestMathFunctions();
 	}
 }
 

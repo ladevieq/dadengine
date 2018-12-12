@@ -52,7 +52,7 @@ namespace DadEngine::Gameplay
 
 		KeyState m_State = MAX_KEY_STATE;
 		KeyCode m_KeyIndex = MAX_KEY_CODE;
-		b8 m_IsConsumed = FALSE;
+		uint8_t m_IsConsumed = FALSE;
 	};
 
 	struct Button
@@ -65,7 +65,7 @@ namespace DadEngine::Gameplay
 
 		MouseButton m_Button = MAX_BUTTON;
 		ButtonState m_State = MAX_BUTTON_STATE;
-		b8 m_IsConsumed = FALSE;
+        uint8_t m_IsConsumed = FALSE;
 	};
 
 
@@ -105,7 +105,7 @@ namespace DadEngine::Gameplay
 		static InputManager* GetInputManager();
 
 
-		FORCE_INLINE void UpdateKeyState(KeyCode _InKeyCode, KeyState _InNewState)
+		void UpdateKeyState(KeyCode _InKeyCode, KeyState _InNewState)
 		{
 			// Key is pressed again
 			if ((m_Keys[_InKeyCode].m_State == KEY_STATE_KEY_PRESSED
@@ -133,7 +133,7 @@ namespace DadEngine::Gameplay
 			m_Keys[_InKeyCode].m_IsConsumed = FALSE;
 		}
 
-		FORCE_INLINE void UpdateButtonState(MouseButton _InButton, ButtonState _InNewState)
+		void UpdateButtonState(MouseButton _InButton, ButtonState _InNewState)
 		{
 			// Button is pressed again
 			if ((m_MouseButtons[_InButton].m_State == BUTTON_STATE_BUTTON_PRESSED
@@ -161,19 +161,19 @@ namespace DadEngine::Gameplay
 			m_MouseButtons[_InButton].m_IsConsumed = FALSE;
 		}
 
-		FORCE_INLINE void UpdateMousePosition(int32 _InX, int32 _InY)
+		void UpdateMousePosition(int32_t _InX, int32_t _InY)
 		{
 			m_PosX = _InX;
 			m_PosY = _InY;
 		}
 
-		FORCE_INLINE void UpdateWheelDelta(int16 _InWheelDelta)
+		void UpdateWheelDelta(int16_t _InWheelDelta)
 		{
 			m_WheelDelta = _InWheelDelta;
 		}
 
 
-		FORCE_INLINE void Update()
+		void Update()
 		{
 			for (Input* currentInput : m_Inputs)
 			{
@@ -211,8 +211,8 @@ namespace DadEngine::Gameplay
 
 	private:
 
-		int32 m_PosX = 0, m_PosY = 0;
-		int16 m_WheelDelta = 0;
+		int32_t m_PosX = 0, m_PosY = 0;
+		int16_t m_WheelDelta = 0;
 		Button m_MouseButtons[MAX_BUTTON]{};
 		Key m_Keys[MAX_KEY_CODE]{};
 	};

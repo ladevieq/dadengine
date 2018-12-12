@@ -1,121 +1,63 @@
 #ifndef __VECTOR2F_HPP_
 #define __VECTOR2F_HPP_
 
-#include "../../Core/Core.hpp"
-#include "../Constants.hpp"
 
 namespace DadEngine::Math
 {
-	class Vector2f
-	{
+    class Vector2f
+    {
 
-	public:
+        public:
+        Vector2f() = default;
 
-		Vector2f() = default;
-
-		Vector2f(float _InX, float _InY)
-		{
-			x = _InX;
-			y = _InY;
-		}
+        Vector2f(float _InX, float _InY);
 
 
-		// Standard vector functions
-		FORCE_INLINE void Normalize()
-		{
-			float length = Length();
+        // Standard vector functions
+        void Normalize();
 
-			LOG_ASSERT(length > FLOAT_EPSILON, "Vector length is null");
+        void Reflect();
 
-			*this /= length;
-		}
+        void Projection();
 
-		FORCE_INLINE void Reflect();
+        float Length();
 
-		FORCE_INLINE void Projection();
+        float SqLength();
 
-		float Length();
+        float Angle(Vector2f &_InVector);
 
-		FORCE_INLINE float SqLength()
-		{
-			return x * x + y * y;
-		}
+        float Dot(Vector2f &_InVector);
 
-		float Angle(Vector2f& _InVector);
+        Vector2f Lerp(Vector2f &_InFrom, Vector2f &_InTo, float _InFactor);
 
-		FORCE_INLINE float Dot(Vector2f& _InVector)
-		{
-			return x * _InVector.x + y * _InVector.y;
-		}
+        // Unary operators
+        Vector2f operator-();
 
-		FORCE_INLINE Vector2f& Lerp(Vector2f& _InFrom, Vector2f& _InTo, float _InFactor)
-		{
-			x = _InFrom.x + _InFactor * (_InTo.x - _InFrom.x);
-			y = _InFrom.y + _InFactor * (_InTo.y - _InFrom.y);
-		}
+        // Binary math operators
+        Vector2f operator+(Vector2f &_InVector);
 
-		// Unary operators
-		FORCE_INLINE Vector2f operator-()
-		{
-			return Vector2f(-x, -y);
-		}
+        Vector2f operator-(Vector2f &_InVector);
 
-		// Binary math operators
-		FORCE_INLINE Vector2f operator+(Vector2f& _InVector)
-		{
-			return Vector2f(x + _InVector.x, y + _InVector.y);
-		}
+        Vector2f operator*(float _InVal);
 
-		FORCE_INLINE Vector2f operator-(Vector2f& _InVector)
-		{
-			return Vector2f(x - _InVector.x, y - _InVector.y);
-		}
+        Vector2f operator/(float _InVal);
 
-		FORCE_INLINE Vector2f operator*(float _InVal)
-		{
-			return Vector2f(x *_InVal, y * _InVal);
-		}
-
-		FORCE_INLINE Vector2f operator/(float _InVal)
-		{
-			return Vector2f(x / _InVal, y / _InVal);
-		}
-
-		FORCE_INLINE float operator^(Vector2f& _InVector)
-		{
-			return x * _InVector.y - y * _InVector.x;
-		}
+        float operator^(Vector2f &_InVector);
 
 
-		// Binary assignement math operators
-		FORCE_INLINE void operator+=(Vector2f& _InVector)
-		{
-			x += _InVector.x;
-			y += _InVector.y;
-		}
+        // Binary assignement math operators
+        void operator+=(Vector2f &_InVector);
 
-		FORCE_INLINE void operator-=(Vector2f& _InVector)
-		{
-			x -= _InVector.x;
-			y -= _InVector.y;
-		}
+        void operator-=(Vector2f &_InVector);
 
-		FORCE_INLINE void operator*=(float _InVal)
-		{
-			x -= _InVal;
-			y -= _InVal;
-		}
+        void operator*=(float _InVal);
 
-		FORCE_INLINE void operator/=(float _InVal)
-		{
-			x /= _InVal;
-			y /= _InVal;
-		}
+        void operator/=(float _InVal);
 
 
-		float x = 0.f;
-		float y = 0.f;
-	};
-}
+        float x = 0.f;
+        float y = 0.f;
+    };
+} // namespace DadEngine::Math
 
 #endif //__VECTOR2F_HPP_
