@@ -1,7 +1,6 @@
 #ifndef __RAW_VERTEX_HPP_
 #define __RAW_VERTEX_HPP_
 
-#include "../../Core/Core.hpp"
 #include "../../Math/Math.hpp"
 
 namespace DadEngine::Rendering

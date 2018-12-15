@@ -2,11 +2,12 @@
 #define __FRAME_PACKET_HPP_
 // Video #3 37:15
 
-#include "RenderNode.hpp"
-#include "RenderObject.hpp"
+#include "../../Core/Core.hpp"
 
 namespace DadEngine::Rendering
 {
+	class RenderObject;
+    class RenderNode;
 	class ViewPacket;
 
 	// One frame rendering informations

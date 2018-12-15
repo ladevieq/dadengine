@@ -5,6 +5,7 @@
 #include "OpenGLVertexBuffer.hpp"
 
 #include "../OpenGLWrapper.hpp"
+#include "../../Mesh/VertexInputLayout.hpp"
 #include "../../Color.hpp"
 
 #pragma comment(lib, "OpenGL32.lib")

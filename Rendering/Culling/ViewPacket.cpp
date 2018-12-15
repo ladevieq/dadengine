@@ -1,5 +1,9 @@
 #include "ViewPacket.hpp"
 
+#include "FramePacket.hpp"
+#include "RenderObject.hpp"
+#include "../Feature/RenderComponent.hpp"
+
 namespace DadEngine::Rendering
 {
 	// Hotfix aui pus la merde

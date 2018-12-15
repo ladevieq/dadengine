@@ -4,6 +4,7 @@
 #include "vulkan/vulkan.hpp"
 
 #include "../../CommandBuffer.hpp"
+#include "../RenderContext.hpp"
 
 #include "VulkanSwapchain.hpp"
 

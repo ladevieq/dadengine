@@ -1,5 +1,7 @@
 #include "VulkanRenderContext.hpp"
 
+#include "../../Shader/Shader.hpp"
+#include "../../Color.hpp"
 #include "VulkanDebug.hpp"
 
 namespace DadEngine::Rendering

@@ -4,6 +4,8 @@
 
 namespace DadEngine::Rendering
 {
+    class RenderContext;
+
 	struct RenderCommand
 	{
 		virtual void Execute(RenderContext* _InRenderContext) = 0;

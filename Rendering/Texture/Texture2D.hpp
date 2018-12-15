@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Core/Core.hpp"
+#include <stdint.h>
 
 enum TEXTURE_MODE
 {
@@ -9,7 +9,7 @@ enum TEXTURE_MODE
 
 class Texture2D
 {
-	uint32 Width;
-	uint32 Height;
-	uint8 MipLevel;
+	uint32_t Width;
+	uint32_t Height;
+	uint8_t MipLevel;
 };

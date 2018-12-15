@@ -1,0 +1,1 @@
+add_library(mesh RawMesh.cpp VertexFactory.cpp VertexInputLayout.cpp)

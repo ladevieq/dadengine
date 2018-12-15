@@ -2,12 +2,13 @@
 #define __VIEW_PACKET_HPP_
 
 #include "../../Core/Core.hpp"
-#include "FramePacket.hpp"
-#include "RenderObject.hpp"
-#include "../Feature/RenderComponent.hpp"
+// #include "../Feature/RenderComponent.hpp"
 
 namespace DadEngine::Rendering
 {
+    class FramePacket;
+    class RenderObject;
+
 	// One camera rendering informations
 	class ViewPacket
 	{
@@ -22,7 +23,7 @@ namespace DadEngine::Rendering
 		// Etract all render node information to a frame packe
 		void ExtractObjects(FramePacket& _InFramePacket);
 
-		TArray<RenderObject*> m_VisibleObjects; // Enculer de tableau qui s'initialise pas
+		TArray<RenderObject*> m_VisibleObjects; // Le tableau ne s'initialise pas
 	};
 }
 

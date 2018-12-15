@@ -1,7 +1,6 @@
 #ifndef __MATERIAL_HPP_
 #define __MATERIAL_HPP_
 
-#include "Shader.hpp"
 #include "../Color.hpp"
 
 namespace DadEngine::Rendering
@@ -11,6 +10,8 @@ namespace DadEngine::Rendering
 		Textures
 		Material type 
 	*/
+
+	class Shader;
 
 	class Material
 	{

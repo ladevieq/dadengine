@@ -1,5 +1,7 @@
 #include "OpenGLVertexBuffer.hpp"
 
+#include "../OpenGLWrapper.hpp"
+
 namespace DadEngine::Rendering
 {
     OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t _InVertexCount,

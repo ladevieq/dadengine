@@ -4,6 +4,7 @@
 #include "RenderContext/RenderContext.hpp"
 #include "RenderCommand.hpp"
 #include "CommandBuffer.hpp"
+#include "Color.hpp"
 
 
 #if defined(DADOPENGL)
@@ -15,11 +16,13 @@
 #endif
 
 #include "Culling/Camera.hpp"
+#include "Culling/ViewPacket.hpp"
 
 #include "Features.hpp"
 
 #include "Shader/Shader.hpp"
 
+#include "Mesh/RawMesh.hpp"
 #include "Mesh/VertexFactory.hpp"
 
 using namespace DadEngine::Rendering;

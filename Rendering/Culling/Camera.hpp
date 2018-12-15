@@ -1,9 +1,6 @@
 #ifndef __CAMERA_HPP_
 #define __CAMERA_HPP_
 
-#include "FramePacket.hpp"
-#include "ViewPacket.hpp"
-#include "RenderObject.hpp"
 
 #include "../../Math/Math.hpp"
 
@@ -11,82 +8,55 @@
 
 namespace DadEngine::Rendering
 {
-	class ::DadEngine::Gameplay::Actor;
+    class FramePacket;
+    class RenderObject;
+    class ::DadEngine::Gameplay::Actor;
 
-	enum ProjectionType
-	{
-		ORTHOGRAPHIC_PROJECTION,
-		PERSPECTIVE_RPOJECTION,
-		MAX_PROJECTION,
-	};
-
-
-	struct OrthographicCamera
-	{
-
-	};
-
-	struct PerspectiveCamera
-	{
-		float m_Fov = 90.f;
-		float m_Near = 0.1f;
-		float m_Far = 1000.f;
-	};
-
-	class Camera : public ::DadEngine::Gameplay::IComponent
-	{
-
-	public:
-
-		Camera();
-
-		Camera(DadEngine::Gameplay::Actor* _InOwner);
+    enum ProjectionType
+    {
+        ORTHOGRAPHIC_PROJECTION,
+        PERSPECTIVE_RPOJECTION,
+        MAX_PROJECTION,
+    };
 
 
-		void ExtractVisibleObjects(TArray<RenderObject*> _InVisibleObjects, FramePacket& _InFramePacket)
-		{
-			ViewPacket view;
+    struct OrthographicCamera
+    {
+    };
 
-			_InFramePacket.AddViewPacket(view);
+    struct PerspectiveCamera
+    {
+        float m_Fov = 90.f;
+        float m_Near = 0.1f;
+        float m_Far = 1000.f;
+    };
 
-			for (RenderObject* currentObject : _InVisibleObjects)
-			{
-				if (currentObject->m_bVisible == TRUE)
-				{
-					view.AddRenderObject(currentObject);
-				}
-			}
-		}
+    class Camera : public ::DadEngine::Gameplay::IComponent
+    {
 
+        public:
+        Camera();
 
-		FORCE_INLINE void SetFov(float _InFov)
-		{
-			m_Fov = _InFov;
-
-			m_Projection.SetIdentity();
-			m_Projection.Perpespective(m_Near, m_Far, m_Fov);
-		}
-
-		FORCE_INLINE void SetPlanes(float _InNear, float _InFar)
-		{
-			m_Near = _InNear;
-			m_Far = _InFar;
-
-			m_Projection.SetIdentity();
-			m_Projection.Perpespective(m_Near, m_Far, m_Fov);
-		}
-
-		FORCE_INLINE Matrix4x4 GetProjectionMatrix() const { return m_Projection; }
+        Camera(DadEngine::Gameplay::Actor *_InOwner);
 
 
-	private:
+        void ExtractVisibleObjects(TArray<RenderObject *> _InVisibleObjects, FramePacket &_InFramePacket);
 
-		Matrix4x4 m_Projection = {};
 
-		float m_Fov = 90.f;
-		float m_Near = 0.1f;
-		float m_Far = 1000.f;
-	};
-}
+        void SetFov(float _InFov);
+
+        void SetPlanes(float _InNear, float _InFar);
+
+        Matrix4x4 GetProjectionMatrix() const;
+
+
+        private:
+        Matrix4x4 m_Projection = {};
+
+        float m_Fov = 90.f;
+        float m_Near = 0.1f;
+        float m_Far = 1000.f;
+    };
+} // namespace DadEngine::Rendering
 
 #endif //__CAMERA_HPP_

@@ -1,5 +1,6 @@
 #include "FramePacket.hpp"
 #include "ViewPacket.hpp"
+#include "RenderObject.hpp"
 
 namespace DadEngine::Rendering
 {

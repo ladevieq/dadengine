@@ -4,8 +4,6 @@
 #include <Windows.h>
 #include <gl/GL.h>
 
-#include "../OpenGLWrapper.hpp"
-
 #include "../../VertexBuffer.hpp"
 
 namespace DadEngine::Rendering

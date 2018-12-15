@@ -8,6 +8,11 @@
 #include "../../../Gameplay/CameraManager.hpp"
 #include "../../../Gameplay/Actor.hpp"
 
+#include "../../Shader/Shader.hpp"
+#include "OpenGLVertexShader.hpp"
+#include "OpenGLGeometryShader.hpp"
+#include "OpenGLFragmentShader.hpp"
+
 namespace DadEngine::Rendering
 {
     uint32_t OpenGLCullingMode[] =

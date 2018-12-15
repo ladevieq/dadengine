@@ -1,6 +1,7 @@
 #ifndef __VERTEX_INPUT_LAYOUT_HPP_
 #define __VERTEX_INPUT_LAYOUT_HPP_
 
+#include "../../Core/Core.hpp"
 
 namespace DadEngine::Rendering
 {
@@ -19,43 +20,9 @@ namespace DadEngine::Rendering
 		uint8_t uiIndex = 0U;
 		VertexInputType uiVertexInputType;
 
-		FORCE_INLINE void GetInputTypeInfo(size_t& _OutInputTypeSize, uint32_t& _OutInputTypeElementCount)
-		{
-			switch (uiVertexInputType)
-			{
-			case VERTEX_INPUT_TYPE_POSITION:
-			{
-				_OutInputTypeElementCount = 3U;
-				_OutInputTypeSize = _OutInputTypeElementCount * sizeof(float);
-				break;
-			}
+		void GetInputTypeInfo(size_t &_OutInputTypeSize, uint32_t &_OutInputTypeElementCount);
 
-			case VERTEX_INPUT_TYPE_COLOR:
-			{
-				_OutInputTypeElementCount = 3U;
-				_OutInputTypeSize = _OutInputTypeElementCount * sizeof(float);
-				break;
-			}
-
-			default:
-				break;
-			}
-		}
-
-		FORCE_INLINE static void GetLayoutStride(TArray<VertexInput> &_InVertexLayout, uint32_t &_OutStride)
-		{
-			_OutStride = 0U;
-
-			for (VertexInput vi : _InVertexLayout)
-			{
-				size_t size;
-                uint32_t count;
-
-				vi.GetInputTypeInfo(size, count);
-
-				_OutStride += (uint32_t)size;
-			}
-		}
+		static void GetLayoutStride(TArray<VertexInput> &_InVertexLayout, uint32_t &_OutStride);
 	};
 }
 

@@ -15,6 +15,11 @@
 
 namespace DadEngine::Rendering
 {
+    class Shader;
+    struct VertexShader;
+    struct GeometryShader;
+    struct FragmentShader;
+
 	class OpenGLRenderContext : public RenderContext
 	{
 

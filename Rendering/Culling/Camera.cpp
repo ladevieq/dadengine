@@ -1,5 +1,8 @@
 #include "Camera.hpp"
 
+#include "FramePacket.hpp"
+#include "ViewPacket.hpp"
+#include "RenderObject.hpp"
 #include "../../Gameplay/Gameplay.hpp"
 
 namespace DadEngine::Rendering
@@ -20,4 +23,41 @@ namespace DadEngine::Rendering
 
 		CameraManager::GetCameraManager()->AddCamera(this);
 	}
+
+	void Camera::ExtractVisibleObjects(TArray<RenderObject *> _InVisibleObjects, FramePacket &_InFramePacket)
+    {
+        ViewPacket view;
+
+        _InFramePacket.AddViewPacket(view);
+
+        for (RenderObject *currentObject : _InVisibleObjects)
+        {
+            if (currentObject->m_bVisible == TRUE)
+            {
+                view.AddRenderObject(currentObject);
+            }
+        }
+    }
+
+	void Camera::SetFov(float _InFov)
+    {
+        m_Fov = _InFov;
+
+        m_Projection.SetIdentity();
+        m_Projection.Perpespective(m_Near, m_Far, m_Fov);
+    }
+
+    void Camera::SetPlanes(float _InNear, float _InFar)
+    {
+        m_Near = _InNear;
+        m_Far = _InFar;
+
+        m_Projection.SetIdentity();
+        m_Projection.Perpespective(m_Near, m_Far, m_Fov);
+    }
+
+    Matrix4x4 Camera::GetProjectionMatrix() const
+    {
+        return m_Projection;
+    }
 }

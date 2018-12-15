@@ -1,7 +1,8 @@
 #ifndef __IMAGE_HPP_
 #define __IMAGE_HPP_
 
-#include "../Core/Core.hpp"
+// #include "../Core/Core.hpp"
+#include <stdint.h>
 
 namespace DadEngine::Rendering
 {
@@ -22,7 +23,7 @@ namespace DadEngine::Rendering
 			:m_ImageSize(_InImageSize)
 		{}
 
-		FORCE_INLINE Extent2D& GetImageSize() { return m_ImageSize; }
+		Extent2D& GetImageSize() { return m_ImageSize; }
 
 
 	protected:

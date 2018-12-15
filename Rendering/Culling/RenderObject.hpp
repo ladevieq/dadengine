@@ -1,7 +1,8 @@
 #ifndef __RENDER_OBJECT_HPP_
 #define __RENDER_OBJECT_HPP_
 
-#include "../../Core/Core.hpp"
+#include <stdint.h>
+#include "../../Core/Defines.hpp"
 
 namespace DadEngine::Rendering
 {
@@ -12,10 +13,7 @@ namespace DadEngine::Rendering
 
 	public:
 
-		RenderObject(RenderComponent* _InComponent)
-		{
-			m_renderComponentHandle = _InComponent;
-		}
+		RenderObject(RenderComponent *_InComponent);
 
 		uint8_t m_bVisible = TRUE;
 

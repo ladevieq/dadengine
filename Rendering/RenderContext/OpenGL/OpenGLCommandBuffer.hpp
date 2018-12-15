@@ -1,30 +1,24 @@
 #ifndef __OPENGL_COMMAND_BUFFER_HPP_
 #define __OPENGL_COMMAND_BUFFER_HPP_
 
+#include "../../../Core/Core.hpp"
 #include "../../CommandBuffer.hpp"
 
 namespace DadEngine::Rendering
 {
+    class RenderContext;
+    class OpenGLRenderCommand;
+
 	class OpenGLCommandBuffer : public CommandBuffer
 	{
 
 	public:
 
-		OpenGLCommandBuffer(RenderContext* _InRenderContext)
-			: CommandBuffer(_InRenderContext)
-		{}
+		OpenGLCommandBuffer(RenderContext *_InRenderContext);
 
-		void BeginRecord() override final
-		{
-			for (OpenGLRenderCommand* currentRenderCmd : m_Commands)
-			{
-				delete currentRenderCmd;
-			}
+		void BeginRecord() override final;
 
-			m_Commands.Clear();
-		}
-
-		void EndRecord() override final { m_ptrRenderContext->SubmitCommandBuffer(this); }
+		void EndRecord() override final;
 
 		TArray<OpenGLRenderCommand*> m_Commands;
 	};

@@ -1,64 +1,62 @@
 #ifndef __RENDERING_FEATURE_HPP_
 #define __RENDERING_FEATURE_HPP_
 
-#include "../Culling/ViewPacket.hpp"
 #include "../Culling/RenderNode.hpp"
-#include "../CommandBuffer.hpp"
 #include "../Culling/RenderObject.hpp"
 #include "../../Core/Core.hpp"
 
 namespace DadEngine::Rendering
 {
-	struct RenderingFeatureInfo
-	{
-		uint8_t SubmitNode : 1;
-		uint8_t SubmitNodes : 1;
-	};
+    class CommandBuffer;
+    class ViewPacket;
 
-	template<typename T>
-	class RenderingFeature
-	{
+    struct RenderingFeatureInfo
+    {
+        uint8_t SubmitNode : 1;
+        uint8_t SubmitNodes : 1;
+    };
 
-	public:
+    template <typename T>
+    class RenderingFeature
+    {
 
-		RenderObject* AddComponent(T* _InComponent)
-		{
-			RenderObject* renderObjectHandle = new RenderObject(_InComponent);
-			renderObjectHandle->m_renderComponentHandle = _InComponent;
+        public:
+        RenderObject* AddComponent(T *_InComponent)
+        {
+            RenderObject *renderObjectHandle = new RenderObject(_InComponent);
+            renderObjectHandle->m_renderComponentHandle = _InComponent;
 
-			m_renderObjects.Add(renderObjectHandle);
+            m_renderObjects.Add(renderObjectHandle);
 
-			_InComponent->m_RenderObjectHandle = renderObjectHandle;
+            _InComponent->m_RenderObjectHandle = renderObjectHandle;
 
-			return renderObjectHandle;
-		}
+            return renderObjectHandle;
+        }
 
-		void RemoveComponent(T* _InComponent);
-
-
-		virtual void Initialize(RenderingFeatureInfo &_OutInfo) = 0;
-
-		// Copy the node data over to the gpu
-		virtual void Extract(RenderNode& _InRenderNode) = 0;
-
-		// Submit rendering commands for each RenerNode
-		virtual void SubmitNode(const RenderNode& _InRenderNode, CommandBuffer& _InCommandBuffer) = 0;
-
-		// Submit all rendering feature RenderNodes
-		virtual void SubmitNodes(const TArray<RenderNode>& _InRenderNode, CommandBuffer& _InCommandBuffer) = 0;
-
-		// Frame begin
-		virtual void SubmitViewBegin(ViewPacket& _InViewPacket, CommandBuffer& _InCommandBuffer) = 0;
-
-		// Frame end
-		virtual void SubmitViewEnd(ViewPacket& _InViewPacket, CommandBuffer& _InCommandBuffer) = 0;
+        void RemoveComponent(T *_InComponent);
 
 
-	private:
+        virtual void Initialize(RenderingFeatureInfo &_OutInfo) = 0;
 
-		TArray<RenderObject*> m_renderObjects;
+        // Copy the node data over to the gpu
+        virtual void Extract(RenderNode &_InRenderNode) = 0;
 
-	};
-}
+        // Submit rendering commands for each RenerNode
+        virtual void SubmitNode(const RenderNode &_InRenderNode, CommandBuffer &_InCommandBuffer) = 0;
+
+        // Submit all rendering feature RenderNodes
+        virtual void SubmitNodes(const TArray<RenderNode> &_InRenderNode, CommandBuffer &_InCommandBuffer) = 0;
+
+        // Frame begin
+        virtual void SubmitViewBegin(ViewPacket &_InViewPacket, CommandBuffer &_InCommandBuffer) = 0;
+
+        // Frame end
+        virtual void SubmitViewEnd(ViewPacket &_InViewPacket, CommandBuffer &_InCommandBuffer) = 0;
+
+
+        private:
+        TArray<RenderObject *> m_renderObjects;
+    };
+} // namespace DadEngine::Rendering
 
 #endif //__RENDERING_FEATURE_HPP_

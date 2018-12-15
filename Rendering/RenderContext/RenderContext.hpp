@@ -1,12 +1,8 @@
 #ifndef __RENDER_CONTEXT_HPP_
 #define __RENDER_CONTEXT_HPP_
 
-#include "../Color.hpp"
-#include "../VertexBuffer.hpp"
-#include "../Shader/Shader.hpp"
-#include "../RenderPass.hpp"
+#include "../../Core/Core.hpp"
 #include "../Framebuffer.hpp"
-#include "../Image.hpp"
 
 namespace DadEngine::Rendering
 {
@@ -54,6 +50,17 @@ namespace DadEngine::Rendering
 	// Primitive type state -> Per object
 
 	class CommandBuffer;
+    struct Color;
+    class Shader;
+    struct VertexShader;
+    struct GeometryShader;
+    struct FragmentShader;
+    class VertexBuffer;
+    struct VertexInput;
+    class Image;
+    struct Extent2D;
+	class RenderPass;
+	// class Framebuffer;
 
 	class RenderContext
 	{

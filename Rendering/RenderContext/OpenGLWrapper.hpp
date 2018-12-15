@@ -8,7 +8,6 @@
 
 #include "wglext.hpp"
 
-#include "../../Core/Core.hpp"
 
 namespace DadEngine::Rendering::OpenGLWrapper
 {

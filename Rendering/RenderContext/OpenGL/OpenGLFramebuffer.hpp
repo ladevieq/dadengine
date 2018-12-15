@@ -1,39 +1,31 @@
 #ifndef __OPENGL_FRAMEBUFFER_HPP_
 #define __OPENGL_FRAMEBUFFER_HPP_
 
+#include <stdint.h>
+#include "../../Framebuffer.hpp"
+
 namespace DadEngine::Rendering
 {
-	struct OpenGLFrmaebufferAttachment
-	{
-		AttachmentPoints m_AttachmentPoint = MAX_FRAMEBUFFER_ATTACHMENT;
-	};
+    struct OpenGLFrmaebufferAttachment
+    {
+        AttachmentPoints m_AttachmentPoint = MAX_FRAMEBUFFER_ATTACHMENT;
+    };
 
-	class OpenGLFramebuffer : public Framebuffer
-	{
+    class OpenGLFramebuffer : public Framebuffer
+    {
 
-	public:
+        public:
+        OpenGLFramebuffer();
 
-		OpenGLFramebuffer()
-		{
-			OpenGLWrapper::glGenFramebuffers(1U, &m_uiFramebufferIndex);
-		}
-
-		~OpenGLFramebuffer()
-		{
-			OpenGLWrapper::glDeleteFramebuffers(1U, &m_uiFramebufferIndex);
-		}
+        ~OpenGLFramebuffer();
 
 
-		uint32_t m_uiFramebufferIndex = 0U;
+        uint32_t m_uiFramebufferIndex = 0U;
 
-	private:
+        private:
+        void Attach(OpenGLFrmaebufferAttachment &_InAttachment);
 
-		FORCE_INLINE void Attach(OpenGLFrmaebufferAttachment& _InAttachment)
-		{
-			//glFrame
-
-		}
-	};
-}
+    };
+} // namespace DadEngine::Rendering
 
 #endif //__OPENGL_FRAMEBUFFER_HPP_

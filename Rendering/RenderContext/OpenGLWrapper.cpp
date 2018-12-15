@@ -1,5 +1,6 @@
 #include "OpenGLWrapper.hpp"
 
+#include <stdio.h>
 
 namespace DadEngine::Rendering::OpenGLWrapper
 {
