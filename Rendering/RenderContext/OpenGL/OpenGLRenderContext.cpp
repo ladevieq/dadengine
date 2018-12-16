@@ -13,6 +13,13 @@
 #include "OpenGLGeometryShader.hpp"
 #include "OpenGLFragmentShader.hpp"
 
+#include "../../Mesh/RawMesh.hpp"
+#include "OpenGLCommandBuffer.hpp"
+#include "OpenGLFramebuffer.hpp"
+#include "OpenGLRenderCommand.hpp"
+#include "OpenGLShader.hpp"
+#include "OpenGLVertexBuffer.hpp"
+
 namespace DadEngine::Rendering
 {
     uint32_t OpenGLCullingMode[] =

@@ -1,5 +1,8 @@
 #include "VulkanVertexBuffer.hpp"
 
+#include "VulkanDebug.hpp"
+#include "VulkanHelper.hpp"
+
 namespace DadEngine::Rendering
 {
     VulkanVertexBuffer::VulkanVertexBuffer(uint32_t _InVertexCount,

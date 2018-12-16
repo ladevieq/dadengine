@@ -2,7 +2,6 @@
 #define __RENDER_CONTEXT_HPP_
 
 #include "../../Core/Core.hpp"
-#include "../Framebuffer.hpp"
 
 namespace DadEngine::Rendering
 {
@@ -60,7 +59,7 @@ namespace DadEngine::Rendering
     class Image;
     struct Extent2D;
 	class RenderPass;
-	// class Framebuffer;
+	class Framebuffer;
 
 	class RenderContext
 	{

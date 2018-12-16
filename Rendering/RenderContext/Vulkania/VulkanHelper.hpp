@@ -1,10 +1,10 @@
 #ifndef __VULKAN_HELPER_HPP_
 #define __VULKAN_HELPER_HPP_
 
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.hpp>
 
 #include "../../../Core/Core.hpp"
-#include "VulkanDebug.hpp"
+
 
 namespace DadEngine::Rendering
 {

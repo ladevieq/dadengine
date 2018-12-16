@@ -7,7 +7,7 @@
 namespace DadEngine::Rendering
 {
     class RenderContext;
-    class OpenGLRenderCommand;
+    struct OpenGLRenderCommand;
 
 	class OpenGLCommandBuffer : public CommandBuffer
 	{

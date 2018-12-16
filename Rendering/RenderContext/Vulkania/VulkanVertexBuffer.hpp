@@ -1,10 +1,8 @@
 #ifndef __VULKAN_VERTEX_BUFFER_HPP_
 #define __VULKAN_VERTEX_BUFFER_HPP_
 
-#include "vulkan/vulkan.hpp"
+#include <vulkan/vulkan.hpp>
 
-#include "VulkanHelper.hpp"
-#include "VulkanDebug.hpp"
 #include "../../VertexBuffer.hpp"
 
 namespace DadEngine::Rendering

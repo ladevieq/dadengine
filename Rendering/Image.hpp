@@ -1,7 +1,6 @@
 #ifndef __IMAGE_HPP_
 #define __IMAGE_HPP_
 
-// #include "../Core/Core.hpp"
 #include <stdint.h>
 
 namespace DadEngine::Rendering

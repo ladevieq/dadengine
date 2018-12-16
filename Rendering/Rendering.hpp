@@ -22,6 +22,8 @@
 
 #include "Shader/Shader.hpp"
 
+#include "Mesh/RawVertex.hpp"
+#include "Mesh/VertexInputLayout.hpp"
 #include "Mesh/RawMesh.hpp"
 #include "Mesh/VertexFactory.hpp"
 

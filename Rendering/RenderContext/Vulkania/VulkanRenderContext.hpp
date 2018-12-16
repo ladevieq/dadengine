@@ -1,25 +1,20 @@
 #ifndef __VULKAN_RENDER_CONTEXT_HPP_
 #define __VULKAN_RENDER_CONTEXT_HPP_
 
-// May be removed
-#include <vulkan/vulkan.h>
+#include <vulkan/vulkan.hpp>
 
-#include "../RenderContext.hpp"
 #include "../../../Core/Core.hpp"
-#include "VulkanSwapchain.hpp"
-#include "VulkanHelper.hpp"
+#include "../RenderContext.hpp"
 
-#include "VulkanCommandBuffer.hpp"
-#include "VulkanVertexInputLayout.hpp"
-#include "VulkanShader.hpp"
-#include "VulkanImage.hpp"
 #include "VulkanDepthStencilBuffer.hpp"
-#include "VulkanVertexBuffer.hpp"
-#include "VulkanFramebuffer.hpp"
 #include "VulkanRenderPass.hpp"
 
 namespace DadEngine::Rendering
 {
+    class VulkanSwapchain;
+    class VulkanImage;
+	class VulkanFramebuffer;
+
 	class VulkanRenderContext : public RenderContext
 	{
 

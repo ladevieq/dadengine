@@ -1,5 +1,6 @@
 #include "VulkanVertexInputLayout.hpp"
 
+#include "../../Mesh/VertexInputLayout.hpp"
 
 namespace DadEngine::Rendering
 {

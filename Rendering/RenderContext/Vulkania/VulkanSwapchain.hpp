@@ -1,11 +1,10 @@
 #ifndef __VULKAN_SWAPCHAIN_HPP_
 #define __VULKAN_SWAPCHAIN_HPP_
 
-#include "vulkan/vulkan.h"
+#include <vulkan/vulkan.hpp>
 
 #include "../../../Core/Core.hpp"
 #include "VulkanImage.hpp"
-#include "VulkanHelper.hpp"
 
 
 namespace DadEngine::Rendering
@@ -34,12 +33,9 @@ namespace DadEngine::Rendering
 
 		uint32_t GetNextImageIndex(VkSemaphore &_InImageAvailableSemaphore);
 
-		FORCE_INLINE uint32_t GetImageCount()
-        {
-            return (uint32_t)m_SwapchainImages.Size();
-        }
+		uint32_t GetImageCount();
 
-		FORCE_INLINE VkFormat GetFormat() { return m_surfaceFormat.format; }
+		VkFormat GetFormat();
 
 		//TArray<SwapchainImage> m_SwapchainImages;
 		TArray<VulkanImage> m_SwapchainImages;

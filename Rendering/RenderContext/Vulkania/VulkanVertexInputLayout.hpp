@@ -3,12 +3,11 @@
 
 #include <vulkan/vulkan.hpp>
 
-#include "../../../Core/Core.hpp"
-#include "../../Mesh/VertexInputLayout.hpp"
-
 
 namespace DadEngine::Rendering
 {
+    enum VertexInputType;
+
 	VkFormat VertexInputTypeFormat(VertexInputType _InInputType);
 }
 

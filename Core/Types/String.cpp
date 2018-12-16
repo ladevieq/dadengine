@@ -7,12 +7,14 @@
 
 namespace DadEngine::Core
 {
-    String::String(const char *_InContent) : m_string(strlen(_InContent))
+    String::String(const char *_InContent)
+		: m_string(strlen(_InContent))
     {
         MemoryManager::Copy((void *)_InContent, m_string.GetData(), m_string.Size());
     }
 
-    String::String(size_t _InSize) : m_string(_InSize, '\0')
+    String::String(size_t _InSize)
+		: m_string(_InSize, '\0')
     {
     }
 

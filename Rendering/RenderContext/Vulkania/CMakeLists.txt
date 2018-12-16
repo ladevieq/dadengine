@@ -1,5 +1,7 @@
 add_library(vulkania VulkanCommandBuffer.cpp VulkanDebug.cpp
-			VulkanDepthStencilBuffer.cpp VulkanFramebuffer.cpp
+			VulkanDepthStencilBuffer.cpp VulkanFragmentShader.cpp
+			VulkanFramebuffer.cpp VulkanGeometryShader.cpp
 			VulkanHelper.cpp VulkanImage.cpp VulkanRenderContext.cpp
-			VulkanRenderPass.cpp VulkanSwapchain.cpp
-			VulkanVertexBuffer.cpp VulkanVertexInputLayout.cpp)
+			VulkanRenderPass.cpp VulkanShader.cpp
+			VulkanSwapchain.cpp VulkanVertexBuffer.cpp
+			VulkanVertexInputLayout.cpp VulkanVertexShader.cpp)

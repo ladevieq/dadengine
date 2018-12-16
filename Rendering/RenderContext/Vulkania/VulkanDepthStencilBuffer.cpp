@@ -1,5 +1,8 @@
 #include "VulkanDepthStencilBuffer.hpp"
 
+#include "VulkanHelper.hpp"
+#include "VulkanDebug.hpp"
+
 namespace DadEngine::Rendering
 {
 	VulkanDepthStencilBuffer::VulkanDepthStencilBuffer(VkDevice _InDevice, VkFormat _InDepthStencilFormat,
@@ -74,4 +77,31 @@ namespace DadEngine::Rendering
 
 		VulkanHelper::SetImageLayout(_InCommandBuffer, this->m_Image, this->m_CurrentLayout, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL, VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT);
 	}
+
+	void VulkanDepthStencilBuffer::ChooseAspect()
+    {
+        switch (m_Format)
+        {
+        case VK_FORMAT_D32_SFLOAT_S8_UINT:
+            m_ImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+            break;
+        case VK_FORMAT_D32_SFLOAT:
+            m_ImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
+            break;
+        case VK_FORMAT_D24_UNORM_S8_UINT:
+            m_ImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+            break;
+        case VK_FORMAT_D16_UNORM_S8_UINT:
+            m_ImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+            break;
+        case VK_FORMAT_D16_UNORM:
+            m_ImageAspect = VK_IMAGE_ASPECT_DEPTH_BIT;
+            break;
+        default:
+            LogDebugReport(DebugReport{ DEBUG_REPORT_CONTEXT_VULKAN, DEBUG_REPORT_TYPE_ERROR,
+                                        DEBUG_REPORT_CODE_DEPTH_STENCIL_BUFFER_FORMAT_ERROR, "Depth stencil buffer have been created with invalid format !",
+                                        __LINE__, __FILE__ });
+            break;
+        }
+    }
 }

@@ -1,6 +1,8 @@
 #include "VulkanHelper.hpp"
 
 #include "VulkanImage.hpp"
+#include "VulkanDebug.hpp"
+
 
 namespace DadEngine::Rendering::VulkanHelper
 {

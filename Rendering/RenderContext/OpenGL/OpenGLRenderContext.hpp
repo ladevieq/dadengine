@@ -2,24 +2,14 @@
 #define __OPENGL_RENDER_CONTEXT_HPP_
 
 #include <Windows.h>
-#include <gl/GL.h>
-#include "../../../Core/Core.hpp"
+
 #include "../RenderContext.hpp"
-#include "../../Mesh/RawMesh.hpp"
-#include "OpenGLVertexBuffer.hpp"
-#include "OpenGLShader.hpp"
-#include "OpenGLRenderCommand.hpp"
+#include "../../../Core/Core.hpp"
 #include "OpenGLCommandBuffer.hpp"
-#include "OpenGLFramebuffer.hpp"
 
 
 namespace DadEngine::Rendering
 {
-    class Shader;
-    struct VertexShader;
-    struct GeometryShader;
-    struct FragmentShader;
-
 	class OpenGLRenderContext : public RenderContext
 	{
 

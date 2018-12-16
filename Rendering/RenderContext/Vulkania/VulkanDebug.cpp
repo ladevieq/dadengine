@@ -1,5 +1,10 @@
 #include "VulkanDebug.hpp"
 
+#include <stdio.h>
+
+#include "../../../Core/Debug.hpp"
+
+using namespace DadEngine::Core;
 
 namespace DadEngine::Rendering::VulkanDebug
 {

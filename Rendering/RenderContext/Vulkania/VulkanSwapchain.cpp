@@ -1,5 +1,8 @@
 #include "VulkanSwapchain.hpp"
 
+#include "VulkanHelper.hpp"
+#include "VulkanDebug.hpp"
+
 namespace DadEngine::Rendering
 {
 	VulkanSwapchain::~VulkanSwapchain()
@@ -143,4 +146,14 @@ namespace DadEngine::Rendering
 
 		return uiImageIndex;
 	}
+
+	uint32_t VulkanSwapchain::GetImageCount()
+    {
+        return (uint32_t)m_SwapchainImages.Size();
+    }
+
+    VkFormat VulkanSwapchain::GetFormat()
+    {
+        return m_surfaceFormat.format;
+    }
 }
