@@ -1,0 +1,1 @@
+add_library(shader Shader.cpp)
