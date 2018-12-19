@@ -1,3 +1,5 @@
+include_directories(${PROJECT_SOURCE_DIR}/include/DadEngine/Rendering)
+
 add_subdirectory(Culling/)
 add_subdirectory(Feature/)
 add_subdirectory(Mesh/)

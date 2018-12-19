@@ -1,3 +1,5 @@
+include_directories(${PROJECT_SOURCE_DIR}/include/DadEngine/Rendering/RenderContext/Vulkania)
+
 add_library(vulkania VulkanCommandBuffer.cpp VulkanDebug.cpp
 			VulkanDepthStencilBuffer.cpp VulkanFragmentShader.cpp
 			VulkanFramebuffer.cpp VulkanGeometryShader.cpp

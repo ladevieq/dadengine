@@ -1,3 +1,5 @@
+include_directories(${PROJECT_SOURCE_DIR}/include/DadEngine/Core)
+
 add_subdirectory(Memory/)
 add_subdirectory(Platform/Windows/)
 add_subdirectory(Serialization/)
