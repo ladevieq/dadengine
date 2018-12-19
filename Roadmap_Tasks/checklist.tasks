@@ -21,7 +21,6 @@ DadEngine:
         ✔ IO stuff @high @done (2017-10-15 10:54:09)
 		☐ Platform independant window creation
         ☐ Platform independant RenderContext creation
-        ☐ Window message pump system
 		☐ Debugging API
     ☐ Rendering
 		☐ Scene class that manage global stuffs
@@ -81,9 +80,3 @@ DadEngine:
     ☐ Custom shading language @low
         ☐ Syntax
         ☐ Compiler
-
-	☐ Build system
-		☐ CMakeLists
-	☐ Documentation
-		☐ Add a documentation generator
-		☐ Add documentation to the OpenGL and Vulkan renderers
