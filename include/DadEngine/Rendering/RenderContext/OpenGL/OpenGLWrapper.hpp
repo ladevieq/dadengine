@@ -4,9 +4,9 @@
 #include <Windows.h>
 
 #include <gl/GL.h>
-#include "glext.hpp"
+#include <gl/glext.h>
 
-#include "wglext.hpp"
+#include <gl/wglext.h>
 
 
 namespace DadEngine::Rendering::OpenGLWrapper

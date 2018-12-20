@@ -1,6 +1,6 @@
 #include "OpenGLRenderContext.hpp"
 
-#include "../OpenGLWrapper.hpp"
+#include "OpenGLWrapper.hpp"
 #include "../../Mesh/VertexFactory.hpp"
 
 #include "../../../Math/Math.hpp"

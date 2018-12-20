@@ -1,6 +1,6 @@
 #include "OpenGLVertexBuffer.hpp"
 
-#include "../OpenGLWrapper.hpp"
+#include "OpenGLWrapper.hpp"
 
 namespace DadEngine::Rendering
 {

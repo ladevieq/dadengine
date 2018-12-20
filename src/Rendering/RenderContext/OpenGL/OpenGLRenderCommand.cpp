@@ -5,7 +5,7 @@
 #include "OpenGLVertexBuffer.hpp"
 #include "OpenGLCommandBuffer.hpp"
 #include "OpenGLShader.hpp"
-#include "../OpenGLWrapper.hpp"
+#include "OpenGLWrapper.hpp"
 #include "../../Mesh/VertexInputLayout.hpp"
 
 
