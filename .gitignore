@@ -1,4 +1,4 @@
 /.vs
-/Roadmap_Tasks
+Roadmap_Tasks/
 $CONOUT
 cmake_install.cmake
