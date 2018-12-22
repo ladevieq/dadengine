@@ -6,9 +6,6 @@ As this is a project i'm currently working on, the README file will evolve as th
 ## Description
 This is my second attempt to create a fully fonctionnal engine almost from scrath.
 
-## Roadmap and implemented features
-See : [Roadmap](https://github.com/ladevieq/DadEngine_2.0/blob/master/DadEngine_2.0/Roadmap_Tasks/checklist.tasks)
-
 ## Core
 The core library implements all the platform dependent features as the IO api, threads and so on. These are implemented in a basic, simple and unoptimized way.
 
