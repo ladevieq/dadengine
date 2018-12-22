@@ -1,0 +1,27 @@
+#include "opengl-command-buffer.hpp"
+
+#include "../render-context.hpp"
+#include "opengl-render-command.hpp"
+
+namespace DadEngine::Rendering
+{
+    OpenGLCommandBuffer::OpenGLCommandBuffer(RenderContext *_InRenderContext)
+        : CommandBuffer(_InRenderContext)
+    {
+    }
+
+    void OpenGLCommandBuffer::BeginRecord()
+    {
+        for (OpenGLRenderCommand *currentRenderCmd : m_Commands)
+        {
+            delete currentRenderCmd;
+        }
+
+        m_Commands.Clear();
+    }
+
+    void OpenGLCommandBuffer::EndRecord()
+    {
+        m_ptrRenderContext->SubmitCommandBuffer(this);
+    }
+}
