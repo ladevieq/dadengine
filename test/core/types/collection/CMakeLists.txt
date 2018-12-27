@@ -1,0 +1,1 @@
+add_executable(collection tarray-tests.cpp)
