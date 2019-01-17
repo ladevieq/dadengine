@@ -1,4 +1,6 @@
 /.vs
 Roadmap_Tasks/
+build/
+install/
 $CONOUT
 cmake_install.cmake

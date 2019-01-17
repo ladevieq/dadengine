@@ -17,7 +17,6 @@ namespace DadEngine::Core
 
     void MemoryManager::Deallocate (void *_InMemLocation)
     {
-        ASSERT (_InMemLocation);
         free (_InMemLocation);
     }
 
