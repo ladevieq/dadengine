@@ -1,7 +1,19 @@
 # Minimum CMake Version required to build
 cmake_minimum_required(VERSION 3.10)
+
+# All warnings and no c++ 98 compatibility
+add_compile_options(-Wall -Wextra -Wno-c++98-compat -Wno-reserved-id-macro -Wno-missing-variable-declarations)
+
+# Enable test and define the needed scope to run ctest
+enable_testing()
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
 project(dadengine VERSION 0.1.0 LANGUAGES CXX)
 
 add_subdirectory(src/)
 
 add_subdirectory(test/)
+
+# add_subdirectory(doc/)

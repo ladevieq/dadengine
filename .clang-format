@@ -12,7 +12,7 @@ BreakBeforeBinaryOperators: false
 BreakBeforeBraces: Allman
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializersBeforeComma: false
-ColumnLimit: 100
+ColumnLimit: 80
 CommentPragmas: ''
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 ConstructorInitializerIndentWidth: 4
@@ -27,10 +27,10 @@ MaxEmptyLinesToKeep: 2
 NamespaceIndentation: All
 ObjCSpaceAfterProperty: true
 ObjCSpaceBeforeProtocolList: true
-PenaltyBreakBeforeFirstCallParameter: 100
+PenaltyBreakBeforeFirstCallParameter: 80
 PenaltyBreakComment: 100
 PenaltyBreakFirstLessLess: 0
-PenaltyBreakString: 100
+PenaltyBreakString: 80
 PenaltyExcessCharacter: 1
 PenaltyReturnTypeOnItsOwnLine: 20
 SpaceBeforeAssignmentOperators: true

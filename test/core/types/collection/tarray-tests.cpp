@@ -1,23 +1,15 @@
-#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 
-#include "tarray.hpp"
+#include "types/collection/tarray.hpp"
 
-using namespace DadEngine::Core;
+using namespace DadEngine;
 
-TEST_CASE("Constructor", "[tarray]")
+TEST_CASE_METHOD(TArray<int>, "Constructing with normal value", "[constructor]")
 {
-    SECTION("Constructing with normal value")
-    {
-        TArray<int> testArr = TArray<int>(6);
+    REQUIRE(TArray<int>{ 6 }.Size() == 6);
+}
 
-        REQUIRE(testArr.Size() == 6);
-    }
-
-	SECTION("Constructing a zero sized array")
-    {
-        TArray<int> testArr = TArray<int>(0);
-
-        REQUIRE(testArr.Size() == 0);
-    }
+TEST_CASE_METHOD(TArray<int>, "Constructing a zero sized array", "[constructor]")
+{
+    REQUIRE(this->Size() == 0);
 }
