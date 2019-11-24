@@ -4,7 +4,7 @@
 #include "../types/collection/tarray.hpp"
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     // Try to remove the useless vtable generation
 
@@ -15,9 +15,11 @@ namespace DadEngine::Core
         Archive() = default;
         Archive(TArray<uint8_t> &_InData, uint8_t _InReading);
 
+        virtual ~Archive() = default;
+
         TArray<uint8_t> &GetData();
 
-        virtual void Serialize(void *_InValue, int32_t _InSize) = 0;
+        virtual void Serialize(void *_InValue, size_t _InSize) = 0;
 
 
         private:
@@ -41,7 +43,7 @@ namespace DadEngine::Core
             }
 
             for (size_t i = 0U; i < _InValue.Size(); i++)
-                _InAr.Serialize(&_InValue[(uint32)i], sizeof(_InValue[(uint32)i]));
+                _InAr.Serialize(&_InValue[(uint32_t)i], sizeof(_InValue[(uint32_t)i]));
 
             return _InAr;
         }
@@ -49,7 +51,7 @@ namespace DadEngine::Core
         protected:
         TArray<uint8_t> m_Data;
 
-        uint32_t m_uiOffset = 0U;
+        size_t m_uiOffset = 0U;
         uint8_t m_bIsReading : 1;
     };
 
@@ -57,6 +59,7 @@ namespace DadEngine::Core
     {
         void TestSerialization();
     }
-} // namespace DadEngine::Core
+} // namespace DadEngine
 
 #endif //__ARCHIVE_HPP_
+

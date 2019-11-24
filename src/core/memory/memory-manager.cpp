@@ -3,66 +3,53 @@
 #include <malloc.h>
 #include <memory.h>
 
-#include "../defines.hpp"
+#include "../debug.hpp"
 #include "../platform/memory.hpp"
 
-namespace DadEngine::Core
+namespace DadEngine
 {
-    void *MemoryManager::Allocate (size_t _InItemSize, size_t _InItemCount)
+    void *MemoryManager::Allocate(size_t _InItemSize, size_t _InItemCount)
     {
         size_t allocSize = _InItemSize * _InItemCount;
 
-        return malloc (allocSize);
+        return malloc(allocSize);
     }
 
-    void MemoryManager::Deallocate (void *_InMemLocation)
+    void MemoryManager::Deallocate(void *_InMemLocation)
     {
-        free (_InMemLocation);
+        free(_InMemLocation);
     }
 
-    void MemoryManager::Copy (void *_InSrc, void *_InDst, size_t _InCpySize)
+    void MemoryManager::Copy(void *_InSrc, void *_InDst, size_t _InCpySize)
     {
-        ASSERT (_InSrc);
-        ASSERT (_InDst);
+        Assert(_InSrc);
+        Assert(_InDst);
 
-        memcpy (_InDst, _InSrc, _InCpySize);
+        memcpy(_InDst, _InSrc, _InCpySize);
 
         // Try with move constructor ...
         //(uint8 [_InCpySize])_InSrc
     }
 
-    void MemoryManager::Set (void *_InDst, int32_t _InValue, size_t _InCpySize)
+    void MemoryManager::Set(void *_InDst, int32_t _InValue, size_t _InCpySize)
     {
-        ASSERT (_InDst);
-        memset (_InDst, _InValue, _InCpySize);
+        Assert(_InDst);
+        memset(_InDst, _InValue, _InCpySize);
     }
 
-    void MemoryManager::GetMemoryInfo ()
+    void MemoryManager::GetMemoryInfo()
     {
-        PlatformMemory::GetStatus ();
+        // PlatformMemory::GetStatus();
     }
 
-	namespace Test
-    {
-        void TestMemoryManager ()
-        {
-            uint32_t *i = nullptr;
+} // namespace DadEngine
 
-            i = new uint32_t;
-
-            ASSERT (i);
-
-            delete i;
-        }
-    } // namespace Test
-} // namespace DadEngine::Core
-
-void *operator new (size_t _InChunkSize)
+void *operator new(size_t _InChunkSize)
 {
-    return DadEngine::Core::MemoryManager::Allocate (1, _InChunkSize);
+    return DadEngine::MemoryManager::Allocate(1, _InChunkSize);
 }
 
-void operator delete (void *_InMemLocation) noexcept
+void operator delete(void *_InMemLocation) noexcept
 {
-    DadEngine::Core::MemoryManager::Deallocate (_InMemLocation);
+    DadEngine::MemoryManager::Deallocate(_InMemLocation);
 }

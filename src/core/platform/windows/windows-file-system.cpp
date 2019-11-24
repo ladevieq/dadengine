@@ -4,7 +4,7 @@
 #include "windows-text-file-io.hpp"
 #include "windows-binary-file-io.hpp"
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     void WindowsFileSystem::CreatDirectory()
     {

@@ -2,17 +2,17 @@
 #define __WINDOWS_MEMORY_HPP_
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
-	class WindowsMemory
-	{
+    class WindowsMemory
+    {
 
-	public:
+        public:
+        static void GetStatus();
+    };
+} // namespace DadEngine
 
-		static void GetStatus();
-	};
-}
-
-using PlatformMemory = DadEngine::Core::WindowsMemory;
+using PlatformMemory = DadEngine::WindowsMemory;
 
 #endif //__WINDOWS_MEMORY_HPP_
+

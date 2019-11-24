@@ -5,24 +5,26 @@
 
 #include "memory-manager.hpp"
 
+#include "../debug.hpp"
 
-namespace DadEngine::Core//::Memory
+
+namespace DadEngine
 {
-    template<typename T>
-	class LinearStackAllocator : public Allocator<T>
-	{
-	public:
+    template <typename T>
+    class LinearStackAllocator : public Allocator<T>
+    {
+        public:
+        using Allocator<T>::Allocator;
 
-		using Allocator<T>::Allocator;
-
-		LinearStackAllocator() = default;
+        LinearStackAllocator() = default;
 
         LinearStackAllocator(const LinearStackAllocator<T> &_InMoveInstance)
         {
             if (_InMoveInstance.m_ptrMemLocation != nullptr)
             {
                 this->m_ptrMemLocation = static_cast<T *>(
-                MemoryManager::Allocate(_InMoveInstance.m_uiCapacity, _InMoveInstance.m_ItemSize));
+                    MemoryManager::Allocate(_InMoveInstance.m_uiCapacity,
+                                            _InMoveInstance.m_ItemSize));
 
                 this->m_ItemSize = _InMoveInstance.m_ItemSize;
                 this->m_uiCapacity = _InMoveInstance.m_uiCapacity;
@@ -32,21 +34,22 @@ namespace DadEngine::Core//::Memory
             }
         }
 
-		LinearStackAllocator(LinearStackAllocator<T>&& _InMoveInstance) = default;
+        LinearStackAllocator(LinearStackAllocator<T> &&_InMoveInstance) = default;
 
 
-		~LinearStackAllocator()
+        ~LinearStackAllocator()
         {
             this->Deallocate();
         }
 
 
-        LinearStackAllocator<T>& operator=(const LinearStackAllocator<T> &_InMoveInstance)
+        LinearStackAllocator<T> &operator=(const LinearStackAllocator<T> &_InMoveInstance)
         {
             if (_InMoveInstance.m_ptrMemLocation != nullptr)
             {
                 this->m_ptrMemLocation = static_cast<T *>(
-                MemoryManager::Allocate(_InMoveInstance.m_uiCapacity, _InMoveInstance.m_ItemSize));
+                    MemoryManager::Allocate(_InMoveInstance.m_uiCapacity,
+                                            _InMoveInstance.m_ItemSize));
 
                 this->m_ItemSize = _InMoveInstance.m_ItemSize;
                 this->m_uiCapacity = _InMoveInstance.m_uiCapacity;
@@ -58,16 +61,17 @@ namespace DadEngine::Core//::Memory
             return *this;
         }
 
-		LinearStackAllocator<T>& operator= (LinearStackAllocator<T>&& _InMoveInstance) = default;
+        LinearStackAllocator<T> &operator=(LinearStackAllocator<T> &&_InMoveInstance) = default;
 
 
         void Allocate(size_t _InItemCout)
         {
-            this->m_ptrMemLocation = static_cast<T *>(MemoryManager::Allocate(_InItemCout, this->m_ItemSize));
+            this->m_ptrMemLocation =
+                static_cast<T *>(MemoryManager::Allocate(_InItemCout, this->m_ItemSize));
 
             this->m_uiCapacity = _InItemCout;
 
-            ASSERT(this->m_ptrMemLocation);
+            Assert(this->m_ptrMemLocation);
         }
 
         void Deallocate()
@@ -80,23 +84,26 @@ namespace DadEngine::Core//::Memory
             }
         }
 
-		void Resize(size_t _InItemCout)
+        void Resize(size_t _InItemCout)
         {
-            void *ptrTempMemory = static_cast<T *>(MemoryManager::Allocate(_InItemCout, this->m_ItemSize));
+            void *ptrTempMemory =
+                static_cast<T *>(MemoryManager::Allocate(_InItemCout, this->m_ItemSize));
 
             this->m_uiCapacity = _InItemCout;
 
             if (this->m_ptrMemLocation != nullptr)
             {
                 // Copy content to the new memory location
-                MemoryManager::Copy((void *)this->m_ptrMemLocation, ptrTempMemory, this->m_ItemSize * _InItemCout);
+                MemoryManager::Copy(reinterpret_cast<void *>(this->m_ptrMemLocation),
+                                    ptrTempMemory, this->m_ItemSize * _InItemCout);
 
                 MemoryManager::Deallocate(this->m_ptrMemLocation);
             }
 
             this->m_ptrMemLocation = static_cast<T *>(ptrTempMemory);
         }
-	};
-}
+    };
+} // namespace DadEngine
 
 #endif //__LINEAR_STACK_ALLOCATOR_HPP_
+

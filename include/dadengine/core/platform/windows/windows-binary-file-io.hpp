@@ -1,13 +1,13 @@
 #ifndef __WINDOWS_BINARY_FILE_IO_HPP_
 #define __WINDOWS_BINARY_FILE_IO_HPP_
 
-#include <stdint.h>
-#include <stdio.h>
+#include <cstdint>
+#include <cstdio>
 
 #include "../../ifile.hpp"
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     class String;
     // Use windows IO stuff ?
@@ -16,7 +16,7 @@ namespace DadEngine::Core
     {
         WindowsBinaryFile(const char *_InFilePath, IOModeFlag _InIOMode);
 
-        ~WindowsBinaryFile();
+        virtual ~WindowsBinaryFile() override final;
 
 
         uint8_t OpenRead(const char *_InFilePath) override final;
@@ -40,6 +40,7 @@ namespace DadEngine::Core
     };
 
     using PlatformBinaryFile = WindowsBinaryFile;
-} // namespace DadEngine::Core
+} // namespace DadEngine
 
 #endif //!__WINDOWS_BINARY_FILE_IO_HPP_
+

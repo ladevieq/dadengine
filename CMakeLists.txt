@@ -1,8 +1,8 @@
-# Minimum CMake Version required to build
+# Minimu CMake Version required to build
 cmake_minimum_required(VERSION 3.10)
 
 # All warnings and no c++ 98 compatibility
-add_compile_options(-Wall -Wextra -Wno-c++98-compat -Wno-reserved-id-macro -Wno-missing-variable-declarations)
+add_compile_options(-Wall -Wextra -Wno-c++98-compat -Wno-reserved-id-macro -Wno-missing-variable-declarations -std=c++17)
 
 # Enable test and define the needed scope to run ctest
 enable_testing()

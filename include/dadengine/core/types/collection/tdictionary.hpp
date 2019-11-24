@@ -1,84 +1,71 @@
 #ifndef __TDICTIONARY_HPP_
 #define __TDICTIONARY_HPP_
 
-#include <stdint.h>
+#include <cstdint>
+#include <list>
+#include <utility>
+#include <vector>
 
-#include "TArray.hpp"
+// #include "tarray.hpp"
 
 
-namespace DadEngine::Core //::Containers
+namespace DadEngine
 {
-    template <typename Key, typename Value>
-    struct Pair
-    {
-        Key k;
-        Value v;
-    };
-
-    template <typename Key, typename Value>
+    template <typename Key, typename Value, const uint32_t PoolSize = 1024U>
     class TDictionary
     {
         public:
-        using P = Pair<Key, Value>;
+        using P = std::pair<Key, Value>;
 
+        TDictionary() = default;
 
-        Pair<uint8_t, Value> Contains(Key _InKeyVal)
+        /**
+         * Find an element inside the map using it's key
+         */
+        bool Insert(P _InNewPair)
         {
-            for (size_t i = 0U; i < this->m_Values.Size(); i++)
+            if (this[_InNewPair.first].first == false)
             {
-                if (this->m_Values[(uint32_t)i].k == _InKeyVal)
+                const auto hashedKey = this->m_hashFunction(_InNewPair.first) % PoolSize;
+
+                this->m_HashMap[hashedKey].insert(_InNewPair);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /**
+         * Find an element inside the map using it's key
+         */
+        std::pair<Key, Value> &operator[](const Key &_InSeekedKey)
+        {
+            const auto hashedKey = this->m_hashFunction(_InSeekedKey) % PoolSize;
+            const auto matchedList = this->m_HashMap[hashedKey];
+            v
+
+                for (const auto &currentPair : matchedList)
+            {
+                if (_InSeekedKey == _InSeekedPair.first)
                 {
-                    return Pair<uint8_t, Value>{ TRUE, this->m_Values[(uint32_t)i].v };
+                    return std::make_pair(true, currentPair);
                 }
             }
 
-            return Pair<uint8_t, Value>{ FALSE };
+            return std::make_pair(true, P());
         }
 
-        void Add(P _InNewItem)
+        auto Data()
         {
-            Pair<uint8_t, Value> pair = Contains(_InNewItem.k);
-
-            if (pair.k == FALSE)
-            {
-                this->m_Values.Add(_InNewItem);
-            }
-
-            else
-            {
-                pair.v = _InNewItem.v;
-            }
-        }
-
-        Pair<Key, Value>& operator[](const Key &_InSeekedkey)
-        {
-            P seekedPair = { _InSeekedkey };
-
-            if (P mathingPair = (Contains(seekedPair).k == TRUE))
-            {
-                // mathingPair.k = this->m_Values[i].k;
-
-                return mathingPair;
-            }
-
-            LOG_ASSERT(0, "Key doesn't exist");
-
-            return P{};
-        }
-
-        size_t Size() const
-        {
-            return this->m_Values.Size();
+            return this->m_HashMap;
         }
 
 
-        TArray<P> m_Values;
+        private:
+        std::hash<Key> m_hashFunction = std::hash<Key>();
+        std::vector<std::list<P>> m_HashMap = std::vector<std::list<P>>(PoolSize);
     };
-
-    namespace Test
-    {
-        void TestDictionary();
-    } // namespace Test
-} // namespace DadEngine::Core
+} // namespace DadEngine
 
 #endif //__TDICTIONARY_HPP_

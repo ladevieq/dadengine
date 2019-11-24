@@ -4,27 +4,26 @@
 #include "platform/timers.hpp"
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
-	class Profile
-	{
-	public:
+    class Profile
+    {
+        public:
+        Profile(const char *_sProfilename);
 
-		Profile(const char *_sProfilename);
-
-		~Profile();
+        ~Profile();
 
 
-	private:
+        private:
+        const char *m_sProfilename = "\0";
+        PlatformTimer time;
+    };
 
-		const char* m_sProfilename = "\0";
-		PlatformTimer time;
-	};
-
-	namespace Test
+    namespace Test
     {
         void TestProfile();
     } // namespace Test
-}
+} // namespace DadEngine
 
 #endif //__PROFILER_HPP_
+

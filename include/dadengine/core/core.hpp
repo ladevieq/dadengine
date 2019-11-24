@@ -1,11 +1,11 @@
 #ifndef __CORE_HPP_
 #define __CORE_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
-#include "application.hpp"
 #include "debug.hpp"
 #include "defines.hpp"
+#include "events/event-manager.hpp"
 #include "ifile.hpp"
 #include "iterators/iterators.hpp"
 #include "memory/memory.hpp"
@@ -14,13 +14,12 @@
 #include "platform/memory.hpp"
 #include "platform/threads.hpp"
 #include "platform/timers.hpp"
-#include "platform/window.hpp"
 #include "profile.hpp"
 #include "serialization/serialization.hpp"
 #include "types/collection/tarray.hpp"
 #include "types/collection/tdictionary.hpp"
 #include "types/string.hpp"
 
-using namespace DadEngine::Core;
+// using namespace DadEngine;
 
 #endif //__CORE_HPP_

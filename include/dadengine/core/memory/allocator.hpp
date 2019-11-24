@@ -2,30 +2,31 @@
 #define __ALLOCATOR_HPP_
 
 
-namespace DadEngine::Core//::Memory
+namespace DadEngine
 {
-	template<typename T>
-	struct Allocator
-	{
-		Allocator() = default;
+    template <typename T>
+    struct Allocator
+    {
+        Allocator() = default;
 
-		/*virtual void Allocate(size_t _InItemCout) = 0;
+        /*virtual void Allocate(size_t _InItemCout) = 0;
 
-		virtual void Deallocate() = 0;
+        virtual void Deallocate() = 0;
 
-		virtual void Resize(size_t _InItemCout) = 0;*/
+        virtual void Resize(size_t _InItemCout) = 0;*/
 
-		void Allocate(size_t _InItemCout);
+        void Allocate(size_t _InItemCout);
 
-		void Deallocate();
+        void Deallocate();
 
-		void Resize(size_t _InItemCout);
+        void Resize(size_t _InItemCout);
 
 
-		T* m_ptrMemLocation = nullptr;
-		size_t m_ItemSize = sizeof(T);
-		size_t m_uiCapacity = 0U;
-	};
-}
+        T *m_ptrMemLocation = nullptr;
+        size_t m_ItemSize = sizeof(T);
+        size_t m_uiCapacity = 0U;
+    };
+} // namespace DadEngine
 
 #endif //__ALLOCATOR_HPP_
+

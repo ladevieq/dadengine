@@ -1,99 +1,70 @@
 #include "windows-threads.hpp"
 
-#include <stdio.h>
+#include <cstdio>
 
-#include "../../defines.hpp"
+#include "debug.hpp"
 
-namespace DadEngine::Core
+namespace DadEngine
 {
 
-    WindowsThread::WindowsThread (uint8_t _InStart, Job _InJob)
+    WindowsThread::WindowsThread(uint8_t _InStart, Job _InJob)
     {
         m_ptrJobFunction = _InJob;
 
-        m_ThreadHandle = CreateThread (NULL, 0U, (LPTHREAD_START_ROUTINE)Work, this,
-                                       _InStart ? NULL : CREATE_SUSPENDED, NULL);
+        m_ThreadHandle =
+            CreateThread(nullptr, 0U, reinterpret_cast<LPTHREAD_START_ROUTINE>(Work),
+                         this, _InStart ? NULL : CREATE_SUSPENDED, nullptr);
 
-        ASSERT (m_ThreadHandle);
+        Assert(m_ThreadHandle);
 
         m_eThreadState = _InStart ? WORKING : CREATED;
     }
 
-    WindowsThread::~WindowsThread ()
+    WindowsThread::~WindowsThread()
     {
         if (m_eThreadState == WORKING || m_eThreadState == STOPPED || m_eThreadState == CREATED)
-            Kill ();
+            Kill();
     }
 
 
     // Change the thread priority for the scheduler
-    void WindowsThread::ChangePriority (int32_t _InThreadPriority)
+    void WindowsThread::ChangePriority(int32_t _InThreadPriority)
     {
-        SetThreadPriority (this->m_ThreadHandle, _InThreadPriority);
+        SetThreadPriority(this->m_ThreadHandle, _InThreadPriority);
     }
 
 
     // Start or resume the thread
-    void WindowsThread::Resume ()
+    void WindowsThread::Resume()
     {
-        ResumeThread (m_ThreadHandle);
+        ResumeThread(m_ThreadHandle);
 
         m_eThreadState = WORKING;
     }
 
-    void WindowsThread::Stop ()
+    void WindowsThread::Stop()
     {
-        SuspendThread (m_ThreadHandle);
+        SuspendThread(m_ThreadHandle);
 
         m_eThreadState = STOPPED;
     }
 
-    void WindowsThread::Kill ()
+    void WindowsThread::Kill()
     {
-        TerminateThread (m_ThreadHandle, 0U);
+        TerminateThread(m_ThreadHandle, 0U);
 
-        CloseHandle (m_ThreadHandle);
+        CloseHandle(m_ThreadHandle);
 
         m_eThreadState = TERMINATED;
     }
 
 
     // Execute the thread task
-    void WindowsThread::Work (WindowsThread *_ptrJob)
+    void WindowsThread::Work(WindowsThread *_ptrJob)
     {
-        _ptrJob->m_ptrJobFunction ();
+        _ptrJob->m_ptrJobFunction();
 
         _ptrJob->m_eThreadState = DONE;
     }
 
-	namespace Test
-    {
-        void TestThread ()
-        {
-            auto func = []() {
-                while (1)
-                {
-                    printf ("Hello World!");
-                }
-            };
-
-            WindowsThread thread (FALSE, func);
-
-            Sleep (1000);
-
-            thread.Resume ();
-
-            Sleep (1000);
-
-            thread.Stop ();
-
-            Sleep (1000);
-
-            thread.Resume ();
-
-            Sleep (3000);
-
-            thread.Kill ();
-        }
-    } // namespace Test
-}
+} // namespace DadEngine

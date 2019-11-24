@@ -1,13 +1,13 @@
 #ifndef __WINDOWS_THREADS_HPP_
 #define __WINDOWS_THREADS_HPP_
 
-#include <stdint.h>
 #include <Windows.h>
+#include <cstdint>
 
 #include "../threads-states.hpp"
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     class WindowsThread
     {
@@ -41,10 +41,7 @@ namespace DadEngine::Core
         ThreadState m_eThreadState = CREATED;
     };
 
-	namespace Test
-    {
-        void TestThread();
-    } // namespace Test
-} // namespace DadEngine::Core
+} // namespace DadEngine
 
 #endif //__WINDOWS_THREADS_HPP_
+

@@ -4,7 +4,7 @@
 #include <Windows.h>
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     void WindowsMemory::GetStatus()
     {

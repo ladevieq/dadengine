@@ -1,9 +1,9 @@
-#include "Archive.hpp"
+#include "archive.hpp"
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     Archive::Archive(TArray<uint8_t> &_InData, uint8_t _InReading)
-		: m_Data(_InData)
+        : m_Data(_InData)
     {
     }
 
@@ -54,4 +54,5 @@ namespace DadEngine::Core
             printf("%f\n", b.floats[2]);*/
         }
     } // namespace Test
-}
+} // namespace DadEngine
+

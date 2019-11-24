@@ -1,7 +1,7 @@
 #ifndef __THREADS_STATES_HPP_
 #define __THREADS_STATES_HPP_
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     enum ThreadState
     {
@@ -10,8 +10,9 @@ namespace DadEngine::Core
         STOPPED,
         DONE,
         TERMINATED,
-        MAX_THREAD_STATE,
+        MAX_THREAD_STATE
     };
 }
 
 #endif //__THREADS_STATES_HPP_
+

@@ -1,9 +1,11 @@
 #ifndef __DEBUG_HPP_
 #define __DEBUG_HPP_
 
-#include <stdint.h>
+#include <cassert>
+#include <cstdint>
+#include <cstdio>
 
-namespace DadEngine::Core //::Debug
+namespace DadEngine //::Debug
 {
     /* Codes ranges
         1xxxx - Core Report Codes
@@ -62,12 +64,12 @@ namespace DadEngine::Core //::Debug
     {
         DebugReport() = default;
 
-        DebugReport(DebugReportContextFlags _InContextFlag,
-                    DebugReportTypeFlags _InReportType,
-                    DebugReportCode _InErrorCode,
-                    const char *sMessage,
-                    uint32_t _InLine,
-                    const char *sFileName);
+        DebugReport(DebugReportContextFlags _contextFlag,
+                    DebugReportTypeFlags _reportType,
+                    DebugReportCode _errorCode,
+                    const char *_message,
+                    const uint32_t _line,
+                    const char *_filename);
 
         /*DebugReport(DebugReportContextFlags _InContextFlag,
         DebugReportTypeFlags _InReportType, DebugReportCode _InErrorCode,
@@ -77,30 +79,44 @@ namespace DadEngine::Core //::Debug
                 m_sMessage(sMessage.Cstr())
         {}*/
 
-        DebugReportContextFlags m_uiContextFlag = MAX_DEBUG_REPORT_CONTEXT;
-        DebugReportTypeFlags m_uiReportTypeFlag = MAX_DEBUG_REPORT_TYPE;
-        DebugReportCode m_uiReportCode = MAX_DEBUG_REPORT_CODE;
-        uint32_t m_iLine = 0U; // May need change
-        const char *m_sFile = nullptr; // May need change
-        const char *m_sMessage = nullptr;
+        DebugReportContextFlags m_contextFlag = MAX_DEBUG_REPORT_CONTEXT;
+        DebugReportTypeFlags m_reportTypeFlag = MAX_DEBUG_REPORT_TYPE;
+        DebugReportCode m_reportCode = MAX_DEBUG_REPORT_CODE;
+        const uint32_t m_line = 0U; // May need change
+        const char *m_file = nullptr; // May need change
+        const char *m_message = nullptr;
     };
 
 
     /*
         [Context] : [Type] : (Code, Line, File) : Message
     */
-    void LogDebugReport(const DebugReport &_InDebugReport);
+    void LogDebugReport(const DebugReport &_debugReport);
 
-    void LogAssert(const char *const _InMessage, const char *const _InFile, uint32_t _InLine);
-
-    void Log(const char *const _InMessage);
-
-	namespace Test
+    constexpr void Assert(const bool _expression)
     {
-        void TestDebug();
-    } // namespace Test
-} // namespace DadEngine::Core
+        assert(_expression);
+    }
 
-// using namespace DadEngine::Core::Debug;
+    inline void LogAssert(const bool _expression,
+                          const char *const _message,
+                          const char *const _file,
+                          const uint32_t _line)
+    {
+        if (!_expression)
+        {
+            // TODO: Add a message box
+            printf("[%s, %s, %u]: %s\n", "Assertion", _file, _line, _message);
+        }
+    }
+
+    inline void Log(const char *const _message)
+    {
+        printf("%s\n", _message);
+    }
+
+} // namespace DadEngine
+
+// using namespace DadEngine::Debug;
 
 #endif //__DEBUG_HPP_

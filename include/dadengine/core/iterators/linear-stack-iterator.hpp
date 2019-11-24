@@ -1,31 +1,44 @@
 #ifndef __LINEAR_STACK_ITERATOR_HPP_
 #define __LINEAR_STACK_ITERATOR_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "iterator.hpp"
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
-	template<typename T>
-	class LinearStackIterator : public Iterator<T>
-	{
+    template <typename T>
+    class LinearStackIterator : public Iterator<T>
+    {
 
-	public:
+        public:
+        LinearStackIterator() = default;
+        LinearStackIterator(T *_InMemLocation, size_t _InSize)
+            : Iterator<T>(_InMemLocation, _InSize)
+        {
+        }
 
-		LinearStackIterator() = default;
-		LinearStackIterator(T* _InMemLocation, size_t _InSize) : Iterator<T>(_InMemLocation, _InSize) {}
-
-		~LinearStackIterator() = default;
+        ~LinearStackIterator() = default;
 
 
-		Iterator<T>& operator++ () { this->m_ptrMemLocation++; return *this; };
+        Iterator<T> &operator++()
+        {
+            this->m_ptrMemLocation++;
+            return *this;
+        }
 
-		T& operator* () const { return *this->m_ptrMemLocation; };
+        T &operator*() const
+        {
+            return *this->m_ptrMemLocation;
+        }
 
-		uint8_t operator != (const LinearStackIterator<T>& _InEqual) const { return this->m_ptrMemLocation != _InEqual.m_ptrMemLocation; };
-	};
-}
+        uint8_t operator!=(const LinearStackIterator<T> &_InEqual) const
+        {
+            return this->m_ptrMemLocation != _InEqual.m_ptrMemLocation;
+        }
+    };
+} // namespace DadEngine
 
 #endif //__LINEAR_STACK_ITERATOR_HPP_
+

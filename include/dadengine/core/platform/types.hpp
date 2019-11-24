@@ -1,5 +1,5 @@
 #ifndef __PLATFROM_TYPES_HPP_
-#define	__PLATFROM_TYPES_HPP_
+#define __PLATFROM_TYPES_HPP_
 
 #include "../defines.hpp"
 
@@ -9,3 +9,4 @@
 
 
 #endif //__PLATEFROM_TYPES_HPP_
+

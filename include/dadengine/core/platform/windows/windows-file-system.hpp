@@ -1,16 +1,16 @@
 #ifndef __WINDOWS_FILE_SYSTEM_HPP_
 #define __WINDOWS_FILE_SYSTEM_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     struct IFile;
-    enum IOMode: uint8_t;
+    enum IOMode : uint8_t;
 
     struct WindowsFileSystem
     {
-        static void CreatDirectory ();
+        static void CreatDirectory();
 
         // Ambiguous we can read and write
         static IFile *CreateFileReader(const char *_InFilePath, IOMode _InFileFormat);
@@ -23,6 +23,7 @@ namespace DadEngine::Core
     };
 
     using PlatformFileSystem = WindowsFileSystem;
-} // namespace DadEngine::Core
+} // namespace DadEngine
 
 #endif // !__WINDOWS_FILE_SYSTEM_HPP_
+

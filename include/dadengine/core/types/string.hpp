@@ -1,12 +1,12 @@
 #ifndef __STRING_HPP_
 #define __STRING_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "collection/tarray.hpp"
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     class String
     {
@@ -36,6 +36,7 @@ namespace DadEngine::Core
         private:
         TArray<char> m_string;
     };
-} // namespace DadEngine::Core
+} // namespace DadEngine
 
 #endif //__STRING_HPP_
+

@@ -1,6 +1,6 @@
 #include "WindowsTypes.hpp"
 
-namespace DadEngine::Core::Test
+namespace DadEngine::Test
 {
     void TestTypes()
     {

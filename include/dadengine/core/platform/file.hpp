@@ -2,10 +2,11 @@
 #define __PLATEFORM_FILE_HPP_
 
 
-#if defined (WINDOWS)
-#include "windows/windows-text-file-io.hpp"
+#if defined(WINDOWS)
 #include "windows/windows-binary-file-io.hpp"
 #include "windows/windows-file-system.hpp"
+#include "windows/windows-text-file-io.hpp"
 #endif
 
 #endif //__PLATEFORM_FILE_HPP_
+

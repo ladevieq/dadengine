@@ -1,14 +1,13 @@
-#include "Profile.hpp"
+#include "profile.hpp"
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "platform/timers.hpp"
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
-    Profile::Profile(const char *_sProfilename)
-		: m_sProfilename(_sProfilename)
+    Profile::Profile(const char *_sProfilename) : m_sProfilename(_sProfilename)
     {
         time.Start();
     }
@@ -18,7 +17,7 @@ namespace DadEngine::Core
         printf("%s %llu %s\n", m_sProfilename, time.GetMilliseconds(), "ms.");
     }
 
-	namespace Test
+    namespace Test
     {
         void TestProfile()
         {
@@ -29,4 +28,5 @@ namespace DadEngine::Core
             }
         }
     } // namespace Test
-}
+} // namespace DadEngine
+

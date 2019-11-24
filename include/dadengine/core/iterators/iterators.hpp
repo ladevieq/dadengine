@@ -5,3 +5,4 @@
 #include "linear-stack-iterator.hpp"
 
 #endif //__ITERATORS_HPP_
+

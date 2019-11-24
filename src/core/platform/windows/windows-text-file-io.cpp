@@ -4,17 +4,19 @@
 #include "../../defines.hpp"
 #include "../../types/string.hpp"
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     WindowsTextFile::WindowsTextFile(const char *_InFilePath, IOModeFlag _InIOMode)
     {
         switch (_InIOMode)
         {
         case IO_MODE_READ:
-            LOG_ASSERT(OpenRead(_InFilePath) != FALSE, "File doesn't exist !");
+            LogAssert(OpenRead(_InFilePath) != false, "File doesn't exist !",
+                      __FILE__, __LINE__);
             break;
         case IO_MODE_WRITE:
-            LOG_ASSERT(OpenWrite(_InFilePath) != FALSE, "File doesn't exist !");
+            LogAssert(OpenWrite(_InFilePath) != false, "File doesn't exist !",
+                      __FILE__, __LINE__);
             break;
         case IO_MODE_WRITE | IO_MODE_READ:
             m_fileHandle = fopen(_InFilePath, "r+");
@@ -46,7 +48,8 @@ namespace DadEngine::Core
 
     uint8_t WindowsTextFile::Read(String &_InDst)
     {
-        size_t size = fread((void *)_InDst.Cstr(), sizeof(uint8_t), _InDst.Size(), m_fileHandle);
+        size_t size = fread(reinterpret_cast<void *>(const_cast<char *>(_InDst.Cstr())),
+                            sizeof(uint8_t), _InDst.Size(), m_fileHandle);
         return size == _InDst.Size();
     }
 
@@ -66,7 +69,8 @@ namespace DadEngine::Core
 
     uint8_t WindowsTextFile::Write(String &_InDst)
     {
-        size_t size = fread((void *)_InDst.Cstr(), 1U, _InDst.Size(), m_fileHandle);
+        size_t size = fread(reinterpret_cast<void *>(const_cast<char *>(_InDst.Cstr())),
+                            1U, _InDst.Size(), m_fileHandle);
         return size == _InDst.Size();
     }
 
@@ -82,10 +86,10 @@ namespace DadEngine::Core
         fgetpos(m_fileHandle, &pos);
         fseek(m_fileHandle, 0, SEEK_END);
 
-        size = (size_t)ftell(m_fileHandle);
+        size = static_cast<size_t>(ftell(m_fileHandle));
 
-        fseek(m_fileHandle, (int32_t)pos, SEEK_SET);
+        fseek(m_fileHandle, static_cast<int32_t>(pos), SEEK_SET);
 
         return size;
     }
-} // namespace DadEngine::Core
+} // namespace DadEngine

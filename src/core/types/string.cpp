@@ -1,20 +1,19 @@
 #include "string.hpp"
 
-#include <string.h>
+#include <cstring>
 
 #include "../memory/memory-manager.hpp"
 
 
-namespace DadEngine::Core
+namespace DadEngine
 {
-    String::String(const char *_InContent)
-		: m_string(strlen(_InContent))
+    String::String(const char *_InContent) : m_string(strlen(_InContent))
     {
-        MemoryManager::Copy((void *)_InContent, m_string.GetData(), m_string.Size());
+        MemoryManager::Copy(reinterpret_cast<void *>(const_cast<char *>(_InContent)),
+                            m_string.GetData(), m_string.Size());
     }
 
-    String::String(size_t _InSize)
-		: m_string(_InSize, '\0')
+    String::String(size_t _InSize) : m_string(_InSize, '\0')
     {
     }
 
@@ -23,7 +22,7 @@ namespace DadEngine::Core
         size_t size = strlen(_InSrc);
         m_string.Reserve(size);
 
-        MemoryManager::Copy((void *)_InSrc, m_string.GetData(), size);
+        MemoryManager::Copy(reinterpret_cast<void *>(_InSrc), m_string.GetData(), size);
     }
 
     /*void String::operator= (char*&& _InSrc)
@@ -45,7 +44,9 @@ namespace DadEngine::Core
 
         m_string.Resize(currentSize + appendSize);
 
-        MemoryManager::Copy((void *)_InNewString.Cstr(), &m_string[(uint32_t)currentSize - 1U], appendSize);
+        MemoryManager::Copy(reinterpret_cast<void *>(
+                                const_cast<char *>(_InNewString.Cstr())),
+                            &m_string[static_cast<uint32_t>(currentSize - 1U)], appendSize);
     }
 
     void String::Append(const char *_InNewCString)
@@ -55,7 +56,8 @@ namespace DadEngine::Core
 
         m_string.Resize(currentSize + appendSize);
 
-        MemoryManager::Copy((void *)_InNewCString, &m_string[(uint32_t)currentSize - 1U], appendSize);
+        MemoryManager::Copy(reinterpret_cast<void *>(const_cast<char *>(_InNewCString)),
+                            &m_string[static_cast<uint32_t>(currentSize - 1U)], appendSize);
     }
 
     const char *String::Cstr() const
@@ -67,11 +69,5 @@ namespace DadEngine::Core
     {
         return m_string.Size();
     }
+} // namespace DadEngine
 
-    namespace Test
-    {
-        void TestString()
-        {
-        }
-    } // namespace Test
-} // namespace DadEngine::Core

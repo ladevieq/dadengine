@@ -1,13 +1,13 @@
 #ifndef __TARRAY_HPP_
 #define __TARRAY_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 #include "../../defines.hpp"
 #include "../../iterators/linear-stack-iterator.hpp"
 #include "../../memory/linear-stack-allocator.hpp"
 
-namespace DadEngine::Core //::Containers
+namespace DadEngine
 {
     template <typename T, typename Alloc = LinearStackAllocator<T>>
     class TArray
@@ -25,14 +25,16 @@ namespace DadEngine::Core //::Containers
         {
             m_allocator.Allocate(_InItemCount);
 
-            MemoryManager::Set(m_allocator.m_ptrMemLocation, *(int32_t *)&_InInitValue, _InItemCount);
+            MemoryManager::Set(m_allocator.m_ptrMemLocation,
+                               *(int32_t *)&_InInitValue, _InItemCount);
         }
 
         TArray(T *_InValues, size_t _InItemCount)
         {
             m_allocator.Allocate(_InItemCount);
 
-            MemoryManager::Copy(_InValues, m_allocator.m_ptrMemLocation, _InItemCount * sizeof(T));
+            MemoryManager::Copy(_InValues, m_allocator.m_ptrMemLocation,
+                                _InItemCount * sizeof(T));
         }
 
         ~TArray() = default;
@@ -118,12 +120,15 @@ namespace DadEngine::Core //::Containers
         // Iterator
         LinearStackIterator<T> begin() const
         {
-            return LinearStackIterator<T>(m_allocator.m_ptrMemLocation, m_allocator.m_uiCapacity);
+            return LinearStackIterator<T>(m_allocator.m_ptrMemLocation,
+                                          m_allocator.m_uiCapacity);
         }
 
         LinearStackIterator<T> end() const
         {
-            return LinearStackIterator<T>(m_allocator.m_ptrMemLocation + m_allocator.m_uiCapacity, 0U);
+            return LinearStackIterator<T>(m_allocator.m_ptrMemLocation +
+                                              m_allocator.m_uiCapacity,
+                                          0U);
         }
 
 
@@ -133,12 +138,12 @@ namespace DadEngine::Core //::Containers
         uint32_t m_uiLastItemIndex = 0U;
     };
 
-    // using namespace DadEngine::Core::Containers;
+    // using namespace DadEngine::Containers;
 
     namespace Test
     {
         void TestTArray();
     }
-} // namespace DadEngine::Core
+} // namespace DadEngine
 
 #endif //__TARRAY_HPP_

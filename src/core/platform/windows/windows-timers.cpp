@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-namespace DadEngine::Core
+namespace DadEngine
 {
     void WindowsTimer::Start()
     {
