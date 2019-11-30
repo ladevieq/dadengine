@@ -2,10 +2,10 @@
 #define __MATRIX3X3_HPP_
 
 
-namespace DadEngine::Math
+namespace DadEngine
 {
-    class Vector2f;
-    class Vector3f;
+    class Vector2;
+    class Vector3;
 
     class Matrix3x3
     {
@@ -13,11 +13,11 @@ namespace DadEngine::Math
         public:
         Matrix3x3() = default;
 
-        Matrix3x3(Vector3f _InVectors[3U]);
+        Matrix3x3(Vector3 _vectors[3U]);
 
-        Matrix3x3(float _In11, float _In12, float _In13, float _In21, float _In22, float _In23, float _In31, float _In32, float _In33);
+        Matrix3x3(float _11, float _12, float _13, float _21, float _22, float _23, float _31, float _32, float _33);
 
-        Matrix3x3(float _InData[9U]);
+        Matrix3x3(float _data[9U]);
 
 
         // Standard matrix functions
@@ -29,59 +29,54 @@ namespace DadEngine::Math
 
         float Determinant();
 
-        void RotationX(float _InAngle);
+        void RotationX(float _angle);
 
-        void RotationY(float _InAngle);
+        void RotationY(float _angle);
 
-        void RotationZ(float _InAngle);
+        void RotationZ(float _angle);
 
-        void Rotation(float _InAngle, Vector3f _InAxis);
+        void Rotation(float _angle, Vector3 _axis);
 
-        void Scale(float _InScaleX, float _InScaleY, float _InScaleZ);
+        void Scale(float _scaleX, float _scaleY, float _scaleZ);
 
-        void Translation(Vector2f _InTranslation);
+        void Translation(Vector2 _translation);
 
 
         // Binary math operators
-        Matrix3x3 operator+(Matrix3x3 &_InMatrix);
+        Matrix3x3 operator+(Matrix3x3 &_matrix);
 
-        Matrix3x3 operator-(Matrix3x3 &_InMatrix);
+        Matrix3x3 operator-(Matrix3x3 &_matrix);
 
-        Matrix3x3 operator*(float &_InFactor);
+        Matrix3x3 operator*(float &_factor);
 
-        Vector3f operator*(Vector3f &_InVector);
+        Vector3 operator*(Vector3 &_vector);
 
-        Matrix3x3 operator*(Matrix3x3 &_InMatrix);
+        Matrix3x3 operator*(Matrix3x3 &_matrix);
 
-        Matrix3x3 operator/(float &_InFactor);
+        Matrix3x3 operator/(float &_factor);
 
-        Matrix3x3 operator/(Matrix3x3 &_InMatrix);
+        Matrix3x3 operator/(Matrix3x3 &_matrix);
 
         // Binary assignement math operators
-        void operator+=(Matrix3x3 &_InMatrix);
+        void operator+=(Matrix3x3 &_matrix);
 
-        void operator-=(Matrix3x3 &_InMatrix);
+        void operator-=(Matrix3x3 &_matrix);
 
-        void operator*=(float &_InFactor);
+        void operator*=(float &_factor);
 
-        Vector3f operator*=(Vector3f &_InVector);
+        Vector3 operator*=(Vector3 &_vector);
 
-        void operator*=(Matrix3x3 &_InMatrix);
+        void operator*=(Matrix3x3 &_matrix);
 
-        void operator/=(float &_InFactor);
+        void operator/=(float &_factor);
 
-        void operator/=(Matrix3x3 &_InMatrix);
+        void operator/=(Matrix3x3 &_matrix);
 
 
         float m_11 = 1.f, m_12 = 0.f, m_13 = 0.f;
         float m_21 = 0.f, m_22 = 1.f, m_23 = 0.f;
         float m_31 = 0.f, m_32 = 0.f, m_33 = 1.f;
     };
-
-    namespace Test
-    {
-        void TestMatrix3x3();
-    }
-} // namespace DadEngine::Math
+} // namespace DadEngine
 
 #endif //__MATRIX3X3_HPP_

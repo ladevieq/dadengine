@@ -282,14 +282,15 @@ int main
 {
     printf("%p %ls %d\n", static_cast<void *>(hInstance), pCmdLine, nCmdShow);
 
+#if defined(DADVULKAN)
     DadEngine::Application app =
-        DadEngine::Application({ "DadWindow", 400U, 400U, false, false }, true);
-
-    printf("la belle console");
+        DadEngine::Application({ "DadVulkan", 400U, 400U, false, false }, true);
+#else
+    DadEngine::Application app =
+        DadEngine::Application({ "DadOpengl", 400U, 400U, false, false }, true);
+#endif
 
     app.Run();
-
-    // system("pause");
 
     // setupRenderContextAndRederingStuffs();
 

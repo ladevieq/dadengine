@@ -2,10 +2,10 @@
 #define __MATRIX4X4_HPP_
 
 
-namespace DadEngine::Math
+namespace DadEngine
 {
-    class Vector3f;
-    class Vector4f;
+    class Vector3;
+    class Vector4;
 
     class Matrix4x4
     {
@@ -13,26 +13,26 @@ namespace DadEngine::Math
         public:
         Matrix4x4() = default;
 
-        Matrix4x4(Vector4f _InVectors[4U]);
+        Matrix4x4(Vector4 _vectors[4U]);
 
-        Matrix4x4(float _In11,
-                  float _In12,
-                  float _In13,
-                  float _In14,
-                  float _In21,
-                  float _In22,
-                  float _In23,
-                  float _In24,
-                  float _In31,
-                  float _In32,
-                  float _In33,
-                  float _In34,
-                  float _In41,
-                  float _In42,
-                  float _In43,
-                  float _In44);
+        Matrix4x4(float _11,
+                  float _12,
+                  float _13,
+                  float _14,
+                  float _21,
+                  float _22,
+                  float _23,
+                  float _24,
+                  float _31,
+                  float _32,
+                  float _33,
+                  float _34,
+                  float _41,
+                  float _42,
+                  float _43,
+                  float _44);
 
-        Matrix4x4(float _InData[16U]);
+        Matrix4x4(float _data[16U]);
 
 
         // Standard matrix functions
@@ -44,45 +44,45 @@ namespace DadEngine::Math
 
         float Determinant();
 
-        void Translation(Vector3f _InTranslation);
+        void Translation(Vector3 _translation);
 
         void Orthographic();
 
-        void Perpespective(float _InNear, float _InFar, float _InFov);
+        void Perpespective(float _near, float _far, float _fov);
 
-        void LookAt(Vector3f &_InEyePosition, Vector3f &_InTargetPosition, Vector3f &_InUp);
+        void LookAt(Vector3 &_eyePosition, Vector3 &_targetPosition, Vector3 &_up);
 
 
         // Binary math operators
-        Matrix4x4 operator+(Matrix4x4 &_InMatrix);
+        Matrix4x4 operator+(Matrix4x4 &_matrix);
 
-        Matrix4x4 operator-(Matrix4x4 &_InMatrix);
+        Matrix4x4 operator-(Matrix4x4 &_matrix);
 
-        Matrix4x4 operator*(float &_InFactor);
+        Matrix4x4 operator*(float &_factor);
 
-        Vector4f operator*(Vector4f &_InVector);
+        Vector4 operator*(Vector4 &_vector);
 
-        Matrix4x4 operator*(Matrix4x4 &_InMatrix);
+        Matrix4x4 operator*(Matrix4x4 &_matrix);
 
-        Matrix4x4 operator/(float &_InFactor);
+        Matrix4x4 operator/(float &_factor);
 
-        Matrix4x4 operator/(Matrix4x4 &_InMatrix);
+        Matrix4x4 operator/(Matrix4x4 &_matrix);
 
 
         // Binary assignement math operators
-        void operator+=(Matrix4x4 &_InMatrix);
+        void operator+=(Matrix4x4 &_matrix);
 
-        void operator-=(Matrix4x4 &_InMatrix);
+        void operator-=(Matrix4x4 &_matrix);
 
-        void operator*=(float &_InFactor);
+        void operator*=(float &_factor);
 
-        Vector4f operator*=(Vector4f &_InVector);
+        Vector4 operator*=(Vector4 &_vector);
 
-        void operator*=(Matrix4x4 &_InMatrix);
+        void operator*=(Matrix4x4 &_matrix);
 
-        void operator/=(float &_InFactor);
+        void operator/=(float &_factor);
 
-        void operator/=(Matrix4x4 &_InMatrix);
+        void operator/=(Matrix4x4 &_matrix);
 
 
         float m_11 = 1.f, m_12 = 0.f, m_13 = 0.f, m_14 = 0.f;
@@ -90,12 +90,7 @@ namespace DadEngine::Math
         float m_31 = 0.f, m_32 = 0.f, m_33 = 1.f, m_34 = 0.f;
         float m_41 = 0.f, m_42 = 0.f, m_43 = 0.f, m_44 = 1.f;
     };
-
-
-    namespace Test
-    {
-        void TestMatrix4x4();
-    }
-} // namespace DadEngine::Math
+} // namespace DadEngine
 
 #endif //__MATRIX4X4_HPP_
+

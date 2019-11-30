@@ -9,8 +9,6 @@
 
 namespace DadEngine
 {
-    LRESULT __stdcall WindowProcedure(HWND _hwnd, uint32_t _msg, WPARAM _wParam, LPARAM _lParam);
-
     class Window
     {
         public:
@@ -19,7 +17,8 @@ namespace DadEngine
 
         void MessagePump();
 
-        void HandleMessages(HWND _hwnd, uint32_t _msg, WPARAM _wParam, LPARAM _lParam);
+        static __stdcall LRESULT
+        HandleMessages(HWND _hwnd, uint32_t _msg, WPARAM _wParam, LPARAM _lParam);
 
         void Close();
 

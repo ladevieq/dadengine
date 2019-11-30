@@ -2,9 +2,9 @@
 #define __MATRIX2X2_HPP_
 
 
-namespace DadEngine::Math
+namespace DadEngine
 {
-    class Vector2f;
+    class Vector2;
 
     class Matrix2x2
     {
@@ -12,11 +12,11 @@ namespace DadEngine::Math
         public:
         Matrix2x2() = default;
 
-        Matrix2x2(Vector2f _InVectors[2U]);
+        Matrix2x2(Vector2 _vectors[2U]);
 
-        Matrix2x2(float _In11, float _In12, float _In21, float _In22);
+        Matrix2x2(float _11, float _12, float _21, float _22);
 
-        Matrix2x2(float _InData[4U]);
+        Matrix2x2(float _data[4U]);
 
 
         // Standard matrix functions
@@ -28,51 +28,46 @@ namespace DadEngine::Math
 
         float Determinant();
 
-        void Rotation(float _InAngle);
+        void Rotation(float _angle);
 
-        void Scale(float _InScaleX, float _InScaleY);
+        void Scale(float _scaleX, float _scaleY);
 
 
         // Binary math operators
-        Matrix2x2 operator+(Matrix2x2 &_InMatrix);
+        Matrix2x2 operator+(Matrix2x2 &_matrix);
 
-        Matrix2x2 operator-(Matrix2x2 &_InMatrix);
+        Matrix2x2 operator-(Matrix2x2 &_matrix);
 
-        Matrix2x2 operator*(float &_InFactor);
+        Matrix2x2 operator*(float &_factor);
 
-        Vector2f operator*(Vector2f &_InVector);
+        Vector2 operator*(Vector2 &_vector);
 
-        Matrix2x2 operator*(Matrix2x2 &_InMatrix);
+        Matrix2x2 operator*(Matrix2x2 &_matrix);
 
-        Matrix2x2 operator/(float &_InFactor);
+        Matrix2x2 operator/(float &_factor);
 
-        Matrix2x2 operator/(Matrix2x2 &_InMatrix);
+        Matrix2x2 operator/(Matrix2x2 &_matrix);
 
         // Binary assignement math operators
-        void operator+=(Matrix2x2 &_InMatrix);
+        void operator+=(Matrix2x2 &_matrix);
 
-        void operator-=(Matrix2x2 &_InMatrix);
+        void operator-=(Matrix2x2 &_matrix);
 
-        void operator*=(float &_InFactor);
+        void operator*=(float &_factor);
 
-        Vector2f operator*=(Vector2f &_InVector);
+        Vector2 operator*=(Vector2 &_vector);
 
-        void operator*=(Matrix2x2 &_InMatrix);
+        void operator*=(Matrix2x2 &_matrix);
 
-        void operator/=(float &_InFactor);
+        void operator/=(float &_factor);
 
-        void operator/=(Matrix2x2 &_InMatrix);
+        void operator/=(Matrix2x2 &_matrix);
 
 
         float m_11 = 1.f, m_12 = 0.f;
         float m_21 = 0.f, m_22 = 1.f;
     };
-
-
-    namespace Test
-    {
-        void TestMatrix2x2();
-    }
-} // namespace DadEngine::Math
+} // namespace DadEngine
 
 #endif //__MATRIX2X2_HPP_
+

@@ -3,17 +3,11 @@
 #include <windowsx.h>
 
 #include "debug.hpp"
+// #include "events/event-manager.hpp"
 // #include "../../../gameplay/input-manager.hpp"
 
 namespace DadEngine
 {
-    LRESULT WindowProcedure(HWND _hwnd, uint32_t _msg, WPARAM _wParam, LPARAM _lParam)
-    {
-        Application::GetApp()->m_window.HandleMessages(_hwnd, _msg, _wParam, _lParam);
-
-        // return DefWindowProc(_hwnd, _msg, _wParam, _lParam);
-    }
-
     Window::Window(const char *_windowName, int32_t _width, int32_t _height, bool _fullscreen, bool _veticalSync)
         : m_fullscreen(_fullscreen), m_verticalSync(_veticalSync),
           m_hInstance(GetModuleHandle(nullptr)), m_windowName(_windowName)
@@ -22,8 +16,10 @@ namespace DadEngine
         createWindowsWindow(m_fullscreen, _width, _height);
 
         m_isOpen = true;
-    }
 
+        // EventManager::GetInstance().AddEventListener(
+        //     EVENT_IDENTIFIERS::CLOSE_WINDOW_EVENT, [&, this]() { this->Close(); });
+    }
 
     void Window::MessagePump()
     {
@@ -36,17 +32,18 @@ namespace DadEngine
         }
     }
 
-    void Window::HandleMessages(HWND _hwnd, uint32_t _msg, WPARAM _wParam, LPARAM _lParam)
+    LRESULT Window::HandleMessages(HWND _hwnd, uint32_t _msg, WPARAM _wParam, LPARAM _lParam)
     {
         switch (_msg)
         {
         case WM_SIZE:
         {
-            // uint32_t uiWidth = LOWORD(_InLParam);
-            // uint32_t uiHeight = HIWORD(_InLParam);
+            uint32_t uiWidth = LOWORD(_lParam);
+            uint32_t uiHeight = HIWORD(_lParam);
 
             // OnSize(_InHWND, uiWidth, uiHeight);
-            // GetClientRect(_InHWND, );
+            RECT clientRect{};
+            GetClientRect(_hwnd, &clientRect);
 
             break;
         }
@@ -56,8 +53,8 @@ namespace DadEngine
 
         case WM_CLOSE:
         {
-            // EventManager.emitEvent()
-            DestroyWindow(_hwnd);
+            // EventManager::GetInstance().EmitEvent(new CloseWindowEvent{});
+            PostQuitMessage(0);
             break;
         }
 
@@ -75,7 +72,7 @@ namespace DadEngine
 
         case WM_KEYDOWN:
         {
-            // printf("%d\n", MapVirtualKey((UINT)_InWParam, MAPVK_VK_TO_CHAR));
+            printf("%d\n", MapVirtualKey((UINT)_wParam, MAPVK_VK_TO_CHAR));
 
             // Gameplay::InputManager::GetInputManager ()->UpdateKeyState (
             // (Gameplay::KeyCode)MapVirtualKey ((UINT)_InWParam, MAPVK_VK_TO_CHAR), Gameplay::KEY_STATE_KEY_PRESSED);
@@ -145,11 +142,17 @@ namespace DadEngine
             // Gameplay::InputManager::GetInputManager ()->UpdateWheelDelta (GET_WHEEL_DELTA_WPARAM (_InWParam));
             break;
         }
+        default:
+        {
+            return DefWindowProc(_hwnd, _msg, _wParam, _lParam);
         }
+        }
+        return 0;
     }
 
     void Window::Close()
     {
+        printf("%s\n", "Event received");
         exit(0);
     }
 
@@ -164,7 +167,8 @@ namespace DadEngine
     {
         m_wndClass.cbSize = sizeof(m_wndClass);
         m_wndClass.hInstance = m_hInstance;
-        m_wndClass.lpfnWndProc = WindowProcedure;
+        // m_wndClass.lpfnWndProc = WindowProcedure;
+        m_wndClass.lpfnWndProc = Window::HandleMessages;
         m_wndClass.lpszClassName = m_className;
         m_wndClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 

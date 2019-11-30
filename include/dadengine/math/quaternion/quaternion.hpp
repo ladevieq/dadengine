@@ -2,10 +2,10 @@
 #define __QUATERNION_HPP_
 
 
-namespace DadEngine::Math
+namespace DadEngine
 {
-    class Vector3f;
-	class Matrix3x3;
+    class Vector3;
+    class Matrix3x3;
     class Matrix4x4;
 
     class Quaternion
@@ -14,17 +14,17 @@ namespace DadEngine::Math
         public:
         Quaternion() = default;
 
-        Quaternion(float _InW, float _InX, float _InY, float _InZ);
+        Quaternion(float _w, float _x, float _y, float _z);
 
-        Quaternion(float _InAngle, Vector3f _InAxis);
+        Quaternion(float _angle, Vector3 _axis);
 
         Quaternion Conjugate();
 
         // Binary math operators
-        Quaternion operator*(Quaternion &_InQuat);
+        Quaternion operator*(Quaternion &_quat);
 
         // Binary assignement math operators
-        void operator*=(Quaternion &_InQuat);
+        void operator*=(Quaternion &_quat);
 
         Matrix3x3 GetRotationMatrix();
 
@@ -39,6 +39,7 @@ namespace DadEngine::Math
 
 
     static const Quaternion IdentityQuaternion(1.f, 0.f, 0.f, 0.f);
-} // namespace DadEngine::Math
+} // namespace DadEngine
 
 #endif //__QUATERNION_HPP_
+

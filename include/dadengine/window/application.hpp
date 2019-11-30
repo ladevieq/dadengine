@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "../rendering/renderer.hpp"
 #include "windows-window.hpp"
 
 namespace DadEngine
@@ -17,20 +18,21 @@ namespace DadEngine
         bool m_verticalSync = false;
     };
 
-    struct ConsoleInfo
-    {
-        HWND consoleHandle = nullptr;
-        const char *m_consoleName = nullptr;
-        bool m_isOpen = false;
-    };
+    // struct ConsoleInfo
+    // {
+    //     HWND consoleHandle = nullptr;
+    //     const char *m_consoleName = nullptr;
+    //     bool m_isOpen = false;
+    // };
+
+    class Window;
+    class Renderer;
 
     class Application
     {
         public:
-        Application(); //, m_renderContext(new Rendering::OpenGLRenderContext(m_window)) {}
-
-        Application(ApplicationInfo _appInfo, const bool _openConsole); //, m_renderContext(new Rendering::OpenGLRenderContext(m_window)) {}
-
+        Application();
+        Application(ApplicationInfo _appInfo, const bool _openConsole);
 
         void Run();
 
@@ -39,12 +41,13 @@ namespace DadEngine
         private:
         void initApplication(const bool _openConsole);
 
+        void closeApplication();
+
         ApplicationInfo m_appInfo = {};
-        ConsoleInfo m_consoleInfo = {};
+        // ConsoleInfo m_consoleInfo = {};
 
         std::unique_ptr<Window> m_window;
-        //
-        // Rendering::RenderContext* m_renderContext = nullptr;
+        std::unique_ptr<Renderer> m_renderer;
     };
 } // namespace DadEngine
 

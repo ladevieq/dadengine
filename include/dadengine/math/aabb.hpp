@@ -1,11 +1,12 @@
 #ifndef __AABB_HPP_
 #define __AABB_HPP_
 
-namespace DadEngine::Math
+namespace DadEngine
 {
-	class AABB
-	{
-	};
-}
+    class AABB
+    {
+    };
+} // namespace DadEngine
 
 #endif //__AABB_HPP_
+

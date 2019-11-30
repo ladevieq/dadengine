@@ -1,28 +1,28 @@
 #include "matrix2x2.hpp"
 
-#include "../constants.hpp"
-#include "../math-functions.hpp"
-#include "../vector/vector2f.hpp"
+#include "../vector/vector2.hpp"
+
+#include <cmath>
 
 
-namespace DadEngine::Math
+namespace DadEngine
 {
-    Matrix2x2::Matrix2x2(Vector2f _InVectors[2U])
+    Matrix2x2::Matrix2x2(Vector2 _vectors[2U])
     {
-        m_11 = _InVectors[0U].x, m_12 = _InVectors[1U].x;
-        m_21 = _InVectors[0U].y, m_22 = _InVectors[1U].y;
+        m_11 = _vectors[0U].x, m_12 = _vectors[1U].x;
+        m_21 = _vectors[0U].y, m_22 = _vectors[1U].y;
     }
 
-    Matrix2x2::Matrix2x2(float _In11, float _In12, float _In21, float _In22)
+    Matrix2x2::Matrix2x2(float _11, float _12, float _21, float _22)
     {
-        m_11 = _In11, m_12 = _In12;
-        m_21 = _In21, m_22 = _In22;
+        m_11 = _11, m_12 = _12;
+        m_21 = _21, m_22 = _22;
     }
 
-    Matrix2x2::Matrix2x2(float _InData[4U])
+    Matrix2x2::Matrix2x2(float _data[4U])
     {
-        m_11 = _InData[0U], m_12 = _InData[1U];
-        m_21 = _InData[2U], m_22 = _InData[3U];
+        m_11 = _data[0U], m_12 = _data[1U];
+        m_21 = _data[2U], m_22 = _data[3U];
     }
 
 
@@ -60,155 +60,134 @@ namespace DadEngine::Math
         return m_11 * m_22 - m_12 * m_21;
     }
 
-    void Matrix2x2::Rotation(float _InAngle)
+    void Matrix2x2::Rotation(float _angle)
     {
-        m_11 = Cos(_InAngle), m_12 = -Sin(_InAngle);
-        m_12 = Sin(_InAngle), m_12 = Cos(_InAngle);
+        m_11 = cos(_angle), m_12 = -sin(_angle);
+        m_12 = sin(_angle), m_12 = cos(_angle);
     }
 
-    void Matrix2x2::Scale(float _InScaleX, float _InScaleY)
+    void Matrix2x2::Scale(float _scaleX, float _scaleY)
     {
-        m_11 = _InScaleX, m_12 = 0.f;
-        m_21 = 0.f, m_22 = _InScaleY;
+        m_11 = _scaleX, m_12 = 0.f;
+        m_21 = 0.f, m_22 = _scaleY;
     }
 
 
     // Binary math operators
-    Matrix2x2 Matrix2x2::operator+(Matrix2x2 &_InMatrix)
+    Matrix2x2 Matrix2x2::operator+(Matrix2x2 &_matrix)
     {
         Matrix2x2 result;
 
-        result.m_11 = m_11 + _InMatrix.m_11, result.m_12 = m_12 + _InMatrix.m_12;
-        result.m_21 = m_21 + _InMatrix.m_21, result.m_22 = m_22 + _InMatrix.m_22;
+        result.m_11 = m_11 + _matrix.m_11, result.m_12 = m_12 + _matrix.m_12;
+        result.m_21 = m_21 + _matrix.m_21, result.m_22 = m_22 + _matrix.m_22;
 
         return result;
     }
 
-    Matrix2x2 Matrix2x2::operator-(Matrix2x2 &_InMatrix)
+    Matrix2x2 Matrix2x2::operator-(Matrix2x2 &_matrix)
     {
         Matrix2x2 result;
 
-        result.m_11 = m_11 - _InMatrix.m_11, result.m_12 = m_12 - _InMatrix.m_12;
-        result.m_21 = m_21 - _InMatrix.m_21, result.m_22 = m_22 - _InMatrix.m_22;
+        result.m_11 = m_11 - _matrix.m_11, result.m_12 = m_12 - _matrix.m_12;
+        result.m_21 = m_21 - _matrix.m_21, result.m_22 = m_22 - _matrix.m_22;
 
         return result;
     }
 
-    Matrix2x2 Matrix2x2::operator*(float &_InFactor)
+    Matrix2x2 Matrix2x2::operator*(float &_factor)
     {
         Matrix2x2 result;
 
-        result.m_11 = m_11 * _InFactor, result.m_12 = m_12 * _InFactor;
-        result.m_21 = m_21 * _InFactor, result.m_22 = m_22 * _InFactor;
+        result.m_11 = m_11 * _factor, result.m_12 = m_12 * _factor;
+        result.m_21 = m_21 * _factor, result.m_22 = m_22 * _factor;
 
         return result;
     }
 
-    Vector2f Matrix2x2::operator*(Vector2f &_InVector)
+    Vector2 Matrix2x2::operator*(Vector2 &_vector)
     {
-        return Vector2f(m_11 * _InVector.x + m_12 * _InVector.y,
-                        m_21 * _InVector.x + m_22 * _InVector.y);
+        return Vector2(m_11 * _vector.x + m_12 * _vector.y,
+                       m_21 * _vector.x + m_22 * _vector.y);
     }
 
-    Matrix2x2 Matrix2x2::operator*(Matrix2x2 &_InMatrix)
+    Matrix2x2 Matrix2x2::operator*(Matrix2x2 &_matrix)
     {
         Matrix2x2 result;
 
-        result.m_11 = m_11 * _InMatrix.m_11 + m_12 * _InMatrix.m_21;
-        result.m_12 = m_11 * _InMatrix.m_12 + m_12 * _InMatrix.m_22;
-        result.m_21 = m_21 * _InMatrix.m_11 + m_22 * _InMatrix.m_21;
-        result.m_22 = m_22 * _InMatrix.m_22 + m_21 * _InMatrix.m_12;
+        result.m_11 = m_11 * _matrix.m_11 + m_12 * _matrix.m_21;
+        result.m_12 = m_11 * _matrix.m_12 + m_12 * _matrix.m_22;
+        result.m_21 = m_21 * _matrix.m_11 + m_22 * _matrix.m_21;
+        result.m_22 = m_22 * _matrix.m_22 + m_21 * _matrix.m_12;
 
         return result;
     }
 
-    Matrix2x2 Matrix2x2::operator/(float &_InFactor)
+    Matrix2x2 Matrix2x2::operator/(float &_factor)
     {
         Matrix2x2 result;
 
-        result.m_11 = m_11 / _InFactor, result.m_12 = m_12 / _InFactor;
-        result.m_21 = m_21 / _InFactor, result.m_22 = m_22 / _InFactor;
+        result.m_11 = m_11 / _factor, result.m_12 = m_12 / _factor;
+        result.m_21 = m_21 / _factor, result.m_22 = m_22 / _factor;
 
         return result;
     }
 
-    Matrix2x2 Matrix2x2::operator/(Matrix2x2 &_InMatrix)
+    Matrix2x2 Matrix2x2::operator/(Matrix2x2 &_matrix)
     {
         Matrix2x2 result;
 
-        _InMatrix.Inverse();
+        _matrix.Inverse();
 
-        result = *this * _InMatrix;
+        result = *this * _matrix;
 
         return result;
     }
 
     // Binary assignement math operators
-    void Matrix2x2::operator+=(Matrix2x2 &_InMatrix)
+    void Matrix2x2::operator+=(Matrix2x2 &_matrix)
     {
-        m_11 += _InMatrix.m_11, m_12 += _InMatrix.m_12;
-        m_21 += _InMatrix.m_21, m_22 += _InMatrix.m_22;
+        m_11 += _matrix.m_11, m_12 += _matrix.m_12;
+        m_21 += _matrix.m_21, m_22 += _matrix.m_22;
     }
 
-    void Matrix2x2::operator-=(Matrix2x2 &_InMatrix)
+    void Matrix2x2::operator-=(Matrix2x2 &_matrix)
     {
-        m_11 -= _InMatrix.m_11, m_12 -= _InMatrix.m_12;
-        m_21 -= _InMatrix.m_21, m_22 -= _InMatrix.m_22;
+        m_11 -= _matrix.m_11, m_12 -= _matrix.m_12;
+        m_21 -= _matrix.m_21, m_22 -= _matrix.m_22;
     }
 
-    void Matrix2x2::operator*=(float &_InFactor)
+    void Matrix2x2::operator*=(float &_factor)
     {
-        m_11 *= _InFactor, m_12 *= _InFactor;
-        m_21 *= _InFactor, m_22 *= _InFactor;
+        m_11 *= _factor, m_12 *= _factor;
+        m_21 *= _factor, m_22 *= _factor;
     }
 
-    Vector2f Matrix2x2::operator*=(Vector2f &_InVector)
+    Vector2 Matrix2x2::operator*=(Vector2 &_vector)
     {
-        return Vector2f(m_11 * _InVector.x + m_12 * _InVector.y,
-                        m_21 * _InVector.x + m_22 * _InVector.y);
+        return Vector2(m_11 * _vector.x + m_12 * _vector.y,
+                       m_21 * _vector.x + m_22 * _vector.y);
     }
 
-    void Matrix2x2::operator*=(Matrix2x2 &_InMatrix)
+    void Matrix2x2::operator*=(Matrix2x2 &_matrix)
     {
         Matrix2x2 temp = *this;
 
-        m_11 = temp.m_11 * _InMatrix.m_11 + temp.m_12 * _InMatrix.m_21;
-        m_12 = temp.m_11 * _InMatrix.m_12 + temp.m_12 * _InMatrix.m_22;
-        m_21 = temp.m_21 * _InMatrix.m_11 + temp.m_22 * _InMatrix.m_21;
-        m_22 = temp.m_22 * _InMatrix.m_22 + temp.m_21 * _InMatrix.m_12;
+        m_11 = temp.m_11 * _matrix.m_11 + temp.m_12 * _matrix.m_21;
+        m_12 = temp.m_11 * _matrix.m_12 + temp.m_12 * _matrix.m_22;
+        m_21 = temp.m_21 * _matrix.m_11 + temp.m_22 * _matrix.m_21;
+        m_22 = temp.m_22 * _matrix.m_22 + temp.m_21 * _matrix.m_12;
     }
 
-    void Matrix2x2::operator/=(float &_InFactor)
+    void Matrix2x2::operator/=(float &_factor)
     {
-        m_11 /= _InFactor, m_12 /= _InFactor;
-        m_21 /= _InFactor, m_22 /= _InFactor;
+        m_11 /= _factor, m_12 /= _factor;
+        m_21 /= _factor, m_22 /= _factor;
     }
 
-    void Matrix2x2::operator/=(Matrix2x2 &_InMatrix)
+    void Matrix2x2::operator/=(Matrix2x2 &_matrix)
     {
-        _InMatrix.Inverse();
+        _matrix.Inverse();
 
-        *this *= _InMatrix;
+        *this *= _matrix;
     }
-
-    namespace Test
-    {
-        void TestMatrix2x2()
-        {
-            Matrix2x2 m(1, 5, 5, 6);
-            Matrix2x2 n(2, 0, 7, 5);
-            Vector2f v(10, 5);
-            Vector2f w;
-            Matrix2x2 o;
-            float det = 0.f;
-
-            n.Transpose();
-            m.Transpose();
-            det = n.Determinant();
-            n.Inverse();
-
-            o = m * n;
-            w = m * v;
-        }
-    } // namespace Test
-} // namespace DadEngine::Math
+} // namespace DadEngine

@@ -1,30 +1,31 @@
 #include "quaternion.hpp"
 
-#include "../math-functions.hpp"
-#include "../vector/vector3f.hpp"
 #include "../matrix/matrix3x3.hpp"
 #include "../matrix/matrix4x4.hpp"
+#include "../vector/vector3.hpp"
+
+#include <cmath>
 
 
-namespace DadEngine::Math
+namespace DadEngine
 {
-    Quaternion::Quaternion(float _InW, float _InX, float _InY, float _InZ)
+    Quaternion::Quaternion(float _w, float _x, float _y, float _z)
     {
-        w = _InW;
-        x = _InX;
-        y = _InY;
-        z = _InZ;
+        w = _w;
+        x = _x;
+        y = _y;
+        z = _z;
     }
 
-    Quaternion::Quaternion(float _InAngle, Vector3f _InAxis)
+    Quaternion::Quaternion(float _angle, Vector3 _axis)
     {
-        float angle2 = _InAngle / 2.f;
-        float sin2 = Sin(angle2);
+        float angle2 = _angle / 2.f;
+        float sin2 = sin(angle2);
 
-        w = Cos(angle2);
-        x = _InAxis.x * sin2;
-        y = _InAxis.y * sin2;
-        z = _InAxis.z * sin2;
+        w = cos(angle2);
+        x = _axis.x * sin2;
+        y = _axis.y * sin2;
+        z = _axis.z * sin2;
     }
 
     Quaternion Quaternion::Conjugate()
@@ -33,22 +34,26 @@ namespace DadEngine::Math
     }
 
     // Binary math operators
-    Quaternion Quaternion::operator*(Quaternion &_InQuat)
+    Quaternion Quaternion::operator*(Quaternion &_quat)
     {
-        return Quaternion(w * _InQuat.w - x * _InQuat.x - y * _InQuat.y - z * _InQuat.z,
-                          w * _InQuat.x + x * _InQuat.w + y * _InQuat.z - z * _InQuat.y,
-                          w * _InQuat.y - x * _InQuat.z + y * _InQuat.w + z * _InQuat.x,
-                          w * _InQuat.z + x * _InQuat.y - y * _InQuat.x + z * _InQuat.w);
+        return Quaternion(w * _quat.w - x * _quat.x - y * _quat.y - z * _quat.z,
+                          w * _quat.x + x * _quat.w + y * _quat.z - z * _quat.y,
+                          w * _quat.y - x * _quat.z + y * _quat.w + z * _quat.x,
+                          w * _quat.z + x * _quat.y - y * _quat.x + z * _quat.w);
     }
 
     // Binary assignement math operators
-    void Quaternion::operator*=(Quaternion &_InQuat)
+    void Quaternion::operator*=(Quaternion &_quat)
     {
         Quaternion temp = *this;
-        w = temp.w * _InQuat.w - temp.x * _InQuat.x - temp.y * _InQuat.y - temp.z * _InQuat.z;
-        x = temp.w * _InQuat.x + temp.x * _InQuat.w + temp.y * _InQuat.z - temp.z * _InQuat.y;
-        y = temp.w * _InQuat.y - temp.x * _InQuat.z + temp.y * _InQuat.w + temp.z * _InQuat.x;
-        z = temp.w * _InQuat.z + temp.x * _InQuat.y - temp.y * _InQuat.x + temp.z * _InQuat.w;
+        w = temp.w * _quat.w - temp.x * _quat.x - temp.y * _quat.y -
+            temp.z * _quat.z;
+        x = temp.w * _quat.x + temp.x * _quat.w + temp.y * _quat.z -
+            temp.z * _quat.y;
+        y = temp.w * _quat.y - temp.x * _quat.z + temp.y * _quat.w +
+            temp.z * _quat.x;
+        z = temp.w * _quat.z + temp.x * _quat.y - temp.y * _quat.x +
+            temp.z * _quat.w;
     }
 
     Matrix3x3 Quaternion::GetRotationMatrix()
@@ -84,4 +89,4 @@ namespace DadEngine::Math
 
         return result;
     }
-} // namespace DadEngine::Math
+} // namespace DadEngine
