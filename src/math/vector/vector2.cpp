@@ -1,6 +1,9 @@
 #include "vector2.hpp"
 
-#include <cmath>
+#include "../constants.hpp"
+#include "../core/debug.hpp"
+
+#include <limits>
 
 
 namespace DadEngine
@@ -17,14 +20,15 @@ namespace DadEngine
     {
         float length = Length();
 
-        LOG_ASSERT(length > FLOAT_EPSILON, "Vector length is null");
+        LogAssert(length > std::numeric_limits<decltype(length)>::epsilon(),
+                  "Vector length is null");
 
         *this /= length;
     }
 
     float Vector2::Length()
     {
-        return Square(SqLength());
+        return std::sqrt(SqLength());
     }
 
     float Vector2::SqLength()
@@ -36,7 +40,7 @@ namespace DadEngine
     {
         Vector2 tempVec = _vector / (Length() * _vector.Length());
 
-        return acos(Dot(tempVec));
+        return std::acos(Dot(tempVec));
     }
 
     float Vector2::Dot(Vector2 &_vector)
@@ -46,8 +50,8 @@ namespace DadEngine
 
     Vector2 Vector2::Lerp(Vector2 &_from, Vector2 &_to, float _factor)
     {
-        return Vector2f(_from.x + _factor * (_to.x - _from.x),
-                        _from.y + _factor * (_to.y - _from.y));
+        return Vector2(_from.x + _factor * (_to.x - _from.x),
+                       _from.y + _factor * (_to.y - _from.y));
     }
 
     // Unary operators

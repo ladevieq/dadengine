@@ -1,9 +1,10 @@
 #include "matrix3x3.hpp"
 
+#include "../constants.hpp"
 #include "../vector/vector2.hpp"
 #include "../vector/vector3.hpp"
 
-#include <cmath>
+#include <limits>
 
 namespace DadEngine
 {
@@ -57,7 +58,8 @@ namespace DadEngine
               cof13 = (m_21 * m_32 - m_22 * m_31);
         float determinant = m_11 * cof11 + m_12 * cof12 + m_13 * cof13;
 
-        if (determinant > FLOAT_EPSILON || determinant < FLOAT_EPSILON)
+        if (determinant > std::numeric_limits<decltype(determinant)>::epsilon() ||
+            determinant < std::numeric_limits<decltype(determinant)>::epsilon())
         {
             determinant = 1.f / determinant;
             float cof21 = -(m_12 * m_33 - m_13 * m_32),
@@ -86,8 +88,8 @@ namespace DadEngine
 
     void Matrix3x3::RotationX(float _angle)
     {
-        float cos = cos(_angle);
-        float sin = sin(_angle);
+        float cos = std::cos(_angle);
+        float sin = std::sin(_angle);
 
         m_11 = 1.f, m_12 = 0.f, m_13 = 0.f;
         m_21 = 0.f, m_22 = cos, m_23 = -sin;
@@ -96,8 +98,8 @@ namespace DadEngine
 
     void Matrix3x3::RotationY(float _angle)
     {
-        float cos = cos(_angle);
-        float sin = sin(_angle);
+        float cos = std::cos(_angle);
+        float sin = std::sin(_angle);
 
         m_11 = cos, m_12 = 0.f, m_13 = sin;
         m_21 = 0.f, m_22 = 1.f, m_23 = 0.f;
@@ -106,8 +108,8 @@ namespace DadEngine
 
     void Matrix3x3::RotationZ(float _angle)
     {
-        float cos = cos(_angle);
-        float sin = sin(_angle);
+        float cos = std::cos(_angle);
+        float sin = std::sin(_angle);
 
         m_11 = cos, m_12 = -sin, m_13 = 0.f;
         m_21 = sin, m_22 = cos, m_23 = 0.f;
@@ -116,15 +118,15 @@ namespace DadEngine
 
     void Matrix3x3::Rotation(float _angle, Vector3 _axis)
     {
-        float cos = cos(_angle);
-        float sin = sin(_angle);
+        float cos = std::cos(_angle);
+        float sin = std::sin(_angle);
         float cosLessOne = 1 - cos;
 
         m_11 = cos + (cosLessOne * _axis.x * _axis.x),
         m_12 = (cosLessOne * _axis.x * _axis.y) - (sin * _axis.z),
         m_13 = (cosLessOne * _axis.x * _axis.z) + (sin * _axis.y);
         m_21 = (cosLessOne * _axis.x * _axis.y) + (sin * _axis.z),
-        m_22 = cos + (cosLessOne * _InAxis.y * _InAxis.y),
+        m_22 = cos + (cosLessOne * _axis.y * _axis.y),
         m_23 = (cosLessOne * _axis.y * _axis.z) - (sin * _axis.x);
         m_31 = (cosLessOne * _axis.x * _axis.z) - (sin * _axis.y),
         m_32 = (cosLessOne * _axis.y * _axis.z) + (sin * _axis.x),
@@ -189,7 +191,7 @@ namespace DadEngine
         return result;
     }
 
-    Vector3f Matrix3x3::operator*(Vector3 &_vector)
+    Vector3 Matrix3x3::operator*(Vector3 &_vector)
     {
         return Vector3(m_11 * _vector.x + m_12 * _vector.y + m_13 * _vector.z,
                        m_21 * _vector.x + m_22 * _vector.y + m_23 * _vector.z,

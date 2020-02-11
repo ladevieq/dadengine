@@ -1,9 +1,10 @@
 #include "matrix4x4.hpp"
 
+#include "../constants.hpp"
 #include "../vector/vector3.hpp"
 #include "../vector/vector4.hpp"
 
-#include <cmath>
+#include <limits>
 
 namespace DadEngine
 {
@@ -96,7 +97,8 @@ namespace DadEngine
 
         float determinant = m_11 * det11 + m_21 * det21 + m_31 * det31 + m_41 * det41;
 
-        if (determinant > FLOAT_EPSILON || determinant < FLOAT_EPSILON)
+        if (determinant > std::numeric_limits<decltype(determinant)>::epsilon() ||
+            determinant < std::numeric_limits<decltype(determinant)>::epsilon())
         {
             // float m_11 = 1.f, m_12 = 0.f, m_13 = 0.f, m_14 = 0.f;
             // float m_21 = 0.f, m_22 = 1.f, m_23 = 0.f, m_24 = 0.f;
@@ -173,7 +175,7 @@ namespace DadEngine
 
     void Matrix4x4::Perpespective(float _near, float _far, float _fov)
     {
-        float s = 1 / Tan((_fov * 0.5f) * ((float)M_PI / 180.0f));
+        float s = 1 / std::tan((_fov * 0.5f) * (static_cast<float>(M_PI) / 180.0f));
         float f = _far - _near;
 
         m_11 = s;

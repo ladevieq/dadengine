@@ -1,7 +1,7 @@
 #ifndef __TEXTURE_2D_HPP_
 #define __TEXTURE_2D_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
 enum TEXTURE_MODE
 {

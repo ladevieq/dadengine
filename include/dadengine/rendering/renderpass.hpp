@@ -1,16 +1,15 @@
 #ifndef __RENDER_PASS_HPP_
 #define __RENDER_PASS_HPP_
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-	class RenderPass
-	{
+    class RenderPass
+    {
 
-	public:
-
-		RenderPass() = default;
-
-	};
-}
+        public:
+        RenderPass() = default;
+    };
+} // namespace DadEngine
 
 #endif //__RENDER_PASS_HPP_
+

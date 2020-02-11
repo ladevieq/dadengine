@@ -3,25 +3,25 @@
 #include "../render-context.hpp"
 #include "opengl-render-command.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-    OpenGLCommandBuffer::OpenGLCommandBuffer(RenderContext *_InRenderContext)
-        : CommandBuffer(_InRenderContext)
+    OpenGLCommandBuffer::OpenGLCommandBuffer(RenderContext *_renderContext)
+        : CommandBuffer(_renderContext)
     {
     }
 
     void OpenGLCommandBuffer::BeginRecord()
     {
-        for (OpenGLRenderCommand *currentRenderCmd : m_Commands)
+        for (OpenGLRenderCommand *currentRenderCmd : m_commands)
         {
             delete currentRenderCmd;
         }
 
-        m_Commands.Clear();
+        m_commands.Clear();
     }
 
     void OpenGLCommandBuffer::EndRecord()
     {
         m_ptrRenderContext->SubmitCommandBuffer(this);
     }
-}
+} // namespace DadEngine

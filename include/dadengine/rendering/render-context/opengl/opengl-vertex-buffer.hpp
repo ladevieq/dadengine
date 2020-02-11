@@ -1,25 +1,27 @@
 #ifndef __OPENGL_VERTEX_BUFFER_HPP_
 #define __OPENGL_VERTEX_BUFFER_HPP_
 
-#include <Windows.h>
-#include <gl/GL.h>
+#include "opengl.hpp"
 
-#include "../../vertex-buffer.hpp"
+#include "vertex-buffer.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-	class OpenGLVertexBuffer : public VertexBuffer
-	{
+    class OpenGLVertexBuffer : public VertexBuffer
+    {
 
-	public:
+        public:
+        OpenGLVertexBuffer(uint32_t _vertexCount,
+                           TArray<VertexInput> &_verticesLayout,
+                           TArray<float> &_data,
+                           uint32_t _stride);
 
-		OpenGLVertexBuffer(uint32_t _InVertexCount, TArray<VertexInput> &_InVerticesLayout, TArray<float> &_InData, uint32_t _InStride);
+        virtual ~OpenGLVertexBuffer();
 
-		virtual ~OpenGLVertexBuffer();
-
-		GLuint m_uiBufferIndex = 0U;
-		GLuint m_uiArrayIndex = 0U;
-	};
-}
+        GLuint m_bufferIndex = 0U;
+        GLuint m_arrayIndex = 0U;
+    };
+} // namespace DadEngine
 
 #endif //!__OPENGL_VERTEX_BUFFER_HPP_
+

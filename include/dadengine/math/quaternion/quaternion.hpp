@@ -30,16 +30,17 @@ namespace DadEngine
 
         Matrix4x4 GetRotationMatrixExtended();
 
+        static inline Quaternion Identity()
+        {
+            return Quaternion(1.f, 0.f, 0.f, 0.f);
+        }
+
 
         float w = 0.f; // Scalar part
         float x = 0.f; // -----------
         float y = 0.f; // Complex part
         float z = 0.f; // -----------
     };
-
-
-    static const Quaternion IdentityQuaternion(1.f, 0.f, 0.f, 0.f);
 } // namespace DadEngine
 
 #endif //__QUATERNION_HPP_
-

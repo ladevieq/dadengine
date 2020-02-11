@@ -2,20 +2,20 @@
 
 #include "opengl-wrapper.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
     OpenGLFramebuffer::OpenGLFramebuffer()
     {
-        OpenGLWrapper::glGenFramebuffers(1U, &m_uiFramebufferIndex);
+        glGenFramebuffers(1U, &m_framebufferIndex);
     }
 
     OpenGLFramebuffer::~OpenGLFramebuffer()
     {
-        OpenGLWrapper::glDeleteFramebuffers(1U, &m_uiFramebufferIndex);
+        glDeleteFramebuffers(1U, &m_framebufferIndex);
     }
 
-    void OpenGLFramebuffer::Attach(OpenGLFrmaebufferAttachment &_InAttachment)
+    void OpenGLFramebuffer::Attach(OpenGLFrmaebufferAttachment &_attachment)
     {
         // glFrame
     }
-}
+} // namespace DadEngine

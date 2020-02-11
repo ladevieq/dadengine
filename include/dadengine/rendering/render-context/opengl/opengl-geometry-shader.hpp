@@ -1,23 +1,23 @@
 #ifndef __OPENGL_GEOMETRY_SHADER_HPP_
 #define __OPENGL_GEOMETRY_SHADER_HPP_
 
-#include <Windows.h>
-#include <gl/GL.h>
+#include "opengl.hpp"
 
 #include "../../shader/shader.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
     class OpenGLGeometryShader : public GeometryShader
     {
         public:
-        OpenGLGeometryShader(const char *_InShaderCode, size_t _InShaderCodeSize);
+        OpenGLGeometryShader(const char *_shaderCode, size_t _shaderCodeSize);
 
         ~OpenGLGeometryShader();
 
 
-        GLuint m_uiShaderID = 0U;
+        GLuint m_shaderID = 0U;
     };
-} // namespace DadEngine::Rendering
+} // namespace DadEngine
 
 #endif //!__OPENGL_GEOMETRY_SHADER_HPP_
+

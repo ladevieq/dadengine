@@ -1,6 +1,7 @@
 #include "windows-timers.hpp"
 
-#include <stdio.h>
+#include <cstdint>
+#include <cstdio>
 
 namespace DadEngine
 {
@@ -29,7 +30,7 @@ namespace DadEngine
         return EndingTime.QuadPart / m_Frequency.QuadPart;
     }
 
-	uint64_t WindowsTimer::GetMilliseconds()
+    uint64_t WindowsTimer::GetMilliseconds()
     {
         LARGE_INTEGER EndingTime;
 
@@ -51,7 +52,7 @@ namespace DadEngine
         return EndingTime.QuadPart / m_Frequency.QuadPart;
     }
 
-	uint64_t WindowsTimer::GetNanoseconds()
+    uint64_t WindowsTimer::GetNanoseconds()
     {
         LARGE_INTEGER EndingTime;
 
@@ -62,7 +63,7 @@ namespace DadEngine
         return EndingTime.QuadPart / m_Frequency.QuadPart;
     }
 
-	namespace Test
+    namespace Test
     {
         void TestTime()
         {
@@ -78,4 +79,4 @@ namespace DadEngine
             printf("%llu nanoseconds\n", time.GetNanoseconds());
         }
     } // namespace Test
-}
+} // namespace DadEngine

@@ -19,7 +19,7 @@ namespace DadEngine
                              DebugReportTypeFlags _reportType,
                              DebugReportCode _errorCode,
                              const char *_message,
-                             const uint32_t _line,
+                             uint32_t _line,
                              const char *_filename)
         : m_contextFlag(_contextFlag), m_reportTypeFlag(_reportType),
           m_reportCode(_errorCode), m_line(_line), m_file(_filename), m_message(_message)

@@ -3,34 +3,36 @@
 #include "raw-vertex.hpp"
 #include "vertex-input-layout.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-    void RawMesh::Create(const TArray<VertexInput> &_InVerticesLayout, TArray<float> &_OutData, uint32_t &_OutStride)
+    void RawMesh::Create(const TArray<VertexInput> &_verticesLayout,
+                         TArray<float> &_data,
+                         uint32_t &_stride)
     {
         for (RawVertex &currentVertex : m_vertices)
         {
-            _OutStride = 0U;
+            _stride = 0U;
 
-            for (VertexInput inputType : _InVerticesLayout)
+            for (VertexInput inputType : _verticesLayout)
             {
-                if (inputType.uiVertexInputType == VERTEX_INPUT_TYPE_POSITION)
+                if (inputType.vertexInputType == VERTEX_INPUT_TYPE_POSITION)
                 {
-                    _OutStride += sizeof(Vector3f);
+                    _stride += sizeof(Vector3);
 
-                    _OutData.Add(currentVertex.Position.x);
-                    _OutData.Add(currentVertex.Position.y);
-                    _OutData.Add(currentVertex.Position.z);
+                    _data.Add(currentVertex.position.x);
+                    _data.Add(currentVertex.position.y);
+                    _data.Add(currentVertex.position.z);
                 }
 
-                if (inputType.uiVertexInputType == VERTEX_INPUT_TYPE_COLOR)
+                if (inputType.vertexInputType == VERTEX_INPUT_TYPE_COLOR)
                 {
-                    _OutStride += sizeof(Vector3f);
+                    _stride += sizeof(Vector3);
 
-                    _OutData.Add(currentVertex.Color0.x);
-                    _OutData.Add(currentVertex.Color0.y);
-                    _OutData.Add(currentVertex.Color0.z);
+                    _data.Add(currentVertex.color0.x);
+                    _data.Add(currentVertex.color0.y);
+                    _data.Add(currentVertex.color0.z);
                 }
             }
         }
     }
-}
+} // namespace DadEngine

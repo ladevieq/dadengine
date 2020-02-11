@@ -1,7 +1,9 @@
 #include "vector3.hpp"
 
-#include <cmath>
+#include "../constants.hpp"
+#include "../core/debug.hpp"
 
+#include <limits>
 
 namespace DadEngine
 {
@@ -18,14 +20,15 @@ namespace DadEngine
     {
         float length = Length();
 
-        LOG_ASSERT(length > FLOAT_EPSILON, "Vector length is null");
+        LogAssert(length > std::numeric_limits<decltype(length)>::epsilon(),
+                  "Vector length is null");
 
         *this /= length;
     }
 
     float Vector3::Length()
     {
-        return Square(SqLength());
+        return std::sqrt(SqLength());
     }
 
     float Vector3::SqLength()
@@ -37,7 +40,7 @@ namespace DadEngine
     {
         Vector3 tempVec = _vector / (Length() * _vector.Length());
 
-        return Acos(Dot(tempVec));
+        return std::acos(Dot(tempVec));
     }
 
     float Vector3::Dot(Vector3 &_vector)

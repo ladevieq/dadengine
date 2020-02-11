@@ -1,8 +1,9 @@
 #include "matrix2x2.hpp"
 
+#include "../constants.hpp"
 #include "../vector/vector2.hpp"
 
-#include <cmath>
+#include <limits>
 
 
 namespace DadEngine
@@ -46,7 +47,8 @@ namespace DadEngine
         Matrix2x2 temp = *this;
         float determinant = Determinant();
 
-        if (determinant > FLOAT_EPSILON || determinant < FLOAT_EPSILON)
+        if (determinant > std::numeric_limits<decltype(determinant)>::epsilon() ||
+            determinant < std::numeric_limits<decltype(determinant)>::epsilon())
         {
             determinant = 1.f / determinant;
 
@@ -62,8 +64,8 @@ namespace DadEngine
 
     void Matrix2x2::Rotation(float _angle)
     {
-        m_11 = cos(_angle), m_12 = -sin(_angle);
-        m_12 = sin(_angle), m_12 = cos(_angle);
+        m_11 = std::cos(_angle), m_12 = -std::sin(_angle);
+        m_12 = std::sin(_angle), m_12 = std::cos(_angle);
     }
 
     void Matrix2x2::Scale(float _scaleX, float _scaleY)

@@ -3,10 +3,14 @@
 
 #pragma comment(lib, "OpenGL32.lib")
 
-#include <gl/GL.h>
-#include <glext.hpp>
-#include <wglext.hpp>
+#include "../../core/defines.hpp"
 
-#include "opengl/opengl-render-context.hpp"
+#if defined(WINDOWS)
+#include <Windows.h>
+#endif
+
+#include <gl/GL.h>
+#include <gl/glext.h>
+#include <gl/wglext.h>
 
 #endif //__OPENGL_HPP_

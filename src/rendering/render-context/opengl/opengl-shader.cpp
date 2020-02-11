@@ -5,58 +5,62 @@
 #include "opengl-vertex-shader.hpp"
 #include "opengl-wrapper.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-    OpenGLShader::OpenGLShader(VertexShader *_InVertexShader, GeometryShader *_InGeometryShader, FragmentShader *_InFragmentShader)
-        : Shader(_InVertexShader, _InGeometryShader, _InFragmentShader)
+    OpenGLShader::OpenGLShader(VertexShader *_vertexShader,
+                               GeometryShader *_geometryShader,
+                               FragmentShader *_fragmentShader)
+        : Shader(_vertexShader, _geometryShader, _fragmentShader)
     {
-        m_uiProgramID = OpenGLWrapper::glCreateProgram();
+        m_programID = glCreateProgram();
 
-        OpenGLWrapper::glAttachShader(m_uiProgramID, ((OpenGLVertexShader *)_InVertexShader)->m_uiShaderID);
-        OpenGLWrapper::glAttachShader(m_uiProgramID, ((OpenGLFragmentShader *)_InFragmentShader)->m_uiShaderID);
+        glAttachShader(m_programID,
+                       dynamic_cast<OpenGLVertexShader *>(_vertexShader)->m_shaderID);
+        glAttachShader(m_programID,
+                       dynamic_cast<OpenGLFragmentShader *>(_fragmentShader)->m_shaderID);
 
-        OpenGLWrapper::glLinkProgram(m_uiProgramID);
+        glLinkProgram(m_programID);
 
 #if defined(_DEBUG)
         DebugReport report;
         GLint isLinked = 0;
-        OpenGLWrapper::glGetProgramiv(m_uiProgramID, GL_LINK_STATUS, &isLinked);
+        glGetProgramiv(m_programID, GL_LINK_STATUS, &isLinked);
         if (isLinked == GL_FALSE)
         {
             GLint maxLength = 0;
-            OpenGLWrapper::glGetProgramiv(m_uiProgramID, GL_INFO_LOG_LENGTH, &maxLength);
+            glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &maxLength);
 
             // The maxLength includes the NULL character
             TArray<GLchar> infoLog(maxLength);
-            OpenGLWrapper::glGetProgramInfoLog(m_uiProgramID, maxLength, &maxLength, &infoLog[0]);
+            glGetProgramInfoLog(m_programID, maxLength, &maxLength, &infoLog[0]);
 
-            report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
-            report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_ERROR;
-            report.m_uiReportCode = DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_FAILED;
-            report.m_iLine = __LINE__;
-            report.m_sFile = __FILE__;
-            report.m_sMessage = infoLog.GetData();
+            report.m_contextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
+            report.m_reportTypeFlag = DEBUG_REPORT_TYPE_ERROR;
+            report.m_reportCode = DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_FAILED;
+            report.m_line = __LINE__;
+            report.m_file = __FILE__;
+            report.m_message = infoLog.GetData();
             LogDebugReport(report);
         }
 
         else
         {
-            report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
-            report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_INFORMATION;
-            report.m_uiReportCode = DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_SUCCEDED;
-            report.m_iLine = __LINE__;
-            report.m_sFile = __FILE__;
-            report.m_sMessage = "Shader program linking succeded";
+            report.m_contextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
+            report.m_reportTypeFlag = DEBUG_REPORT_TYPE_INFORMATION;
+            report.m_reportCode = DEBUG_REPORT_CODE_SHADER_PROGRAM_LINKING_SUCCEDED;
+            report.m_line = __LINE__;
+            report.m_file = __FILE__;
+            report.m_message = "Shader program linking succeded";
             LogDebugReport(report);
         }
 #endif
 
         // Bind function
-        // OpenGLWrapper::glUseProgram(m_uiProgramID);
+        // glUseProgram(m_uiProgramID);
     }
 
     OpenGLShader::~OpenGLShader()
     {
-        OpenGLWrapper::glDeleteProgram(m_uiProgramID);
+        glDeleteProgram(m_programID);
     }
-}
+} // namespace DadEngine

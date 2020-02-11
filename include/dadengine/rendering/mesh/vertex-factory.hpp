@@ -3,18 +3,21 @@
 
 #include "../../core/core.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
     class RawMesh;
     struct VertexInput;
 
-	class Vertexfactory
-	{
+    class Vertexfactory
+    {
 
-	public:
-
-		static void Create(RawMesh& _InMesh, TArray<float>& _OutData, TArray<VertexInput>& _InVerticesLayout, uint32_t& _OutStride);
-	};
-}
+        public:
+        static void Create(RawMesh &_mesh,
+                           TArray<float> &_data,
+                           TArray<VertexInput> &_verticesLayout,
+                           uint32_t &_stride);
+    };
+} // namespace DadEngine
 
 #endif //__VERTEX_FACTORY_HPP_
+

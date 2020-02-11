@@ -26,7 +26,7 @@ namespace DadEngine
             m_allocator.Allocate(_InItemCount);
 
             MemoryManager::Set(m_allocator.m_ptrMemLocation,
-                               *(int32_t *)&_InInitValue, _InItemCount);
+                               reinterpret_cast<int32_t>(&_InInitValue), _InItemCount);
         }
 
         TArray(T *_InValues, size_t _InItemCount)
@@ -36,8 +36,6 @@ namespace DadEngine
             MemoryManager::Copy(_InValues, m_allocator.m_ptrMemLocation,
                                 _InItemCount * sizeof(T));
         }
-
-        ~TArray() = default;
 
 
         TArray<T, Alloc> &operator=(const TArray &_InCpy)
@@ -137,13 +135,6 @@ namespace DadEngine
 
         uint32_t m_uiLastItemIndex = 0U;
     };
-
-    // using namespace DadEngine::Containers;
-
-    namespace Test
-    {
-        void TestTArray();
-    }
 } // namespace DadEngine
-
 #endif //__TARRAY_HPP_
+

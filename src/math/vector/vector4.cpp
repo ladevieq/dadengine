@@ -1,6 +1,9 @@
 #include "vector4.hpp"
 
-#include <cmath>
+#include "../constants.hpp"
+#include "../core/debug.hpp"
+
+#include <limits>
 
 namespace DadEngine
 {
@@ -18,14 +21,15 @@ namespace DadEngine
     {
         float length = Length();
 
-        LOG_ASSERT(length > FLOAT_EPSILON, "Vector length is null");
+        LogAssert(length > std::numeric_limits<decltype(length)>::epsilon(),
+                  "Vector length is null");
 
         *this /= length;
     }
 
     float Vector4::Length()
     {
-        return Square(SqLength());
+        return std::sqrt(SqLength());
     }
 
     float Vector4::SqLength()
@@ -35,9 +39,9 @@ namespace DadEngine
 
     float Vector4::Angle(Vector4 &_vector)
     {
-        Vector4 tempVec = _InVector / (Length() * _InVector.Length());
+        Vector4 tempVec = _vector / (Length() * _vector.Length());
 
-        return Acos(Dot(tempVec));
+        return std::acos(Dot(tempVec));
     }
 
     float Vector4::Dot(Vector4 &_vector)
@@ -65,7 +69,7 @@ namespace DadEngine
         return Vector4(x + _vector.x, y + _vector.y, z + _vector.z, w + _vector.w);
     }
 
-    Vector4 Vector4::operator-(Vector4f &_vector)
+    Vector4 Vector4::operator-(Vector4 &_vector)
     {
         return Vector4(x - _vector.x, y - _vector.y, z - _vector.z, w + _vector.w);
     }
@@ -80,7 +84,7 @@ namespace DadEngine
         return Vector4(x / _val, y / _val, z / _val, w / _val);
     }
 
-    Vector4 Vector4::operator^(Vector4 &_InVector)
+    Vector4 Vector4::operator^(Vector4 &_vector)
     {
         return Vector4(y * _vector.z - z * _vector.y,
                        z * _vector.x - x * _vector.z,

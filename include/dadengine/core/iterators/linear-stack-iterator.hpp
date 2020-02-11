@@ -19,8 +19,6 @@ namespace DadEngine
         {
         }
 
-        ~LinearStackIterator() = default;
-
 
         Iterator<T> &operator++()
         {

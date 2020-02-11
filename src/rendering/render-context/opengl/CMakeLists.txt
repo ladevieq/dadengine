@@ -1,13 +1,14 @@
-add_library(opengl opengl-command-buffer.cpp opengl-fragment-shader.cpp
-	opengl-framebuffer.cpp opengl-geometry-shader.cpp
-	opengl-render-command.cpp opengl-render-context.cpp
-	opengl-shader.cpp opengl-vertex-buffer.cpp
-	opengl-vertex-shader.cpp opengl-wrapper.cpp)
-
-target_compile_features(opengl PUBLIC cxx_std_17)
-
-# Don't use compiler specific flags
-set_target_properties(opengl PROPERTIES CXX_EXTENSIONS OFF)
-
-target_include_directories(opengl PRIVATE ${CMAKE_SOURCE_DIR}/include/thirdparty)
-target_include_directories(opengl PRIVATE ${CMAKE_SOURCE_DIR}/include/dadengine/rendering/render-context/opengl)
+set(
+        DADENGINE_RENDERING_SRC
+        ${DADENGINE_RENDERING_SRC}
+        render-context/opengl/opengl-command-buffer.cpp
+        render-context/opengl/opengl-fragment-shader.cpp
+        render-context/opengl/opengl-framebuffer.cpp
+        render-context/opengl/opengl-geometry-shader.cpp
+        render-context/opengl/opengl-render-command.cpp
+        render-context/opengl/opengl-render-context.cpp
+        render-context/opengl/opengl-shader.cpp
+        render-context/opengl/opengl-vertex-buffer.cpp
+        render-context/opengl/opengl-vertex-shader.cpp
+        render-context/opengl/opengl-wrapper.cpp PARENT_SCOPE
+)

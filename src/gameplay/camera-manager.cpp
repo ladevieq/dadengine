@@ -1,6 +1,6 @@
 #include "camera-manager.hpp"
 
-namespace DadEngine::Gameplay
+namespace DadEngine
 {
 	CameraManager* s_CameraManager = new CameraManager();
 

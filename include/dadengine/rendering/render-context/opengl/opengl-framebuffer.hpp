@@ -1,10 +1,11 @@
 #ifndef __OPENGL_FRAMEBUFFER_HPP_
 #define __OPENGL_FRAMEBUFFER_HPP_
 
-#include <stdint.h>
 #include "../../framebuffer.hpp"
+#include "opengl.hpp"
 
-namespace DadEngine::Rendering
+
+namespace DadEngine
 {
     struct OpenGLFrmaebufferAttachment
     {
@@ -20,12 +21,12 @@ namespace DadEngine::Rendering
         ~OpenGLFramebuffer();
 
 
-        uint32_t m_uiFramebufferIndex = 0U;
+        GLuint m_framebufferIndex = 0U;
 
         private:
-        void Attach(OpenGLFrmaebufferAttachment &_InAttachment);
-
+        void Attach(OpenGLFrmaebufferAttachment &_attachment);
     };
-} // namespace DadEngine::Rendering
+} // namespace DadEngine
 
 #endif //__OPENGL_FRAMEBUFFER_HPP_
+

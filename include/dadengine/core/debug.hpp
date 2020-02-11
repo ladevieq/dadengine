@@ -68,7 +68,7 @@ namespace DadEngine //::Debug
                     DebugReportTypeFlags _reportType,
                     DebugReportCode _errorCode,
                     const char *_message,
-                    const uint32_t _line,
+                    uint32_t _line,
                     const char *_filename);
 
         /*DebugReport(DebugReportContextFlags _InContextFlag,
@@ -82,7 +82,7 @@ namespace DadEngine //::Debug
         DebugReportContextFlags m_contextFlag = MAX_DEBUG_REPORT_CONTEXT;
         DebugReportTypeFlags m_reportTypeFlag = MAX_DEBUG_REPORT_TYPE;
         DebugReportCode m_reportCode = MAX_DEBUG_REPORT_CODE;
-        const uint32_t m_line = 0U; // May need change
+        uint32_t m_line = 0U; // May need change
         const char *m_file = nullptr; // May need change
         const char *m_message = nullptr;
     };
@@ -107,6 +107,15 @@ namespace DadEngine //::Debug
         {
             // TODO: Add a message box
             printf("[%s, %s, %u]: %s\n", "Assertion", _file, _line, _message);
+        }
+    }
+
+    inline void LogAssert(const bool _expression, const char *const _message)
+    {
+        if (!_expression)
+        {
+            // TODO: Add a message box
+            printf("[%s, %s, %u]: %s\n", "Assertion", "0", 0, _message);
         }
     }
 

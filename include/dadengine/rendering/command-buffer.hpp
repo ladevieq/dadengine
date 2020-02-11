@@ -1,21 +1,21 @@
 #ifndef __COMMAND_BUFFER_HPP_
 #define __COMMAND_BUFFER_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
     struct Color;
     class VertexBuffer;
     class RenderContext;
-	class Shader;
+    class Shader;
     class RenderPass;
     class Framebuffer;
 
     class CommandBuffer
     {
         public:
-        CommandBuffer(RenderContext *_InRenderContext);
+        CommandBuffer(RenderContext *_renderContext);
 
 
         virtual void BeginRecord() = 0;
@@ -24,28 +24,29 @@ namespace DadEngine::Rendering
 
 
         // Commands
-        void ClearColor(Color _ColorValue);
+        void ClearColor(Color _colorValue);
 
-        void ClearDepthStencil(float _DepthValue, uint32_t _InStencilValue);
+        void ClearDepthStencil(float _depthValue, uint32_t _stencilValue);
 
         void Present();
 
-        void BindShader(Shader *_InShader);
+        void BindShader(Shader *_shader);
 
-        void BindVertexBuffer(VertexBuffer *_InVertexBuffer);
+        void BindVertexBuffer(VertexBuffer *_vertexBuffer);
 
-        void DrawVertexBuffer(VertexBuffer *_InVertexBuffer);
+        void DrawVertexBuffer(VertexBuffer *_vertexBuffer);
 
-        void DrawVertexBufferMultipleTimes(VertexBuffer *_InVertexBuffer, int32_t _InInstanceCount);
+        void DrawVertexBufferMultipleTimes(VertexBuffer *_vertexBuffer, int32_t _instanceCount);
 
-        void BeginRenderPass(RenderPass *_InRenderPass, Framebuffer *_InFrameBuffer);
+        void BeginRenderPass(RenderPass *_renderPass, Framebuffer *_frameBuffer);
 
-        void EndRenderPass(RenderPass *_InRenderPass);
+        void EndRenderPass(RenderPass *_renderPass);
 
 
         protected:
         RenderContext *m_ptrRenderContext = nullptr;
     };
-} // namespace DadEngine::Rendering
+} // namespace DadEngine
 
 #endif //__COMMAND_BUFFER_HPP_
+

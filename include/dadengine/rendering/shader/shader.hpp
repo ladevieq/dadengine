@@ -3,7 +3,7 @@
 
 #include "../../core/core.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
     struct VertexInput;
 
@@ -11,50 +11,70 @@ namespace DadEngine::Rendering
     {
         VertexShader(const char *_InShaderCode, TArray<VertexInput> &_InVertexInputLayout);
 
+        virtual ~VertexShader()
+        {
+        }
+
         /*
             0U, VERTEX_INPUT_TYPE_POSITION
             1U, VERTEX_INPUT_TYPE_COLOR0
             2U, VERTEX_INPUT_TYPE_NORMAL
         */
         TArray<VertexInput> m_vertexInputLayout;
-        const char *m_sCode = nullptr;
+        const char *m_code = nullptr;
     };
 
     struct GeometryShader
     {
-        GeometryShader(const char *_InShaderCode) : m_sCode(_InShaderCode)
+        GeometryShader(const char *_shaderCode) : m_code(_shaderCode)
         {
         }
 
-        const char *m_sCode = nullptr;
+        virtual ~GeometryShader()
+        {
+        }
+
+        const char *m_code = nullptr;
     };
 
     struct FragmentShader
     {
-        FragmentShader(const char *_InShaderCode) : m_sCode(_InShaderCode)
+        FragmentShader(const char *_shaderCode) : m_code(_shaderCode)
         {
         }
 
-        const char *m_sCode = nullptr;
+        virtual ~FragmentShader()
+        {
+        }
+
+        const char *m_code = nullptr;
     };
 
 
     struct TesselationShader
     {
-        TesselationShader(const char *_InShaderCode) : m_sCode(_InShaderCode)
+        TesselationShader(const char *_shaderCode) : m_code(_shaderCode)
         {
         }
 
-        const char *m_sCode = nullptr;
+        virtual ~TesselationShader()
+        {
+        }
+
+        const char *m_code = nullptr;
     };
 
     struct ComputeShader
     {
-        ComputeShader(const char *_InShaderCode) : m_sCode(_InShaderCode)
+        ComputeShader(const char *_shaderCode) : m_code(_shaderCode)
         {
         }
 
-        const char *m_sCode = nullptr;
+        virtual ~ComputeShader()
+        {
+        }
+
+        const char *m_code = nullptr;
     };
 
 
@@ -64,9 +84,13 @@ namespace DadEngine::Rendering
     {
 
         public:
-        Shader(VertexShader *_InVertexShader, GeometryShader *_InGeometryShader, FragmentShader *_InFragmentShader)
-            : m_ptrVertexShader(_InVertexShader), m_ptrGeometryShader(_InGeometryShader),
-              m_ptrFragmentShader(_InFragmentShader)
+        Shader(VertexShader *_vertexShader, GeometryShader *_geometryShader, FragmentShader *_fragmentShader)
+            : m_ptrVertexShader(_vertexShader), m_ptrGeometryShader(_geometryShader),
+              m_ptrFragmentShader(_fragmentShader)
+        {
+        }
+
+        virtual ~Shader()
         {
         }
 
@@ -74,6 +98,6 @@ namespace DadEngine::Rendering
         GeometryShader *m_ptrGeometryShader = nullptr;
         FragmentShader *m_ptrFragmentShader = nullptr;
     };
-} // namespace DadEngine::Rendering
+} // namespace DadEngine
 
 #endif //!__SHADER_HPP_

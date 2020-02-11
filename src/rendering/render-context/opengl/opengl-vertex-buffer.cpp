@@ -2,29 +2,29 @@
 
 #include "opengl-wrapper.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-    OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t _InVertexCount,
-                                           TArray<VertexInput> &_InVerticesLayout,
-                                           TArray<float> &_InData,
-                                           uint32_t _InStride)
-        :
-		VertexBuffer(_InVertexCount, _InVerticesLayout, _InData, _InStride)
-	{
-		OpenGLWrapper::glGenVertexArrays(1U, &m_uiArrayIndex);
-		OpenGLWrapper::glBindVertexArray(m_uiArrayIndex);
+    OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t _vertexCount,
+                                           TArray<VertexInput> &_verticesLayout,
+                                           TArray<float> &_data,
+                                           uint32_t _stride)
+        : VertexBuffer(_vertexCount, _verticesLayout, _data, _stride)
+    {
+        glGenVertexArrays(1U, &m_arrayIndex);
+        glBindVertexArray(m_arrayIndex);
 
-		OpenGLWrapper::glGenBuffers(1U, &m_uiBufferIndex);
-		OpenGLWrapper::glBindBuffer(GL_ARRAY_BUFFER, m_uiBufferIndex);
-		OpenGLWrapper::glBufferData(GL_ARRAY_BUFFER, m_Data.Size() * sizeof(m_Data[0]), m_Data.GetData(), GL_STATIC_DRAW);
+        glGenBuffers(1U, &m_bufferIndex);
+        glBindBuffer(GL_ARRAY_BUFFER, m_bufferIndex);
+        glBufferData(GL_ARRAY_BUFFER, m_data.Size() * sizeof(m_data[0]),
+                     m_data.GetData(), GL_STATIC_DRAW);
 
-		OpenGLWrapper::glBindVertexArray(0U);
-		OpenGLWrapper::glBindBuffer(GL_ARRAY_BUFFER, 0U);
-	}
+        glBindVertexArray(0U);
+        glBindBuffer(GL_ARRAY_BUFFER, 0U);
+    }
 
-	OpenGLVertexBuffer::~OpenGLVertexBuffer()
-	{
-		OpenGLWrapper::glDeleteBuffers(1U, &m_uiBufferIndex);
-		OpenGLWrapper::glDeleteVertexArrays(1U, &m_uiArrayIndex);
-	}
-}
+    OpenGLVertexBuffer::~OpenGLVertexBuffer()
+    {
+        glDeleteBuffers(1U, &m_bufferIndex);
+        glDeleteVertexArrays(1U, &m_arrayIndex);
+    }
+} // namespace DadEngine

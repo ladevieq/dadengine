@@ -56,14 +56,21 @@ namespace DadEngine
 
         void operator^=(Vector3 &_vector);
 
+        static inline Vector3 Zero()
+        {
+            return Vector3(0.f, 0.f, 0.f);
+        }
+
+        static inline Vector3 One()
+        {
+            return Vector3(1.f, 1.f, 1.f);
+        }
+
 
         float x = 0.f;
         float y = 0.f;
         float z = 0.f;
     };
-
-    static const Vector3 NullVector3(0.f, 0.f, 0.f);
 } // namespace DadEngine
 
 #endif //__VECTOR3_HPP_
-

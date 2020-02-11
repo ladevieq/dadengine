@@ -1,23 +1,25 @@
 #ifndef __OPENGL_VERTEX_SHADER_HPP_
 #define __OPENGL_VERTEX_SHADER_HPP_
 
-#include <Windows.h>
-#include <gl/GL.h>
 #include "../../shader/shader.hpp"
+#include "opengl.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
     class OpenGLVertexShader : public VertexShader
     {
         public:
-        OpenGLVertexShader(const char *_InShaderCode, size_t _InShaderCodeSize, TArray<VertexInput> &_InVertexInputLayout);
+        OpenGLVertexShader(const char *_shaderCode,
+                           size_t _shaderCodeSize,
+                           TArray<VertexInput> &_vertexInputLayout);
 
 
         ~OpenGLVertexShader();
 
 
-        GLuint m_uiShaderID = 0U;
+        GLuint m_shaderID = 0U;
     };
-} // namespace DadEngine::Rendering
+} // namespace DadEngine
 
 #endif //!__OPENGL_VERTEX_SHADER_HPP_
+

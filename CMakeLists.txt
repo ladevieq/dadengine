@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # All warnings and no c++ 98 compatibility
-add_compile_options(-Wall -Wextra -Wno-c++98-compat -Wno-reserved-id-macro -Wno-missing-variable-declarations -std=c++17)
+add_compile_options(-fcolor-diagnostics -fansi-escape-codes -Wall -Wextra -Wno-c++98-compat -Wno-reserved-id-macro -Wno-missing-variable-declarations -Wc++17-extensions -Wno-comma)
 
 # Enable test and define the needed scope to run ctest
 enable_testing()

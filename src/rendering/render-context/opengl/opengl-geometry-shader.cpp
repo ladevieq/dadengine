@@ -2,50 +2,50 @@
 
 #include "opengl-wrapper.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-    OpenGLGeometryShader::OpenGLGeometryShader(const char *_InShaderCode, size_t _InShaderCodeSize)
-        : GeometryShader(_InShaderCode)
+    OpenGLGeometryShader::OpenGLGeometryShader(const char *_shaderCode, size_t _shaderCodeSize)
+        : GeometryShader(_shaderCode)
     {
-        m_uiShaderID = OpenGLWrapper::glCreateShader(GL_GEOMETRY_SHADER);
+        m_shaderID = glCreateShader(GL_GEOMETRY_SHADER);
 
-        OpenGLWrapper::glShaderSource(m_uiShaderID, 1U, &_InShaderCode, NULL);
+        glShaderSource(m_shaderID, 1U, &_shaderCode, NULL);
 
-        OpenGLWrapper::glCompileShader(m_uiShaderID);
+        glCompileShader(m_shaderID);
 
 #if defined(_DEBUG)
         GLint isCompiled;
         DebugReport report;
-        OpenGLWrapper::glGetShaderiv(m_uiShaderID, GL_COMPILE_STATUS, &isCompiled);
+        glGetShaderiv(m_shaderID, GL_COMPILE_STATUS, &isCompiled);
         if (isCompiled == GL_FALSE)
         {
             GLint maxLength = 0;
-            OpenGLWrapper::glGetShaderiv(m_uiShaderID, GL_INFO_LOG_LENGTH, &maxLength);
+            glGetShaderiv(m_shaderID, GL_INFO_LOG_LENGTH, &maxLength);
 
             // The maxLength includes the NULL character
             TArray<GLchar> infoLog(maxLength);
-            OpenGLWrapper::glGetShaderInfoLog(m_uiShaderID, maxLength, &maxLength, &infoLog[0]);
+            glGetShaderInfoLog(m_shaderID, maxLength, &maxLength, &infoLog[0]);
 
-            report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
-            report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_ERROR;
-            report.m_uiReportCode = DEBUG_REPORT_CODE_SHADER_COMPILING_FAILED;
-            report.m_sMessage = infoLog.GetData();
+            report.m_contextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
+            report.m_reportTypeFlag = DEBUG_REPORT_TYPE_ERROR;
+            report.m_reportCode = DEBUG_REPORT_CODE_SHADER_COMPILING_FAILED;
+            report.m_message = infoLog.GetData();
             LogDebugReport(report);
         }
 
         else
         {
-            report.m_uiContextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
-            report.m_uiReportTypeFlag = DEBUG_REPORT_TYPE_INFORMATION;
-            report.m_uiReportCode = DEBUG_REPORT_CODE_SHADER_COMPILING_SUCCEDED;
-            report.m_sMessage = "Shader compilation succeded";
+            report.m_contextFlag = DEBUG_REPORT_CONTEXT_OPENGL;
+            report.m_reportTypeFlag = DEBUG_REPORT_TYPE_INFORMATION;
+            report.m_reportCode = DEBUG_REPORT_CODE_SHADER_COMPILING_SUCCEDED;
+            report.m_message = "Shader compilation succeded";
             LogDebugReport(report);
         }
 #endif
     }
 
-    OpenGLGeometryShader ::~OpenGLGeometryShader()
+    OpenGLGeometryShader::~OpenGLGeometryShader()
     {
-        OpenGLWrapper::glDeleteShader(m_uiShaderID);
+        glDeleteShader(m_shaderID);
     }
-}
+} // namespace DadEngine

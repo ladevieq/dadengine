@@ -2,10 +2,10 @@
 
 #include "../mesh/vertex-input-layout.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-    VertexShader::VertexShader(const char *_InShaderCode, TArray<VertexInput> &_InVertexInputLayout)
-        : m_vertexInputLayout(_InVertexInputLayout), m_sCode(_InShaderCode)
+    VertexShader::VertexShader(const char *_shaderCode, TArray<VertexInput> &_vertexInputLayout)
+        : m_vertexInputLayout(_vertexInputLayout), m_code(_shaderCode)
     {
     }
-} // namespace DadEngine::Rendering
+} // namespace DadEngine

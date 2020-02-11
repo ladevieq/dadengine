@@ -28,9 +28,9 @@ namespace DadEngine
         }
 
 
-        Vector3 m_position = NullVector3;
-        Vector3 m_scale = NullVector3;
-        Quaternion m_rotation = IdentityQuaternion;
+        Vector3 m_position = Vector3::Zero();
+        Vector3 m_scale = Vector3::Zero();
+        Quaternion m_rotation = Quaternion::Identity();
     };
 } // namespace DadEngine
 

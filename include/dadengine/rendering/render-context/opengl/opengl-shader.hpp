@@ -1,29 +1,29 @@
 #ifndef __OPENGL_SHADER_HPP_
 #define __OPENGL_SHADER_HPP_
 
-#include <Windows.h>
-#include <gl/GL.h>
+#include "opengl.hpp"
+#include "shader/shader.hpp"
 
-#include "../../shader/shader.hpp"
-
-namespace DadEngine::Rendering
+namespace DadEngine
 {
     struct VertexShader;
     struct GeometryShader;
     struct FragmentShader;
 
-	// Object pipeline ?
-	class OpenGLShader : public Shader
-	{
-	public:
+    // Object pipeline ?
+    class OpenGLShader : public Shader
+    {
+        public:
+        OpenGLShader(VertexShader *_vertexShader,
+                     GeometryShader *_geometryShader,
+                     FragmentShader *_fragmentShader);
 
-		OpenGLShader(VertexShader *_InVertexShader, GeometryShader *_InGeometryShader, FragmentShader *_InFragmentShader);
-
-		~OpenGLShader();
+        virtual ~OpenGLShader();
 
 
-		GLuint m_uiProgramID = 0U;
-	};
-}
+        GLuint m_programID = 0U;
+    };
+} // namespace DadEngine
 
 #endif //!__OPENGL_SHADER_HPP_
+

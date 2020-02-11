@@ -3,7 +3,6 @@
 
 #include <vulkan/vulkan.h>
 
-#include "vulkania/vulkan-render-context.hpp"
 #include "vulkania/vulkan-command-buffer.hpp"
 #include "vulkania/vulkan-debug.hpp"
 #include "vulkania/vulkan-depth-stencil-buffer.hpp"
@@ -22,3 +21,4 @@
 
 
 #endif //__VULKAN_HPP_
+

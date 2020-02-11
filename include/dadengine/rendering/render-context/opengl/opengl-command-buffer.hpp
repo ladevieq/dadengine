@@ -4,24 +4,24 @@
 #include "../../../core/core.hpp"
 #include "../../command-buffer.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
     class RenderContext;
     struct OpenGLRenderCommand;
 
-	class OpenGLCommandBuffer : public CommandBuffer
-	{
+    class OpenGLCommandBuffer : public CommandBuffer
+    {
 
-	public:
+        public:
+        OpenGLCommandBuffer(RenderContext *_renderContext);
 
-		OpenGLCommandBuffer(RenderContext *_InRenderContext);
+        void BeginRecord() override final;
 
-		void BeginRecord() override final;
+        void EndRecord() override final;
 
-		void EndRecord() override final;
-
-		TArray<OpenGLRenderCommand*> m_Commands;
-	};
-}
+        TArray<OpenGLRenderCommand *> m_commands;
+    };
+} // namespace DadEngine
 
 #endif //!__OPENGL_COMMAND_BUFFER_HPP_
+

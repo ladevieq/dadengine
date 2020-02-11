@@ -1,42 +1,42 @@
 #include "vertex-input-layout.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-    void VertexInput::GetInputTypeInfo(size_t &_OutInputTypeSize, uint32_t &_OutInputTypeElementCount)
+    void VertexInput::GetInputTypeInfo(size_t &_inputTypeSize, uint32_t &_inputTypeElementCount)
     {
-        switch (uiVertexInputType)
+        switch (vertexInputType)
         {
         case VERTEX_INPUT_TYPE_POSITION:
         {
-            _OutInputTypeElementCount = 3U;
-            _OutInputTypeSize = _OutInputTypeElementCount * sizeof(float);
+            _inputTypeElementCount = 3U;
+            _inputTypeSize = _inputTypeElementCount * sizeof(float);
             break;
         }
 
         case VERTEX_INPUT_TYPE_COLOR:
         {
-            _OutInputTypeElementCount = 3U;
-            _OutInputTypeSize = _OutInputTypeElementCount * sizeof(float);
+            _inputTypeElementCount = 3U;
+            _inputTypeSize = _inputTypeElementCount * sizeof(float);
             break;
         }
 
-        default:
+        case MAX_VERTEX_INPUT_TYPE:
             break;
         }
     }
 
-    void VertexInput::GetLayoutStride(TArray<VertexInput> &_InVertexLayout, uint32_t &_OutStride)
+    void VertexInput::GetLayoutStride(TArray<VertexInput> &_vertexLayout, uint32_t &_stride)
     {
-        _OutStride = 0U;
+        _stride = 0U;
 
-        for (VertexInput vi : _InVertexLayout)
+        for (VertexInput vi : _vertexLayout)
         {
             size_t size;
             uint32_t count;
 
             vi.GetInputTypeInfo(size, count);
 
-            _OutStride += (uint32_t)size;
+            _stride += static_cast<uint32_t>(size);
         }
     }
-}
+} // namespace DadEngine

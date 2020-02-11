@@ -1,15 +1,15 @@
 #include "vertex-factory.hpp"
 
-#include "vertex-input-layout.hpp"
 #include "raw-mesh.hpp"
+#include "vertex-input-layout.hpp"
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-    void Vertexfactory::Create(RawMesh &_InMesh,
-                                      TArray<float> &_OutData,
-                                      TArray<VertexInput> &_InVerticesLayout,
-                                      uint32_t &_OutStride)
+    void Vertexfactory::Create(RawMesh &_mesh,
+                               TArray<float> &_data,
+                               TArray<VertexInput> &_verticesLayout,
+                               uint32_t &_stride)
     {
-        _InMesh.Create(_InVerticesLayout, _OutData, _OutStride);
+        _mesh.Create(_verticesLayout, _data, _stride);
     }
-} // namespace DadEngine::Rendering
+} // namespace DadEngine

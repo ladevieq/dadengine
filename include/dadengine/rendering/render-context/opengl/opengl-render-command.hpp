@@ -1,11 +1,12 @@
 #ifndef __OPENGL_RENDER_COMMAND_HPP_
 #define __OPENGL_RENDER_COMMAND_HPP_
 
-#include <stdint.h>
 #include "../../color.hpp"
 
+#include <cstdint>
 
-namespace DadEngine::Rendering
+
+namespace DadEngine
 {
     class Shader;
     class OpenGLShader;
@@ -21,19 +22,19 @@ namespace DadEngine::Rendering
 
     struct OpenGLCommandClearColorBuffer : public OpenGLRenderCommand
     {
-        Color m_ClearColor = {};
+        Color m_clearColor = {};
 
-        OpenGLCommandClearColorBuffer(Color &_InClearColorValue);
+        OpenGLCommandClearColorBuffer(Color &_clearColorValue);
 
         void Execute() override final;
     };
 
     struct OpenGLCommandClearDepthStencilBuffer : public OpenGLRenderCommand
     {
-        double m_ClearDepthValue = 0.0;
-        uint32_t m_ClearStencilValue = 0U;
+        double m_clearDepthValue = 0.0;
+        uint32_t m_clearStencilValue = 0U;
 
-        OpenGLCommandClearDepthStencilBuffer(double _InClearDepthValue, uint32_t _InClearStencilValue);
+        OpenGLCommandClearDepthStencilBuffer(double _clearDepthValue, uint32_t _clearStencilValue);
 
 
         void Execute() override final;
@@ -41,28 +42,28 @@ namespace DadEngine::Rendering
 
     struct OpenGLCommandDraw : public OpenGLRenderCommand
     {
-        VertexBuffer *m_VertexBuffer = nullptr;
+        VertexBuffer *m_vertexBuffer = nullptr;
 
-        OpenGLCommandDraw(VertexBuffer *_InVertexBuffer);
+        OpenGLCommandDraw(VertexBuffer *_vertexBuffer);
 
         void Execute() override final;
     };
 
     struct OpenGLCommandDrawMultiples : public OpenGLRenderCommand
     {
-        VertexBuffer *m_VertexBuffer = nullptr;
-        int32_t m_InstanceCount = 0;
+        VertexBuffer *m_vertexBuffer = nullptr;
+        int32_t m_instanceCount = 0;
 
-        OpenGLCommandDrawMultiples(VertexBuffer *_InVertexBuffer, int32_t _InInstanceCount);
+        OpenGLCommandDrawMultiples(VertexBuffer *_vertexBuffer, int32_t _instanceCount);
 
         void Execute() override final;
     };
 
     struct OpenGLBindVertexBuffer : public OpenGLRenderCommand
     {
-        VertexBuffer *m_VertexBuffer = nullptr;
+        VertexBuffer *m_vertexBuffer = nullptr;
 
-        OpenGLBindVertexBuffer(VertexBuffer *_InVertexBuffer);
+        OpenGLBindVertexBuffer(VertexBuffer *_vertexBuffer);
 
 
         void Execute() override final;
@@ -71,28 +72,31 @@ namespace DadEngine::Rendering
 
     struct OpenGLBindShaderProgram : public OpenGLRenderCommand
     {
-        OpenGLShader *m_Shader = nullptr;
+        OpenGLShader *m_shader = nullptr;
 
-        OpenGLBindShaderProgram(OpenGLShader *_InShader);
+        OpenGLBindShaderProgram(OpenGLShader *_shader);
 
 
         void Execute() override final;
     };
 
 
-    void CommandClearColorBuffer(OpenGLCommandBuffer *_InCmdBuffer, Color &_InClearColorValue);
+    void CommandClearColorBuffer(OpenGLCommandBuffer *_cmdBuffer, Color &_clearColorValue);
 
-    void CommandClearDepthStencilBuffer(OpenGLCommandBuffer *_InCmdBuffer,
-                                        double _InClearDepthValue,
-                                        uint32_t _InClearStencilValue);
+    void CommandClearDepthStencilBuffer(OpenGLCommandBuffer *_cmdBuffer,
+                                        double _clearDepthValue,
+                                        uint32_t _clearStencilValue);
 
-    void CommandDraw(OpenGLCommandBuffer *_InCmdBuffer, VertexBuffer *_InVertexBuffer);
+    void CommandDraw(OpenGLCommandBuffer *_cmdBuffer, VertexBuffer *_vertexBuffer);
 
-    void CommandDrawMultiples(OpenGLCommandBuffer *_InCmdBuffer, VertexBuffer *_InVertexBuffer, int32_t _InInstanceCount);
+    void CommandDrawMultiples(OpenGLCommandBuffer *_cmdBuffer,
+                              VertexBuffer *_vertexBuffer,
+                              int32_t _instanceCount);
 
-    void CommandBindVertexBuffer(OpenGLCommandBuffer *_InCmdBuffer, VertexBuffer *_InVertexBuffer);
+    void CommandBindVertexBuffer(OpenGLCommandBuffer *_cmdBuffer, VertexBuffer *_vertexBuffer);
 
-    void CommandBindShaderProgram(OpenGLCommandBuffer *_InCmdBuffer, Shader *_InVertexBuffer);
-} // namespace DadEngine::Rendering
+    void CommandBindShaderProgram(OpenGLCommandBuffer *_cmdBuffer, Shader *_shader);
+} // namespace DadEngine
 
 #endif //__OPENGL_RENDER_COMMAND_HPP_
+

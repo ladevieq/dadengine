@@ -1,35 +1,36 @@
 #ifndef __IMAGE_HPP_
 #define __IMAGE_HPP_
 
-#include <stdint.h>
+#include <cstdint>
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-	struct Extent2D
-	{
+    struct Extent2D
+    {
         uint32_t width;
         uint32_t height;
-	};
+    };
 
-	class Image
-	{
+    class Image
+    {
 
-	public:
+        public:
+        Image() = default;
 
-		Image() = default;
+        Image(Extent2D &_imageSize) : m_imageSize(_imageSize)
+        {
+        }
 
-		Image(Extent2D & _InImageSize)
-			:m_ImageSize(_InImageSize)
-		{}
+        Extent2D &GetImageSize()
+        {
+            return m_imageSize;
+        }
 
-		Extent2D& GetImageSize() { return m_ImageSize; }
 
-
-	protected:
-		
-		Extent2D m_ImageSize;
-
-	};
-}
+        protected:
+        Extent2D m_imageSize;
+    };
+} // namespace DadEngine
 
 #endif //__IMAGE_HPP_
+

@@ -1,137 +1,145 @@
 #include "opengl-render-command.hpp"
 
-#include <Windows.h>
-
-#include "opengl-vertex-buffer.hpp"
+#include "../../mesh/vertex-input-layout.hpp"
 #include "opengl-command-buffer.hpp"
 #include "opengl-shader.hpp"
+#include "opengl-vertex-buffer.hpp"
 #include "opengl-wrapper.hpp"
-#include "../../mesh/vertex-input-layout.hpp"
 
 
-namespace DadEngine::Rendering
+namespace DadEngine
 {
-    OpenGLCommandClearColorBuffer::OpenGLCommandClearColorBuffer(Color &_InClearColorValue)
-        : m_ClearColor(_InClearColorValue)
+    OpenGLCommandClearColorBuffer::OpenGLCommandClearColorBuffer(Color &_clearColorValue)
+        : m_clearColor(_clearColorValue)
     {
     }
 
     void OpenGLCommandClearColorBuffer::Execute()
     {
-        glClearColor(m_ClearColor.r, m_ClearColor.g, m_ClearColor.b, m_ClearColor.a);
+        glClearColor(m_clearColor.r, m_clearColor.g, m_clearColor.b,
+                     m_clearColor.a);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
 
-    OpenGLCommandClearDepthStencilBuffer::OpenGLCommandClearDepthStencilBuffer(double _InClearDepthValue,
-                                                                               uint32_t _InClearStencilValue)
-        : m_ClearDepthValue(_InClearDepthValue), m_ClearStencilValue(_InClearStencilValue)
+    OpenGLCommandClearDepthStencilBuffer::OpenGLCommandClearDepthStencilBuffer(double _clearDepthValue,
+                                                                               uint32_t _clearStencilValue)
+        : m_clearDepthValue(_clearDepthValue), m_clearStencilValue(_clearStencilValue)
     {
     }
 
     void OpenGLCommandClearDepthStencilBuffer::Execute()
     {
-        glClearDepth(m_ClearDepthValue);
-        glClearStencil(m_ClearStencilValue);
+        glClearDepth(m_clearDepthValue);
+        glClearStencil(m_clearStencilValue);
         glClear(GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     }
 
 
-    OpenGLCommandDraw::OpenGLCommandDraw(VertexBuffer *_InVertexBuffer)
-        : m_VertexBuffer(_InVertexBuffer)
+    OpenGLCommandDraw::OpenGLCommandDraw(VertexBuffer *_vertexBuffer)
+        : m_vertexBuffer(_vertexBuffer)
     {
     }
 
     void OpenGLCommandDraw::Execute()
     {
-        OpenGLWrapper::glDrawArrays(GL_TRIANGLES, 0U, m_VertexBuffer->m_uiVertexCount);
+        glDrawArrays(GL_TRIANGLES, 0U, m_vertexBuffer->m_vertexCount);
     }
 
 
-    OpenGLCommandDrawMultiples::OpenGLCommandDrawMultiples(VertexBuffer *_InVertexBuffer, int32_t _InInstanceCount)
-        : m_VertexBuffer(_InVertexBuffer), m_InstanceCount(_InInstanceCount)
+    OpenGLCommandDrawMultiples::OpenGLCommandDrawMultiples(VertexBuffer *_vertexBuffer,
+                                                           int32_t _instanceCount)
+        : m_vertexBuffer(_vertexBuffer), m_instanceCount(_instanceCount)
     {
     }
 
     void OpenGLCommandDrawMultiples::Execute()
     {
-        OpenGLWrapper::glDrawArrayInstanced(GL_TRIANGLES, 0U, m_VertexBuffer->m_uiVertexCount, m_InstanceCount);
+        glDrawArrayInstanced(GL_TRIANGLES, 0U, m_vertexBuffer->m_vertexCount, m_instanceCount);
     }
 
 
-    OpenGLBindVertexBuffer::OpenGLBindVertexBuffer(VertexBuffer *_InVertexBuffer)
-        : m_VertexBuffer(_InVertexBuffer)
+    OpenGLBindVertexBuffer::OpenGLBindVertexBuffer(VertexBuffer *_vertexBuffer)
+        : m_vertexBuffer(_vertexBuffer)
     {
     }
 
     void OpenGLBindVertexBuffer::Execute()
     {
         // Binding a VBO linked to a VAO and linking vertices inputs to the buffer
-        OpenGLWrapper::glBindBuffer(GL_ARRAY_BUFFER, ((OpenGLVertexBuffer*)m_VertexBuffer)->m_uiBufferIndex);
+        glBindBuffer(GL_ARRAY_BUFFER,
+                     dynamic_cast<OpenGLVertexBuffer *>(m_vertexBuffer)->m_bufferIndex);
 
         size_t offset = 0U;
 
-        for (VertexInput input : m_VertexBuffer->m_verticesLayout)
+        for (VertexInput input : m_vertexBuffer->m_verticesLayout)
         {
             uint32_t count;
             size_t size;
 
             input.GetInputTypeInfo(size, count);
 
-            OpenGLWrapper::glVertexAttribPointer(input.uiIndex, count, GL_FLOAT, GL_FALSE,
-                                                 (GLsizei)m_VertexBuffer->m_uiVertexLayoutStride,
-                                                 (void *)offset);
-            OpenGLWrapper::glEnableVertexAttribArray(input.uiIndex);
+            glVertexAttribPointer(input.index, count, GL_FLOAT, GL_FALSE,
+                                  static_cast<GLsizei>(m_vertexBuffer->m_vertexLayoutStride),
+                                  reinterpret_cast<void *>(offset));
+            glEnableVertexAttribArray(input.index);
 
             offset += size;
         }
 
         // Unbinding the buffer linked to a VAO
-        OpenGLWrapper::glBindBuffer(GL_ARRAY_BUFFER, 0U);
+        glBindBuffer(GL_ARRAY_BUFFER, 0U);
 
         // Bind the VAO
-        OpenGLWrapper::glBindVertexArray(((OpenGLVertexBuffer *)m_VertexBuffer)->m_uiArrayIndex);
+        glBindVertexArray(dynamic_cast<OpenGLVertexBuffer *>(m_vertexBuffer)->m_arrayIndex);
     }
 
 
-    OpenGLBindShaderProgram::OpenGLBindShaderProgram(OpenGLShader *_InShader) : m_Shader(_InShader)
+    OpenGLBindShaderProgram::OpenGLBindShaderProgram(OpenGLShader *_shader)
+        : m_shader(_shader)
     {
     }
 
     void OpenGLBindShaderProgram::Execute()
     {
-        OpenGLWrapper::glUseProgram(m_Shader->m_uiProgramID);
+        glUseProgram(m_shader->m_programID);
     }
 
 
-    void CommandClearColorBuffer(OpenGLCommandBuffer *_InCmdBuffer, Color &_InClearColorValue)
+    void CommandClearColorBuffer(OpenGLCommandBuffer *_cmdBuffer, Color &_clearColorValue)
     {
-        _InCmdBuffer->m_Commands.Add(new OpenGLCommandClearColorBuffer(_InClearColorValue));
+        _cmdBuffer->m_commands.Add(new OpenGLCommandClearColorBuffer(_clearColorValue));
     }
 
-    void CommandClearDepthStencilBuffer(OpenGLCommandBuffer *_InCmdBuffer, double _InClearDepthValue, uint32_t _InClearStencilValue)
+    void CommandClearDepthStencilBuffer(OpenGLCommandBuffer *_cmdBuffer,
+                                        double _clearDepthValue,
+                                        uint32_t _clearStencilValue)
     {
-        _InCmdBuffer->m_Commands.Add(
-            new OpenGLCommandClearDepthStencilBuffer(_InClearDepthValue, _InClearStencilValue));
+        _cmdBuffer->m_commands.Add(
+            new OpenGLCommandClearDepthStencilBuffer(_clearDepthValue, _clearStencilValue));
     }
 
-    void CommandDraw(OpenGLCommandBuffer *_InCmdBuffer, VertexBuffer *_InVertexBuffer)
+    void CommandDraw(OpenGLCommandBuffer *_cmdBuffer, VertexBuffer *_vertexBuffer)
     {
-        _InCmdBuffer->m_Commands.Add(new OpenGLCommandDraw(_InVertexBuffer));
+        _cmdBuffer->m_commands.Add(new OpenGLCommandDraw(_vertexBuffer));
     }
 
-    void CommandDrawMultiples(OpenGLCommandBuffer *_InCmdBuffer, VertexBuffer *_InVertexBuffer, int32_t _InInstanceCount)
+    void CommandDrawMultiples(OpenGLCommandBuffer *_cmdBuffer,
+                              VertexBuffer *_vertexBuffer,
+                              int32_t _instanceCount)
     {
-        _InCmdBuffer->m_Commands.Add(new OpenGLCommandDrawMultiples(_InVertexBuffer, _InInstanceCount));
+        _cmdBuffer->m_commands.Add(new OpenGLCommandDrawMultiples(_vertexBuffer, _instanceCount));
     }
 
-    void CommandBindVertexBuffer(OpenGLCommandBuffer *_InCmdBuffer, VertexBuffer *_InVertexBuffer)
+    void CommandBindVertexBuffer(OpenGLCommandBuffer *_cmdBuffer, VertexBuffer *_vertexBuffer)
     {
-        _InCmdBuffer->m_Commands.Add(new OpenGLBindVertexBuffer((OpenGLVertexBuffer *)_InVertexBuffer));
+        _cmdBuffer->m_commands.Add(new OpenGLBindVertexBuffer(
+            dynamic_cast<OpenGLVertexBuffer *>(_vertexBuffer)));
     }
 
-    void CommandBindShaderProgram(OpenGLCommandBuffer *_InCmdBuffer, Shader *_InVertexBuffer)
+    void CommandBindShaderProgram(OpenGLCommandBuffer *_cmdBuffer, Shader *_shader)
     {
-        _InCmdBuffer->m_Commands.Add(new OpenGLBindShaderProgram((OpenGLShader *)_InVertexBuffer));
+        _cmdBuffer->m_commands.Add(
+            new OpenGLBindShaderProgram(dynamic_cast<OpenGLShader *>(_shader)));
     }
-} // namespace DadEngine::Rendering
+} // namespace DadEngine
