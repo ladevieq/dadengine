@@ -1,5 +1,5 @@
 # Platforms macros
-add_definitions(-DVK_USE_PLATFORM_WIN32_KHR -DDADOPENGL -D_CRT_SECURE_NO_WARNINGS)
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
 # Needed packages
 find_package(Vulkan)
@@ -8,6 +8,16 @@ find_package(OpenGL REQUIRED)
 # Add source files
 # add_subdirectory(math/)
 add_subdirectory(window/)
+
+# Use c++ 17 flags and fix system includes with clang-cl.exe
+IF (WIN32)
+    # Use clang-cl.exe MSVC-like flags
+    add_compile_options(--driver-mode=cl)
+    add_compile_options(/std:c++17)
+    set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "-imsvc ")
+ELSE()
+    add_compile_options(-std=c++17)
+ENDIF()
 
 add_executable(dadengine main.cpp)
 
@@ -22,5 +32,4 @@ target_include_directories(dadengine SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include/
 # 	target_link_libraries(dadengine private ${vulkan_library}) 
 # endif()
 
-# target_link_libraries(dadengine PRIVATE core gameplay math rendering window)
 target_link_libraries(dadengine PRIVATE window)
