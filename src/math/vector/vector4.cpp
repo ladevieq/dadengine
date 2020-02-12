@@ -1,9 +1,6 @@
 #include "vector4.hpp"
 
 #include "../constants.hpp"
-#include "../core/debug.hpp"
-
-#include <limits>
 
 namespace DadEngine
 {
@@ -20,9 +17,6 @@ namespace DadEngine
     void Vector4::Normalize()
     {
         float length = Length();
-
-        LogAssert(length > std::numeric_limits<decltype(length)>::epsilon(),
-                  "Vector length is null");
 
         *this /= length;
     }

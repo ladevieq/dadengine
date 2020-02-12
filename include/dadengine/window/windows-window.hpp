@@ -20,7 +20,7 @@ namespace DadEngine
         static __stdcall LRESULT
         HandleMessages(HWND _hwnd, uint32_t _msg, WPARAM _wParam, LPARAM _lParam);
 
-        void Close();
+        [[ noreturn ]] void Close();
 
         void SetWindowTitle(const char *_windowName);
 

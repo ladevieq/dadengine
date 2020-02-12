@@ -1,10 +1,7 @@
 #include "windows-window.hpp"
 
+#include <cassert>
 #include <windowsx.h>
-
-#include "debug.hpp"
-// #include "events/event-manager.hpp"
-// #include "../../../gameplay/input-manager.hpp"
 
 namespace DadEngine
 {
@@ -38,9 +35,6 @@ namespace DadEngine
         {
         case WM_SIZE:
         {
-            uint32_t uiWidth = LOWORD(_lParam);
-            uint32_t uiHeight = HIWORD(_lParam);
-
             // OnSize(_InHWND, uiWidth, uiHeight);
             RECT clientRect{};
             GetClientRect(_hwnd, &clientRect);
@@ -53,7 +47,6 @@ namespace DadEngine
 
         case WM_CLOSE:
         {
-            // EventManager::GetInstance().EmitEvent(new CloseWindowEvent{});
             PostQuitMessage(0);
             break;
         }
@@ -72,74 +65,51 @@ namespace DadEngine
 
         case WM_KEYDOWN:
         {
-            printf("%d\n", MapVirtualKey((UINT)_wParam, MAPVK_VK_TO_CHAR));
-
-            // Gameplay::InputManager::GetInputManager ()->UpdateKeyState (
-            // (Gameplay::KeyCode)MapVirtualKey ((UINT)_InWParam, MAPVK_VK_TO_CHAR), Gameplay::KEY_STATE_KEY_PRESSED);
-
             break;
         }
 
         case WM_KEYUP:
         {
-            /*Gameplay::InputManager::GetInputManager ()->UpdateKeyState (
-            (Gameplay::KeyCode)MapVirtualKey ((UINT)_InWParam, MAPVK_VK_TO_CHAR), Gameplay::KEY_STATE_KEY_RELEASED);*/
-
             break;
         }
 
         case WM_LBUTTONDOWN:
         {
-            /*Gameplay::InputManager::GetInputManager ()->UpdateButtonState (Gameplay::BUTTON_LEFT_BUTTON,
-                                                                           Gameplay::BUTTON_STATE_BUTTON_DOWN);*/
             break;
         }
 
         case WM_LBUTTONUP:
         {
-            /*Gameplay::InputManager::GetInputManager ()->UpdateButtonState (Gameplay::BUTTON_LEFT_BUTTON,
-                                                                           Gameplay::BUTTON_STATE_BUTTON_UP);*/
             break;
         }
 
         case WM_RBUTTONDOWN:
         {
-            /*Gameplay::InputManager::GetInputManager ()->UpdateButtonState (Gameplay::BUTTON_RIGHT_BUTTON,
-                                                                           Gameplay::BUTTON_STATE_BUTTON_DOWN);*/
             break;
         }
 
         case WM_RBUTTONUP:
         {
-            /*Gameplay::InputManager::GetInputManager ()->UpdateButtonState (Gameplay::BUTTON_RIGHT_BUTTON,
-                                                                           Gameplay::BUTTON_STATE_BUTTON_UP);*/
             break;
         }
 
         case WM_MBUTTONDOWN:
         {
-            /*Gameplay::InputManager::GetInputManager ()->UpdateButtonState (Gameplay::BUTTON_MIDDLE_BUTTON,
-                                                                           Gameplay::BUTTON_STATE_BUTTON_DOWN); */
             break;
         }
 
         case WM_MBUTTONUP:
         {
-            /*Gameplay::InputManager::GetInputManager ()->UpdateButtonState (Gameplay::BUTTON_MIDDLE_BUTTON,
-                                                                           Gameplay::BUTTON_STATE_BUTTON_UP);*/
             break;
         }
 
         case WM_MOUSEMOVE:
         {
-            /*Gameplay::InputManager::GetInputManager ()->UpdateMousePosition
-               (GET_X_LPARAM (_InLParam), GET_Y_LPARAM (_InLParam));*/
             break;
         }
 
         case WM_MOUSEWHEEL:
         {
-            // Gameplay::InputManager::GetInputManager ()->UpdateWheelDelta (GET_WHEEL_DELTA_WPARAM (_InWParam));
             break;
         }
         default:
@@ -150,9 +120,8 @@ namespace DadEngine
         return 0;
     }
 
-    void Window::Close()
+    [[ noreturn ]] void Window::Close()
     {
-        printf("%s\n", "Event received");
         exit(0);
     }
 
@@ -172,7 +141,7 @@ namespace DadEngine
         m_wndClass.lpszClassName = m_className;
         m_wndClass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
 
-        Assert(RegisterClassEx(&m_wndClass));
+        assert(RegisterClassEx(&m_wndClass));
     }
 
     void Window::createWindowsWindow(bool _fullscreen, int32_t _width, int32_t _height)
@@ -199,7 +168,7 @@ namespace DadEngine
                                         m_windowRect.right, m_windowRect.bottom,
                                         nullptr, nullptr, m_hInstance, nullptr);
 
-        LogAssert(m_windowHandle != nullptr, "Failed to create window !", __FILE__, __LINE__);
+        assert(m_windowHandle != nullptr);
 
         ShowWindow(m_windowHandle, SW_SHOW);
         SetForegroundWindow(m_windowHandle);

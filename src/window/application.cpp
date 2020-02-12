@@ -1,5 +1,4 @@
 #include "application.hpp"
-// #include "../Rendering/Rendering.hpp"
 
 namespace DadEngine
 {
@@ -42,61 +41,6 @@ namespace DadEngine
         while (m_window->IsOpen())
         {
             m_window->MessagePump();
-            // else
-            // {
-            // Profile renderProfile ("Rendering");
-            // CommandBuffer cmdBuff;
-            // ViewPacket view;
-            // FramePacket frame;
-            // Camera cam;
-
-            // Extract visible objects
-            // cam.ExtractVisibleObjects(WorldObjects, frame);
-
-            // Extract rendernode / component data
-            // frame.Extract();
-
-            // Foreach feature generate the rendering instructions
-            // renderFeature.SubmitViewBegin(view, cmdBuff);
-
-
-            // cmdBuff.BindVertexBuffer(vb);
-            // cmdBuff.DrawVertexBuffer(vb);
-
-
-            // if (renderFeatureInfo.SubmitNode == TRUE)
-            //
-            // renderFeature.SubmitNode();
-            // }
-            //
-            // if (renderFeatureInfo.SubmitNodes == TRUE)
-            // {
-            // renderFeature.SubmitNodes();
-            // }
-
-            // renderFeature.SubmitViewEnd(view, cmdBuff);
-
-
-            // Sync rendering and game threads
-            // Exchange extracted datas and rendering commands
-
-            // Resume threads
-
-            // cmdBuff.Execute(renderContext);
-
-
-            // if (fpsTimer.GetMilliseconds() >= 1000U)
-            // {
-            //     // sprintf(name, "%u\0", uiCounter);
-            //     printf("%u\n", uiCounter);
-            //
-            //     // window.SetWindowTitle(name);
-            //     fpsTimer.Reset();
-            //     uiCounter = 0U;
-            // }
-            //
-            // uiCounter++;
-            // }
         }
     } // namespace DadEngine
 

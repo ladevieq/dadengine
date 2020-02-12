@@ -4,7 +4,6 @@
 #include <cstdint>
 #include <memory>
 
-#include "../rendering/renderer.hpp"
 #include "windows-window.hpp"
 
 namespace DadEngine
@@ -18,15 +17,7 @@ namespace DadEngine
         bool m_verticalSync = false;
     };
 
-    // struct ConsoleInfo
-    // {
-    //     HWND consoleHandle = nullptr;
-    //     const char *m_consoleName = nullptr;
-    //     bool m_isOpen = false;
-    // };
-
     class Window;
-    class Renderer;
 
     class Application
     {
@@ -47,7 +38,6 @@ namespace DadEngine
         // ConsoleInfo m_consoleInfo = {};
 
         std::unique_ptr<Window> m_window;
-        std::unique_ptr<Renderer> m_renderer;
     };
 } // namespace DadEngine
 
