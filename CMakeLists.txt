@@ -9,6 +9,9 @@ enable_testing()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Put binaries at the root of the build folder
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+
 
 project(dadengine VERSION 0.1.0 LANGUAGES CXX)
 

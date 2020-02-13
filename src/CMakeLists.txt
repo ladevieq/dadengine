@@ -1,5 +1,5 @@
 # Platforms macros
-add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+add_definitions(-D_CRT_SECURE_NO_WARNINGS -DNOMINMAX)
 
 # Needed packages
 find_package(Vulkan)
