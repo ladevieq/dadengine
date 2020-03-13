@@ -1,10 +1,9 @@
-#ifndef __APPLICATION_HPP_
-#define __APPLICATION_HPP_
+#pragma once
 
 #include <cstdint>
 #include <memory>
 
-#include "windows-window.hpp"
+#include "window.hpp"
 
 namespace DadEngine
 {
@@ -16,8 +15,6 @@ namespace DadEngine
         bool m_fullscreen = false;
         bool m_verticalSync = false;
     };
-
-    class Window;
 
     class Application
     {
@@ -40,5 +37,3 @@ namespace DadEngine
         std::unique_ptr<Window> m_window;
     };
 } // namespace DadEngine
-
-#endif //__APPLICATION_HPP_

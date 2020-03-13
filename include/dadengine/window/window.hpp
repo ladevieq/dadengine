@@ -1,11 +1,9 @@
-#ifndef __PLATFORM_WINDOW_HPP_
-#define __PLATFORM_WINDOW_HPP_
+#pragma once
 
-#include "application.hpp"
-
-#if defined(WINDOWS)
+#if defined(_WIN32) || defined(_WIN64)
 #include "windows-window.hpp"
+#elif defined(__linux__)
+#include "x-window.hpp"
 #endif
 
-
-#endif //__PLATFORM_WINDOW_HPP_
+#include "application.hpp"

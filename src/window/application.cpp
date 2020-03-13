@@ -26,14 +26,14 @@ namespace DadEngine
 
     void Application::initApplication(const bool _openConsole)
     {
-        if (_openConsole)
-        {
-            // TODO: Must be freed on exit
-            AllocConsole();
-            AttachConsole(GetCurrentProcessId());
-            freopen("CON", "w", stdout);
-            SetConsoleTitle("Debug Window");
-        }
+        // if (_openConsole)
+        // {
+        //     // TODO: Must be freed on exit
+        //     AllocConsole();
+        //     AttachConsole(GetCurrentProcessId());
+        //     freopen("CON", "w", stdout);
+        //     SetConsoleTitle("Debug Window");
+        // }
     }
 
     void Application::Run()
@@ -42,7 +42,7 @@ namespace DadEngine
         {
             m_window->MessagePump();
         }
-    } // namespace DadEngine
+    }
 
     Window *Application::GetWindow()
     {

@@ -80,6 +80,8 @@ namespace DadEngine
         bool m_isOpen = false;
         bool m_fullscreen = false;
         bool m_verticalSync = false;
+
+        // Windows specific
         DWORD m_dwExStyle;
         DWORD m_dwStyle;
         WNDCLASSEX m_wndClass = {};
