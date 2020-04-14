@@ -173,22 +173,23 @@ namespace DadEngine
     {
     }
 
-    void Matrix4x4::Perpespective(float _near, float _far, float _fov)
+    void Matrix4x4::PerspectiveRH_NO(float _near, float _far, float _fov, float _aspect)
     {
-        float s = 1 / std::tan((_fov * 0.5f) * (static_cast<float>(M_PI) / 180.0f));
+        float radFov = static_cast<float>(DEGTORAD(static_cast<double>(_fov))) / 2.f;
+        float halfTan = std::tan(radFov);
         float f = _far - _near;
 
-        m_11 = s;
-        m_22 = s;
-        m_33 = -_far / f;
+        m_11 = 1.f / (_aspect * halfTan);
+        m_22 = 1.f / halfTan;
+        m_33 = -(_far + _near) / f;
         m_34 = -1.f;
-        m_43 = -(_far * _near) / f;
+        m_43 = -(2.f * _far * _near) / f;
         m_44 = 0.f;
     }
 
-    void Matrix4x4::LookAt(Vector3 &_eyePosition, Vector3 &_targetPosition, Vector3 &_up)
+    void Matrix4x4::LookAtRH(Vector3 &_eyePosition, Vector3 &_targetPosition, Vector3 &_up)
     {
-        Vector3 z = (_eyePosition - _targetPosition);
+        Vector3 z = (_targetPosition - _eyePosition);
         z.Normalize();
         Vector3 x = (_up ^ z);
         x.Normalize();
@@ -196,19 +197,19 @@ namespace DadEngine
 
         m_11 = x.x;
         m_12 = y.x;
-        m_13 = z.x;
+        m_13 = -z.x;
         m_14 = 0.f;
         m_21 = x.y;
         m_22 = y.y;
-        m_23 = z.y;
+        m_23 = -z.y;
         m_24 = 0.f;
         m_31 = x.z;
         m_32 = y.z;
-        m_33 = z.z;
+        m_33 = -z.z;
         m_34 = 0.f;
         m_41 = -x.Dot(_eyePosition);
         m_42 = -y.Dot(_eyePosition);
-        m_43 = -z.Dot(_eyePosition);
+        m_43 = z.Dot(_eyePosition);
         m_44 = 1.f;
     }
 
