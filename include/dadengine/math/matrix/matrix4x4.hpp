@@ -48,9 +48,9 @@ namespace DadEngine
 
         void Orthographic();
 
-        void Perpespective(float _near, float _far, float _fov);
+        void PerspectiveRH_NO(float _near, float _far, float _fov, float _aspect);
 
-        void LookAt(Vector3 &_eyePosition, Vector3 &_targetPosition, Vector3 &_up);
+        void LookAtRH(Vector3 &_eyePosition, Vector3 &_targetPosition, Vector3 &_up);
 
 
         // Binary math operators
