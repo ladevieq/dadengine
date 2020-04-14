@@ -3,6 +3,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <string>
 
 #include <Windows.h>
 
@@ -12,45 +13,33 @@ namespace DadEngine
     class Window
     {
         public:
-        Window(const char *_windowName, int32_t _width, int32_t _height, bool _fullscreen, bool _veticalSync);
+        Window(std::string &&_windowName, int32_t _width, int32_t _height, bool _fullscreen, bool _veticalSync);
 
 
         void MessagePump();
 
-        static __stdcall LRESULT
-        HandleMessages(HWND _hwnd, uint32_t _msg, WPARAM _wParam, LPARAM _lParam);
+        static WINAPI LRESULT HandleMessages(HWND _hwnd, uint32_t _msg, WPARAM _wParam, LPARAM _lParam);
 
-        [[ noreturn ]] void Close();
+        void SetWindowTitle(std::string &&_windowName);
 
-        void SetWindowTitle(const char *_windowName);
+        void Close();
 
-        /*void OnSize(HWND _InHWND, uint32 _InWidth, uint32 _InHeight)
-        {
-            RECT rect = {};
-            GetClientRect(_InHWND, &rect);
-
-            rect.left = _InWidth;
-            rect.bottom = _InHeight;
-
-            AdjustWindowRectEx(&rect, m_dwStyle, FALSE, m_dwExStyle);
-        }*/
-
-        HINSTANCE GetWindowHInstance() const
+        [[nodiscard]] HINSTANCE GetWindowHInstance() const
         {
             return m_hInstance;
         }
 
-        HWND GetWindowHandle() const
+        [[nodiscard]] HWND GetWindowHandle() const
         {
             return m_windowHandle;
         }
 
-        bool GetFullscreen()
+        [[nodiscard]] bool GetFullscreen() const
         {
             return m_fullscreen;
         }
 
-        bool GetVerticalSync()
+        [[nodiscard]] bool GetVerticalSync() const
         {
             return m_verticalSync;
         }
@@ -60,12 +49,12 @@ namespace DadEngine
             return m_windowRect;
         }
 
-        const char *GetWindowName()
+        std::string GetWindowName()
         {
             return m_windowName;
         }
 
-        bool IsOpen()
+        [[nodiscard]] bool IsOpen() const
         {
             return this->m_isOpen;
         }
@@ -74,21 +63,21 @@ namespace DadEngine
         private:
         void createWindowClass();
 
-        void createWindowsWindow(bool _fullscreen, int32_t _width, int32_t _height);
+        void createWindow(bool _fullscreen, int32_t _width, int32_t _height);
 
 
-        bool m_isOpen = false;
-        bool m_fullscreen = false;
+        bool m_isOpen       = false;
+        bool m_fullscreen   = false;
         bool m_verticalSync = false;
         DWORD m_dwExStyle;
         DWORD m_dwStyle;
         WNDCLASSEX m_wndClass = {};
-        HWND m_windowHandle = nullptr;
+        HWND m_windowHandle   = nullptr;
         HINSTANCE m_hInstance = nullptr;
-        RECT m_windowRect = { 0, 0, 0, 0 };
+        RECT m_windowRect     = { 0, 0, 0, 0 };
 
-        const char *m_className = "DadEngine Class Name\0";
-        const char *m_windowName = "DadEngine Window Name\0";
+        std::string m_className  = "DadEngine Class Name";
+        std::string m_windowName = "DadEngine Window Name";
     };
 } // namespace DadEngine
 

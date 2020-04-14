@@ -23,21 +23,16 @@ namespace DadEngine
     {
         public:
         Application();
-        Application(ApplicationInfo _appInfo, const bool _openConsole);
+        Application(ApplicationInfo _appInfo);
 
         void Run();
 
-        Window *GetWindow();
+        Window& GetWindow();
 
         private:
-        void initApplication(const bool _openConsole);
-
-        void closeApplication();
-
         ApplicationInfo m_appInfo = {};
-        // ConsoleInfo m_consoleInfo = {};
 
-        std::unique_ptr<Window> m_window;
+        Window m_window;
     };
 } // namespace DadEngine
 
