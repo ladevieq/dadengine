@@ -1,4 +1,3 @@
-
 #include "gltf-loader.hpp"
 
 #include <cstdint>
@@ -11,7 +10,7 @@
 #include <nlohmann/json.hpp>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
+#include <stb_image.h>
 
 #include "helpers/file.hpp"
 #include "math/math.hpp"

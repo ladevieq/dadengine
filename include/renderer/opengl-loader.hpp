@@ -7,12 +7,12 @@
 #include <windowsx.h>
 #endif
 
-#include <gl/GL.h>
-#include <gl/glext.h>
+#include <GL/GL.h>
+#include <GL/glext.h>
 
 #if defined(WINDOWS)
 
-#include <gl/wglext.h>
+#include <GL/wglext.h>
 
 #define WINDOWS_OPENGL_FUNCTIONS \
     X(PFNWGLCREATECONTEXTATTRIBSARBPROC, wglCreateContextAttribsARB)
@@ -81,8 +81,7 @@ WINDOWS_OPENGL_FUNCTIONS
     inline void Load_##name()                                        \
     {                                                                \
         name = reinterpret_cast<type>(wglGetProcAddress(#name));     \
-        if (!name)                                                   \
-        {                                                            \
+        if (!name) {                                                 \
             printf("%s%s\n", "Cannot load opengl function ", #name); \
         }                                                            \
     }

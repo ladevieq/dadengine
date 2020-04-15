@@ -1,4 +1,3 @@
-find_package(Catch2 REQUIRED)
+find_path(CATCH_INCLUDE_DIR NAMES catch.hpp PATH_SUFFIXES catch2)
 
-include(Catch)
-include(CTest)
+include_directories(${CATCH_INCLUDE_DIR})

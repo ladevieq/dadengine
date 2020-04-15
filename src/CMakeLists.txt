@@ -1,7 +1,7 @@
-add_definitions(-DNOMINMAX -DWINDOWS -DVULKAN -DVK_NO_PROTOTYPES)
+add_definitions(-DNOMINMAX -DWINDOWS -DOPENGL -DVK_NO_PROTOTYPES)
 
-find_package(Vulkan)
 find_package(OpenGL REQUIRED)
+find_package(Vulkan)
 
 add_subdirectory(math/)
 add_subdirectory(window/)
@@ -13,14 +13,13 @@ add_subdirectory(renderer/)
 
 add_executable(dadengine main.cpp)
 
-target_include_directories(dadengine PRIVATE ${CMAKE_SOURCE_DIR}/include/dadengine)
-target_include_directories(dadengine SYSTEM PRIVATE ${CMAKE_SOURCE_DIR}/include/thirdparty)
+target_include_directories(dadengine PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(dadengine SYSTEM PRIVATE "$ENV{VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/include")
 
 target_link_libraries(dadengine PRIVATE ${OPENGL_LIBRARIES})
 
 if(Vulkan_FOUND)
     target_include_directories(dadengine SYSTEM PRIVATE ${Vulkan_INCLUDE_DIRS})
-# target_link_libraries(dadengine private ${VULKAN_LIBRARY}) 
 endif()
 
 target_link_libraries(dadengine PRIVATE window math loaders renderer model helpers camera)
