@@ -18,21 +18,21 @@ namespace DadEngine
 
         Quaternion(float _angle, Vector3 _axis);
 
-        Quaternion Conjugate();
+        Quaternion Conjugate() const;
 
         // Binary math operators
-        Quaternion operator*(Quaternion &_quat);
+        Quaternion operator*(Quaternion &_quat) const;
 
         // Binary assignement math operators
         void operator*=(Quaternion &_quat);
 
-        Matrix3x3 GetRotationMatrix();
+        Matrix3x3 GetRotationMatrix() const;
 
-        Matrix4x4 GetRotationMatrixExtended();
+        Matrix4x4 GetRotationMatrixExtended() const;
 
         static inline Quaternion Identity()
         {
-            return Quaternion(1.f, 0.f, 0.f, 0.f);
+            return Quaternion { 1.f, 0.f, 0.f, 0.f };
         }
 
 

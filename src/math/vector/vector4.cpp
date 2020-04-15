@@ -1,6 +1,6 @@
-#include "vector4.hpp"
+#include "vector/vector4.hpp"
 
-#include "../constants.hpp"
+#include "constants.hpp"
 
 namespace DadEngine
 {
@@ -21,24 +21,24 @@ namespace DadEngine
         *this /= length;
     }
 
-    float Vector4::Length()
+    float Vector4::Length() const
     {
         return std::sqrt(SqLength());
     }
 
-    float Vector4::SqLength()
+    float Vector4::SqLength() const
     {
         return x * x + y * y + z * z;
     }
 
-    float Vector4::Angle(Vector4 &_vector)
+    float Vector4::Angle(Vector4 &_vector) const
     {
         Vector4 tempVec = _vector / (Length() * _vector.Length());
 
         return std::acos(Dot(tempVec));
     }
 
-    float Vector4::Dot(Vector4 &_vector)
+    float Vector4::Dot(Vector4 &_vector) const
     {
         return x * _vector.x + y * _vector.y + z * _vector.z;
     }
@@ -52,33 +52,33 @@ namespace DadEngine
     }
 
     // Unary operators
-    Vector4 Vector4::operator-()
+    Vector4 Vector4::operator-() const
     {
         return Vector4(-x, -y, -z, -w);
     }
 
     // Binary math operators
-    Vector4 Vector4::operator+(Vector4 &_vector)
+    Vector4 Vector4::operator+(Vector4 &_vector) const
     {
         return Vector4(x + _vector.x, y + _vector.y, z + _vector.z, w + _vector.w);
     }
 
-    Vector4 Vector4::operator-(Vector4 &_vector)
+    Vector4 Vector4::operator-(Vector4 &_vector) const
     {
         return Vector4(x - _vector.x, y - _vector.y, z - _vector.z, w + _vector.w);
     }
 
-    Vector4 Vector4::operator*(float _val)
+    Vector4 Vector4::operator*(float _val) const
     {
         return Vector4(x * _val, y * _val, z * _val, w + _val);
     }
 
-    Vector4 Vector4::operator/(float _val)
+    Vector4 Vector4::operator/(float _val) const
     {
         return Vector4(x / _val, y / _val, z / _val, w / _val);
     }
 
-    Vector4 Vector4::operator^(Vector4 &_vector)
+    Vector4 Vector4::operator^(Vector4 &_vector) const
     {
         return Vector4(y * _vector.z - z * _vector.y,
                        z * _vector.x - x * _vector.z,

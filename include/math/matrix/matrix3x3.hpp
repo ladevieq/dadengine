@@ -1,6 +1,7 @@
 #ifndef __MATRIX3X3_HPP_
 #define __MATRIX3X3_HPP_
 
+#include <array>
 
 namespace DadEngine
 {
@@ -13,11 +14,11 @@ namespace DadEngine
         public:
         Matrix3x3() = default;
 
-        Matrix3x3(Vector3 _vectors[3U]);
+        Matrix3x3(std::array<Vector3, 3> _vectors);
 
         Matrix3x3(float _11, float _12, float _13, float _21, float _22, float _23, float _31, float _32, float _33);
 
-        Matrix3x3(float _data[9U]);
+        Matrix3x3(std::array<float, 9> _data);
 
 
         // Standard matrix functions
@@ -27,7 +28,7 @@ namespace DadEngine
 
         void Inverse();
 
-        float Determinant();
+        float Determinant() const;
 
         void RotationX(float _angle);
 
@@ -43,19 +44,19 @@ namespace DadEngine
 
 
         // Binary math operators
-        Matrix3x3 operator+(Matrix3x3 &_matrix);
+        Matrix3x3 operator+(Matrix3x3 &_matrix) const;
 
-        Matrix3x3 operator-(Matrix3x3 &_matrix);
+        Matrix3x3 operator-(Matrix3x3 &_matrix) const;
 
-        Matrix3x3 operator*(float &_factor);
+        Matrix3x3 operator*(float &_factor) const;
 
-        Vector3 operator*(Vector3 &_vector);
+        Vector3 operator*(Vector3 &_vector) const;
 
-        Matrix3x3 operator*(Matrix3x3 &_matrix);
+        Matrix3x3 operator*(Matrix3x3 &_matrix) const;
 
-        Matrix3x3 operator/(float &_factor);
+        Matrix3x3 operator/(float &_factor) const;
 
-        Matrix3x3 operator/(Matrix3x3 &_matrix);
+        Matrix3x3 operator/(Matrix3x3 &_matrix) const;
 
         // Binary assignement math operators
         void operator+=(Matrix3x3 &_matrix);
@@ -64,7 +65,7 @@ namespace DadEngine
 
         void operator*=(float &_factor);
 
-        Vector3 operator*=(Vector3 &_vector);
+        Vector3 operator*=(Vector3 &_vector) const;
 
         void operator*=(Matrix3x3 &_matrix);
 

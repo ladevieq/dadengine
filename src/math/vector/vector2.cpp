@@ -1,6 +1,6 @@
-#include "vector2.hpp"
+#include "vector/vector2.hpp"
 
-#include "../constants.hpp"
+#include "constants.hpp"
 
 
 namespace DadEngine
@@ -19,24 +19,24 @@ namespace DadEngine
         *this /= length;
     }
 
-    float Vector2::Length()
+    float Vector2::Length() const
     {
         return std::sqrt(SqLength());
     }
 
-    float Vector2::SqLength()
+    float Vector2::SqLength() const
     {
         return x * x + y * y;
     }
 
-    float Vector2::Angle(Vector2 &_vector)
+    float Vector2::Angle(Vector2 &_vector) const
     {
         Vector2 tempVec = _vector / (Length() * _vector.Length());
 
         return std::acos(Dot(tempVec));
     }
 
-    float Vector2::Dot(Vector2 &_vector)
+    float Vector2::Dot(Vector2 &_vector) const
     {
         return x * _vector.x + y * _vector.y;
     }
@@ -48,33 +48,33 @@ namespace DadEngine
     }
 
     // Unary operators
-    Vector2 Vector2::operator-()
+    Vector2 Vector2::operator-() const
     {
         return Vector2(-x, -y);
     }
 
     // Binary math operators
-    Vector2 Vector2::operator+(Vector2 &_vector)
+    Vector2 Vector2::operator+(Vector2 &_vector) const
     {
         return Vector2(x + _vector.x, y + _vector.y);
     }
 
-    Vector2 Vector2::operator-(Vector2 &_vector)
+    Vector2 Vector2::operator-(Vector2 &_vector) const
     {
         return Vector2(x - _vector.x, y - _vector.y);
     }
 
-    Vector2 Vector2::operator*(float _val)
+    Vector2 Vector2::operator*(float _val) const
     {
         return Vector2(x * _val, y * _val);
     }
 
-    Vector2 Vector2::operator/(float _val)
+    Vector2 Vector2::operator/(float _val) const
     {
         return Vector2(x / _val, y / _val);
     }
 
-    float Vector2::operator^(Vector2 &_vector)
+    float Vector2::operator^(Vector2 &_vector) const
     {
         return x * _vector.y - y * _vector.x;
     }

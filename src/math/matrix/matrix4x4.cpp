@@ -1,24 +1,24 @@
-#include "matrix4x4.hpp"
+#include "matrix/matrix4x4.hpp"
 
-#include "../constants.hpp"
-#include "../vector/vector3.hpp"
-#include "../vector/vector4.hpp"
+#include "constants.hpp"
+#include "vector/vector3.hpp"
+#include "vector/vector4.hpp"
 
 #include <limits>
 
 namespace DadEngine
 {
-    Matrix4x4::Matrix4x4(Vector4 _vectors[4U])
-    {
-        m_11 = _vectors[0U].x, m_12 = _vectors[1U].x, m_13 = _vectors[2U].x,
-        m_14 = _vectors[3U].x;
-        m_21 = _vectors[0U].y, m_22 = _vectors[1U].y, m_23 = _vectors[2U].y,
-        m_24 = _vectors[3U].y;
-        m_31 = _vectors[0U].z, m_32 = _vectors[1U].z, m_33 = _vectors[2U].z,
-        m_34 = _vectors[3U].z;
-        m_41 = _vectors[0U].w, m_42 = _vectors[1U].w, m_43 = _vectors[2U].w,
-        m_44 = _vectors[3U].w;
-    }
+    // Matrix4x4::Matrix4x4(std::array<Vector4, 4> _vectors)
+    // {
+    //     m_11 = _vectors[0U].x, m_12 = _vectors[1U].x, m_13 = _vectors[2U].x,
+    //     m_14 = _vectors[3U].x;
+    //     m_21 = _vectors[0U].y, m_22 = _vectors[1U].y, m_23 = _vectors[2U].y,
+    //     m_24 = _vectors[3U].y;
+    //     m_31 = _vectors[0U].z, m_32 = _vectors[1U].z, m_33 = _vectors[2U].z,
+    //     m_34 = _vectors[3U].z;
+    //     m_41 = _vectors[0U].w, m_42 = _vectors[1U].w, m_43 = _vectors[2U].w,
+    //     m_44 = _vectors[3U].w;
+    // }
 
     Matrix4x4::Matrix4x4(float _11,
                          float _12,
@@ -43,7 +43,7 @@ namespace DadEngine
         m_41 = _41, m_42 = _42, m_43 = _43, m_44 = _44;
     }
 
-    Matrix4x4::Matrix4x4(float _data[16U])
+    Matrix4x4::Matrix4x4(std::array<float, 16> _data)
     {
         m_11 = _data[0U], m_12 = _data[1U], m_13 = _data[2U], m_14 = _data[3U];
         m_21 = _data[4U], m_22 = _data[5U], m_23 = _data[6U], m_24 = _data[7U];
@@ -97,9 +97,8 @@ namespace DadEngine
 
         float determinant = m_11 * det11 + m_21 * det21 + m_31 * det31 + m_41 * det41;
 
-        if (determinant > std::numeric_limits<decltype(determinant)>::epsilon() ||
-            determinant < std::numeric_limits<decltype(determinant)>::epsilon())
-        {
+        if (determinant > std::numeric_limits<decltype(determinant)>::epsilon()
+            || determinant < std::numeric_limits<decltype(determinant)>::epsilon()) {
             // float m_11 = 1.f, m_12 = 0.f, m_13 = 0.f, m_14 = 0.f;
             // float m_21 = 0.f, m_22 = 1.f, m_23 = 0.f, m_24 = 0.f;
             // float m_31 = 0.f, m_32 = 0.f, m_33 = 1.f, m_34 = 0.f;
@@ -143,7 +142,7 @@ namespace DadEngine
         }
     }
 
-    float Matrix4x4::Determinant()
+    float Matrix4x4::Determinant() const
     {
         // Same determinants precalculated
         float det111 = m_33 * m_44 - m_34 * m_43;
@@ -170,14 +169,13 @@ namespace DadEngine
     }
 
     void Matrix4x4::Orthographic()
-    {
-    }
+    {}
 
-    void Matrix4x4::PerspectiveRH_NO(float _near, float _far, float _fov, float _aspect)
+    void Matrix4x4::PerspectiveRHNO(float _near, float _far, float _fov, float _aspect)
     {
-        float radFov = static_cast<float>(DEGTORAD(static_cast<double>(_fov))) / 2.f;
+        float radFov = static_cast<float>(DegToRad(static_cast<double>(_fov))) / 2.f;
         float halfTan = std::tan(radFov);
-        float f = _far - _near;
+        float f       = _far - _near;
 
         m_11 = 1.f / (_aspect * halfTan);
         m_22 = 1.f / halfTan;
@@ -215,7 +213,7 @@ namespace DadEngine
 
 
     // Binary math operators
-    Matrix4x4 Matrix4x4::operator+(Matrix4x4 &_matrix)
+    Matrix4x4 Matrix4x4::operator+(Matrix4x4 &_matrix) const
     {
         Matrix4x4 result;
 
@@ -231,7 +229,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix4x4 Matrix4x4::operator-(Matrix4x4 &_matrix)
+    Matrix4x4 Matrix4x4::operator-(Matrix4x4 &_matrix) const
     {
         Matrix4x4 result;
 
@@ -247,7 +245,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix4x4 Matrix4x4::operator*(float &_factor)
+    Matrix4x4 Matrix4x4::operator*(float &_factor) const
     {
         Matrix4x4 result;
 
@@ -263,62 +261,62 @@ namespace DadEngine
         return result;
     }
 
-    Vector4 Matrix4x4::operator*(Vector4 &_vector)
+    Vector4 Matrix4x4::operator*(Vector4 &_vector) const
     {
-        return Vector4(m_11 * _vector.x + m_12 * _vector.y + m_13 * _vector.z +
-                           m_14 * _vector.w,
-                       m_21 * _vector.x + m_22 * _vector.y + m_23 * _vector.z +
-                           m_24 * _vector.w,
-                       m_31 * _vector.x + m_32 * _vector.y + m_33 * _vector.z +
-                           m_34 * _vector.w,
-                       m_41 * _vector.x + m_42 * _vector.y + m_43 * _vector.z +
-                           m_44 * _vector.w);
+        return Vector4(m_11 * _vector.x + m_12 * _vector.y + m_13 * _vector.z
+                           + m_14 * _vector.w,
+                       m_21 * _vector.x + m_22 * _vector.y + m_23 * _vector.z
+                           + m_24 * _vector.w,
+                       m_31 * _vector.x + m_32 * _vector.y + m_33 * _vector.z
+                           + m_34 * _vector.w,
+                       m_41 * _vector.x + m_42 * _vector.y + m_43 * _vector.z
+                           + m_44 * _vector.w);
     }
 
-    Matrix4x4 Matrix4x4::operator*(Matrix4x4 &_matrix)
+    Matrix4x4 Matrix4x4::operator*(Matrix4x4 &_matrix) const
     {
         Matrix4x4 result;
 
-        result.m_11 = m_11 * _matrix.m_11 + m_12 * _matrix.m_21 +
-                      m_13 * _matrix.m_31 + m_14 * _matrix.m_41;
-        result.m_12 = m_11 * _matrix.m_12 + m_12 * _matrix.m_22 +
-                      m_13 * _matrix.m_32 + m_14 * _matrix.m_42;
-        result.m_13 = m_11 * _matrix.m_13 + m_12 * _matrix.m_23 +
-                      m_13 * _matrix.m_33 + m_14 * _matrix.m_43;
-        result.m_14 = m_11 * _matrix.m_14 + m_12 * _matrix.m_24 +
-                      m_13 * _matrix.m_34 + m_14 * _matrix.m_44;
+        result.m_11 = m_11 * _matrix.m_11 + m_12 * _matrix.m_21
+                      + m_13 * _matrix.m_31 + m_14 * _matrix.m_41;
+        result.m_12 = m_11 * _matrix.m_12 + m_12 * _matrix.m_22
+                      + m_13 * _matrix.m_32 + m_14 * _matrix.m_42;
+        result.m_13 = m_11 * _matrix.m_13 + m_12 * _matrix.m_23
+                      + m_13 * _matrix.m_33 + m_14 * _matrix.m_43;
+        result.m_14 = m_11 * _matrix.m_14 + m_12 * _matrix.m_24
+                      + m_13 * _matrix.m_34 + m_14 * _matrix.m_44;
 
-        result.m_21 = m_21 * _matrix.m_11 + m_22 * _matrix.m_21 +
-                      m_23 * _matrix.m_31 + m_24 * _matrix.m_41;
-        result.m_22 = m_21 * _matrix.m_12 + m_22 * _matrix.m_22 +
-                      m_23 * _matrix.m_32 + m_24 * _matrix.m_42;
-        result.m_23 = m_21 * _matrix.m_13 + m_22 * _matrix.m_23 +
-                      m_23 * _matrix.m_33 + m_24 * _matrix.m_43;
-        result.m_24 = m_21 * _matrix.m_14 + m_22 * _matrix.m_24 +
-                      m_23 * _matrix.m_34 + m_24 * _matrix.m_44;
+        result.m_21 = m_21 * _matrix.m_11 + m_22 * _matrix.m_21
+                      + m_23 * _matrix.m_31 + m_24 * _matrix.m_41;
+        result.m_22 = m_21 * _matrix.m_12 + m_22 * _matrix.m_22
+                      + m_23 * _matrix.m_32 + m_24 * _matrix.m_42;
+        result.m_23 = m_21 * _matrix.m_13 + m_22 * _matrix.m_23
+                      + m_23 * _matrix.m_33 + m_24 * _matrix.m_43;
+        result.m_24 = m_21 * _matrix.m_14 + m_22 * _matrix.m_24
+                      + m_23 * _matrix.m_34 + m_24 * _matrix.m_44;
 
-        result.m_31 = m_31 * _matrix.m_11 + m_32 * _matrix.m_21 +
-                      m_33 * _matrix.m_31 + m_34 * _matrix.m_41;
-        result.m_32 = m_31 * _matrix.m_12 + m_32 * _matrix.m_22 +
-                      m_33 * _matrix.m_32 + m_34 * _matrix.m_42;
-        result.m_33 = m_31 * _matrix.m_13 + m_32 * _matrix.m_23 +
-                      m_33 * _matrix.m_33 + m_34 * _matrix.m_43;
-        result.m_34 = m_31 * _matrix.m_14 + m_32 * _matrix.m_24 +
-                      m_33 * _matrix.m_34 + m_34 * _matrix.m_44;
+        result.m_31 = m_31 * _matrix.m_11 + m_32 * _matrix.m_21
+                      + m_33 * _matrix.m_31 + m_34 * _matrix.m_41;
+        result.m_32 = m_31 * _matrix.m_12 + m_32 * _matrix.m_22
+                      + m_33 * _matrix.m_32 + m_34 * _matrix.m_42;
+        result.m_33 = m_31 * _matrix.m_13 + m_32 * _matrix.m_23
+                      + m_33 * _matrix.m_33 + m_34 * _matrix.m_43;
+        result.m_34 = m_31 * _matrix.m_14 + m_32 * _matrix.m_24
+                      + m_33 * _matrix.m_34 + m_34 * _matrix.m_44;
 
-        result.m_41 = m_41 * _matrix.m_11 + m_42 * _matrix.m_21 +
-                      m_43 * _matrix.m_31 + m_44 * _matrix.m_41;
-        result.m_42 = m_41 * _matrix.m_12 + m_42 * _matrix.m_22 +
-                      m_43 * _matrix.m_32 + m_44 * _matrix.m_42;
-        result.m_43 = m_41 * _matrix.m_13 + m_42 * _matrix.m_23 +
-                      m_43 * _matrix.m_33 + m_44 * _matrix.m_43;
-        result.m_44 = m_41 * _matrix.m_14 + m_42 * _matrix.m_24 +
-                      m_43 * _matrix.m_34 + m_44 * _matrix.m_44;
+        result.m_41 = m_41 * _matrix.m_11 + m_42 * _matrix.m_21
+                      + m_43 * _matrix.m_31 + m_44 * _matrix.m_41;
+        result.m_42 = m_41 * _matrix.m_12 + m_42 * _matrix.m_22
+                      + m_43 * _matrix.m_32 + m_44 * _matrix.m_42;
+        result.m_43 = m_41 * _matrix.m_13 + m_42 * _matrix.m_23
+                      + m_43 * _matrix.m_33 + m_44 * _matrix.m_43;
+        result.m_44 = m_41 * _matrix.m_14 + m_42 * _matrix.m_24
+                      + m_43 * _matrix.m_34 + m_44 * _matrix.m_44;
 
         return result;
     }
 
-    Matrix4x4 Matrix4x4::operator/(float &_factor)
+    Matrix4x4 Matrix4x4::operator/(float &_factor) const
     {
         Matrix4x4 result;
 
@@ -334,7 +332,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix4x4 Matrix4x4::operator/(Matrix4x4 &_matrix)
+    Matrix4x4 Matrix4x4::operator/(Matrix4x4 &_matrix) const
     {
         Matrix4x4 result;
 
@@ -379,57 +377,57 @@ namespace DadEngine
         m_41 *= _factor, m_42 *= _factor, m_43 *= _factor, m_44 *= _factor;
     }
 
-    Vector4 Matrix4x4::operator*=(Vector4 &_vector)
+    Vector4 Matrix4x4::operator*=(Vector4 &_vector) const
     {
-        return Vector4(m_11 * _vector.x + m_12 * _vector.y + m_13 * _vector.z +
-                           m_14 * _vector.w,
-                       m_21 * _vector.x + m_22 * _vector.y + m_23 * _vector.z +
-                           m_24 * _vector.w,
-                       m_31 * _vector.x + m_32 * _vector.y + m_33 * _vector.z +
-                           m_34 * _vector.w,
-                       m_41 * _vector.x + m_42 * _vector.y + m_43 * _vector.z +
-                           m_44 * _vector.w);
+        return Vector4(m_11 * _vector.x + m_12 * _vector.y + m_13 * _vector.z
+                           + m_14 * _vector.w,
+                       m_21 * _vector.x + m_22 * _vector.y + m_23 * _vector.z
+                           + m_24 * _vector.w,
+                       m_31 * _vector.x + m_32 * _vector.y + m_33 * _vector.z
+                           + m_34 * _vector.w,
+                       m_41 * _vector.x + m_42 * _vector.y + m_43 * _vector.z
+                           + m_44 * _vector.w);
     }
 
     void Matrix4x4::operator*=(Matrix4x4 &_matrix)
     {
         Matrix4x4 temp = *this;
 
-        m_11 = temp.m_11 * _matrix.m_11 + temp.m_12 * _matrix.m_21 +
-               temp.m_13 * _matrix.m_31 + temp.m_14 * _matrix.m_41;
-        m_12 = temp.m_11 * _matrix.m_12 + temp.m_12 * _matrix.m_22 +
-               temp.m_13 * _matrix.m_32 + temp.m_14 * _matrix.m_42;
-        m_13 = temp.m_11 * _matrix.m_13 + temp.m_12 * _matrix.m_23 +
-               temp.m_13 * _matrix.m_33 + temp.m_14 * _matrix.m_43;
-        m_14 = temp.m_11 * _matrix.m_14 + temp.m_12 * _matrix.m_24 +
-               temp.m_13 * _matrix.m_34 + temp.m_14 * _matrix.m_44;
+        m_11 = temp.m_11 * _matrix.m_11 + temp.m_12 * _matrix.m_21
+               + temp.m_13 * _matrix.m_31 + temp.m_14 * _matrix.m_41;
+        m_12 = temp.m_11 * _matrix.m_12 + temp.m_12 * _matrix.m_22
+               + temp.m_13 * _matrix.m_32 + temp.m_14 * _matrix.m_42;
+        m_13 = temp.m_11 * _matrix.m_13 + temp.m_12 * _matrix.m_23
+               + temp.m_13 * _matrix.m_33 + temp.m_14 * _matrix.m_43;
+        m_14 = temp.m_11 * _matrix.m_14 + temp.m_12 * _matrix.m_24
+               + temp.m_13 * _matrix.m_34 + temp.m_14 * _matrix.m_44;
 
-        m_21 = temp.m_21 * _matrix.m_11 + temp.m_22 * _matrix.m_21 +
-               temp.m_23 * _matrix.m_31 + temp.m_24 * _matrix.m_41;
-        m_22 = temp.m_21 * _matrix.m_12 + temp.m_22 * _matrix.m_22 +
-               temp.m_23 * _matrix.m_32 + temp.m_24 * _matrix.m_42;
-        m_23 = temp.m_21 * _matrix.m_13 + temp.m_22 * _matrix.m_23 +
-               temp.m_23 * _matrix.m_33 + temp.m_24 * _matrix.m_43;
-        m_24 = temp.m_21 * _matrix.m_14 + temp.m_22 * _matrix.m_24 +
-               temp.m_23 * _matrix.m_34 + temp.m_24 * _matrix.m_44;
+        m_21 = temp.m_21 * _matrix.m_11 + temp.m_22 * _matrix.m_21
+               + temp.m_23 * _matrix.m_31 + temp.m_24 * _matrix.m_41;
+        m_22 = temp.m_21 * _matrix.m_12 + temp.m_22 * _matrix.m_22
+               + temp.m_23 * _matrix.m_32 + temp.m_24 * _matrix.m_42;
+        m_23 = temp.m_21 * _matrix.m_13 + temp.m_22 * _matrix.m_23
+               + temp.m_23 * _matrix.m_33 + temp.m_24 * _matrix.m_43;
+        m_24 = temp.m_21 * _matrix.m_14 + temp.m_22 * _matrix.m_24
+               + temp.m_23 * _matrix.m_34 + temp.m_24 * _matrix.m_44;
 
-        m_31 = temp.m_31 * _matrix.m_11 + temp.m_32 * _matrix.m_21 +
-               temp.m_33 * _matrix.m_31 + temp.m_34 * _matrix.m_41;
-        m_32 = temp.m_31 * _matrix.m_12 + temp.m_32 * _matrix.m_22 +
-               temp.m_33 * _matrix.m_32 + temp.m_34 * _matrix.m_42;
-        m_33 = temp.m_31 * _matrix.m_13 + temp.m_32 * _matrix.m_23 +
-               temp.m_33 * _matrix.m_33 + temp.m_34 * _matrix.m_43;
-        m_34 = temp.m_31 * _matrix.m_14 + temp.m_32 * _matrix.m_24 +
-               temp.m_33 * _matrix.m_34 + temp.m_34 * _matrix.m_44;
+        m_31 = temp.m_31 * _matrix.m_11 + temp.m_32 * _matrix.m_21
+               + temp.m_33 * _matrix.m_31 + temp.m_34 * _matrix.m_41;
+        m_32 = temp.m_31 * _matrix.m_12 + temp.m_32 * _matrix.m_22
+               + temp.m_33 * _matrix.m_32 + temp.m_34 * _matrix.m_42;
+        m_33 = temp.m_31 * _matrix.m_13 + temp.m_32 * _matrix.m_23
+               + temp.m_33 * _matrix.m_33 + temp.m_34 * _matrix.m_43;
+        m_34 = temp.m_31 * _matrix.m_14 + temp.m_32 * _matrix.m_24
+               + temp.m_33 * _matrix.m_34 + temp.m_34 * _matrix.m_44;
 
-        m_41 = temp.m_41 * _matrix.m_11 + temp.m_42 * _matrix.m_21 +
-               temp.m_43 * _matrix.m_31 + temp.m_44 * _matrix.m_41;
-        m_42 = temp.m_41 * _matrix.m_12 + temp.m_42 * _matrix.m_22 +
-               temp.m_43 * _matrix.m_32 + temp.m_44 * _matrix.m_42;
-        m_43 = temp.m_41 * _matrix.m_13 + temp.m_42 * _matrix.m_23 +
-               temp.m_43 * _matrix.m_33 + temp.m_44 * _matrix.m_43;
-        m_44 = temp.m_41 * _matrix.m_14 + temp.m_42 * _matrix.m_24 +
-               temp.m_43 * _matrix.m_34 + temp.m_44 * _matrix.m_44;
+        m_41 = temp.m_41 * _matrix.m_11 + temp.m_42 * _matrix.m_21
+               + temp.m_43 * _matrix.m_31 + temp.m_44 * _matrix.m_41;
+        m_42 = temp.m_41 * _matrix.m_12 + temp.m_42 * _matrix.m_22
+               + temp.m_43 * _matrix.m_32 + temp.m_44 * _matrix.m_42;
+        m_43 = temp.m_41 * _matrix.m_13 + temp.m_42 * _matrix.m_23
+               + temp.m_43 * _matrix.m_33 + temp.m_44 * _matrix.m_43;
+        m_44 = temp.m_41 * _matrix.m_14 + temp.m_42 * _matrix.m_24
+               + temp.m_43 * _matrix.m_34 + temp.m_44 * _matrix.m_44;
     }
 
     void Matrix4x4::operator/=(float &_factor)

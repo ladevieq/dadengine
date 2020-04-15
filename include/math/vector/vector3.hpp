@@ -16,29 +16,29 @@ namespace DadEngine
         // Standard vector functions
         void Normalize();
 
-        float Length();
+        float Length() const;
 
-        float SqLength();
+        float SqLength() const;
 
-        float Angle(Vector3 &_vector);
+        float Angle(Vector3 &_vector) const;
 
-        float Dot(Vector3 &_vector);
+        float Dot(Vector3 &_vector) const;
 
-        Vector3 Lerp(Vector3 &_from, Vector3 &_to, float _factor);
+        static Vector3 Lerp(Vector3 &_from, Vector3 &_to, float _factor);
 
         // Unary operators
-        Vector3 operator-();
+        Vector3 operator-() const;
 
         // Binary math operators
-        Vector3 operator+(Vector3 &_vector);
+        Vector3 operator+(Vector3 &_vector) const;
 
-        Vector3 operator-(Vector3 &_vector);
+        Vector3 operator-(Vector3 &_vector) const;
 
-        Vector3 operator*(float _val);
+        Vector3 operator*(float _val) const;
 
-        Vector3 operator/(float _val);
+        Vector3 operator/(float _val) const;
 
-        Vector3 operator^(Vector3 &_vector);
+        Vector3 operator^(Vector3 &_vector) const;
 
 
         // Binary assignement math operators
@@ -58,12 +58,12 @@ namespace DadEngine
 
         static inline Vector3 Zero()
         {
-            return Vector3(0.f, 0.f, 0.f);
+            return Vector3 { 0.f, 0.f, 0.f };
         }
 
         static inline Vector3 One()
         {
-            return Vector3(1.f, 1.f, 1.f);
+            return Vector3 { 1.f, 1.f, 1.f };
         }
 
 

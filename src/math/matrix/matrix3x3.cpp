@@ -1,28 +1,29 @@
-#include "matrix3x3.hpp"
+#include "matrix/matrix3x3.hpp"
 
-#include "../constants.hpp"
-#include "../vector/vector2.hpp"
-#include "../vector/vector3.hpp"
+#include "constants.hpp"
+#include "vector/vector2.hpp"
+#include "vector/vector3.hpp"
 
 #include <limits>
 
 namespace DadEngine
 {
-    Matrix3x3::Matrix3x3(Vector3 _vectors[3U])
+    Matrix3x3::Matrix3x3(std::array<Vector3, 3> _vectors)
     {
         m_11 = _vectors[0U].x, m_12 = _vectors[1U].x, m_13 = _vectors[2U].x;
         m_21 = _vectors[0U].y, m_22 = _vectors[1U].y, m_23 = _vectors[2U].y;
         m_31 = _vectors[0U].z, m_32 = _vectors[1U].z, m_33 = _vectors[2U].z;
     }
 
-    Matrix3x3::Matrix3x3(float _11, float _12, float _13, float _21, float _22, float _23, float _31, float _32, float _33)
+    Matrix3x3::Matrix3x3(
+        float _11, float _12, float _13, float _21, float _22, float _23, float _31, float _32, float _33)
     {
         m_11 = _11, m_12 = _12, m_13 = _13;
         m_21 = _21, m_22 = _22, m_23 = _23;
         m_31 = _31, m_32 = _32, m_33 = _33;
     }
 
-    Matrix3x3::Matrix3x3(float _data[9U])
+    Matrix3x3::Matrix3x3(std::array<float, 9> _data)
     {
         m_11 = _data[0U], m_12 = _data[1U], m_13 = _data[2U];
         m_21 = _data[3U], m_22 = _data[4U], m_23 = _data[5U];
@@ -53,21 +54,20 @@ namespace DadEngine
 
     void Matrix3x3::Inverse()
     {
-        float cof11 = (m_22 * m_33 - m_23 * m_32),
-              cof12 = -(m_21 * m_33 - m_23 * m_31),
-              cof13 = (m_21 * m_32 - m_22 * m_31);
+        float cof11       = (m_22 * m_33 - m_23 * m_32);
+        float cof12       = -(m_21 * m_33 - m_23 * m_31);
+        float cof13       = (m_21 * m_32 - m_22 * m_31);
         float determinant = m_11 * cof11 + m_12 * cof12 + m_13 * cof13;
 
-        if (determinant > std::numeric_limits<decltype(determinant)>::epsilon() ||
-            determinant < std::numeric_limits<decltype(determinant)>::epsilon())
-        {
+        if (determinant > std::numeric_limits<decltype(determinant)>::epsilon()
+            || determinant < std::numeric_limits<decltype(determinant)>::epsilon()) {
             determinant = 1.f / determinant;
-            float cof21 = -(m_12 * m_33 - m_13 * m_32),
-                  cof22 = (m_11 * m_33 - m_13 * m_31),
-                  cof23 = -(m_11 * m_32 - m_12 * m_31);
-            float cof31 = (m_12 * m_23 - m_13 * m_22),
-                  cof32 = -(m_11 * m_23 - m_13 * m_21),
-                  cof33 = (m_11 * m_22 - m_12 * m_21);
+            float cof21 = -(m_12 * m_33 - m_13 * m_32);
+            float cof22 = (m_11 * m_33 - m_13 * m_31);
+            float cof23 = -(m_11 * m_32 - m_12 * m_31);
+            float cof31 = (m_12 * m_23 - m_13 * m_22);
+            float cof32 = -(m_11 * m_23 - m_13 * m_21);
+            float cof33 = (m_11 * m_22 - m_12 * m_21);
 
             m_11 = cof11 * determinant, m_12 = cof12 * determinant, m_13 = cof13 * determinant;
             m_21 = cof21 * determinant, m_22 = cof22 * determinant, m_23 = cof23 * determinant;
@@ -77,11 +77,11 @@ namespace DadEngine
         }
     }
 
-    float Matrix3x3::Determinant()
+    float Matrix3x3::Determinant() const
     {
-        float cof11 = (m_22 * m_33 - m_23 * m_32),
-              cof12 = -(m_21 * m_33 - m_23 * m_31),
-              cof13 = (m_21 * m_32 - m_22 * m_31);
+        float cof11 = (m_22 * m_33 - m_23 * m_32);
+        float cof12 = -(m_21 * m_33 - m_23 * m_31);
+        float cof13 = (m_21 * m_32 - m_22 * m_31);
 
         return m_11 * cof11 + m_12 * cof12 + m_13 * cof13;
     }
@@ -118,8 +118,8 @@ namespace DadEngine
 
     void Matrix3x3::Rotation(float _angle, Vector3 _axis)
     {
-        float cos = std::cos(_angle);
-        float sin = std::sin(_angle);
+        float cos        = std::cos(_angle);
+        float sin        = std::sin(_angle);
         float cosLessOne = 1 - cos;
 
         m_11 = cos + (cosLessOne * _axis.x * _axis.x),
@@ -149,7 +149,7 @@ namespace DadEngine
 
 
     // Binary math operators
-    Matrix3x3 Matrix3x3::operator+(Matrix3x3 &_matrix)
+    Matrix3x3 Matrix3x3::operator+(Matrix3x3 &_matrix) const
     {
         Matrix3x3 result;
 
@@ -163,7 +163,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix3x3 Matrix3x3::operator-(Matrix3x3 &_matrix)
+    Matrix3x3 Matrix3x3::operator-(Matrix3x3 &_matrix) const
     {
         Matrix3x3 result;
 
@@ -177,7 +177,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix3x3 Matrix3x3::operator*(float &_factor)
+    Matrix3x3 Matrix3x3::operator*(float &_factor) const
     {
         Matrix3x3 result;
 
@@ -191,14 +191,14 @@ namespace DadEngine
         return result;
     }
 
-    Vector3 Matrix3x3::operator*(Vector3 &_vector)
+    Vector3 Matrix3x3::operator*(Vector3 &_vector) const
     {
         return Vector3(m_11 * _vector.x + m_12 * _vector.y + m_13 * _vector.z,
                        m_21 * _vector.x + m_22 * _vector.y + m_23 * _vector.z,
                        m_31 * _vector.x + m_32 * _vector.y + m_33 * _vector.z);
     }
 
-    Matrix3x3 Matrix3x3::operator*(Matrix3x3 &_matrix)
+    Matrix3x3 Matrix3x3::operator*(Matrix3x3 &_matrix) const
     {
         Matrix3x3 result;
 
@@ -215,7 +215,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix3x3 Matrix3x3::operator/(float &_factor)
+    Matrix3x3 Matrix3x3::operator/(float &_factor) const
     {
         Matrix3x3 result;
 
@@ -229,7 +229,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix3x3 Matrix3x3::operator/(Matrix3x3 &_matrix)
+    Matrix3x3 Matrix3x3::operator/(Matrix3x3 &_matrix) const
     {
         Matrix3x3 result;
 
@@ -262,7 +262,7 @@ namespace DadEngine
         m_31 *= _factor, m_32 *= _factor, m_33 *= _factor;
     }
 
-    Vector3 Matrix3x3::operator*=(Vector3 &_vector)
+    Vector3 Matrix3x3::operator*=(Vector3 &_vector) const
     {
         return Vector3(m_11 * _vector.x + m_12 * _vector.y + m_13 * _vector.z,
                        m_21 * _vector.x + m_22 * _vector.y + m_23 * _vector.z,
@@ -273,26 +273,26 @@ namespace DadEngine
     {
         Matrix3x3 temp = *this;
 
-        m_11 = temp.m_11 * _matrix.m_11 + temp.m_12 * _matrix.m_21 +
-               temp.m_13 * _matrix.m_31;
-        m_12 = temp.m_11 * _matrix.m_12 + temp.m_12 * _matrix.m_22 +
-               temp.m_13 * _matrix.m_32;
-        m_13 = temp.m_11 * _matrix.m_13 + temp.m_12 * _matrix.m_23 +
-               temp.m_13 * _matrix.m_33;
+        m_11 = temp.m_11 * _matrix.m_11 + temp.m_12 * _matrix.m_21
+               + temp.m_13 * _matrix.m_31;
+        m_12 = temp.m_11 * _matrix.m_12 + temp.m_12 * _matrix.m_22
+               + temp.m_13 * _matrix.m_32;
+        m_13 = temp.m_11 * _matrix.m_13 + temp.m_12 * _matrix.m_23
+               + temp.m_13 * _matrix.m_33;
 
-        m_21 = temp.m_21 * _matrix.m_11 + temp.m_22 * _matrix.m_21 +
-               temp.m_23 * _matrix.m_31;
-        m_22 = temp.m_21 * _matrix.m_12 + temp.m_22 * _matrix.m_22 +
-               temp.m_23 * _matrix.m_32;
-        m_23 = temp.m_21 * _matrix.m_13 + temp.m_22 * _matrix.m_23 +
-               temp.m_23 * _matrix.m_33;
+        m_21 = temp.m_21 * _matrix.m_11 + temp.m_22 * _matrix.m_21
+               + temp.m_23 * _matrix.m_31;
+        m_22 = temp.m_21 * _matrix.m_12 + temp.m_22 * _matrix.m_22
+               + temp.m_23 * _matrix.m_32;
+        m_23 = temp.m_21 * _matrix.m_13 + temp.m_22 * _matrix.m_23
+               + temp.m_23 * _matrix.m_33;
 
-        m_31 = temp.m_31 * _matrix.m_11 + temp.m_32 * _matrix.m_21 +
-               temp.m_33 * _matrix.m_31;
-        m_32 = temp.m_31 * _matrix.m_12 + temp.m_32 * _matrix.m_22 +
-               temp.m_33 * _matrix.m_32;
-        m_33 = temp.m_31 * _matrix.m_13 + temp.m_32 * _matrix.m_23 +
-               temp.m_33 * _matrix.m_33;
+        m_31 = temp.m_31 * _matrix.m_11 + temp.m_32 * _matrix.m_21
+               + temp.m_33 * _matrix.m_31;
+        m_32 = temp.m_31 * _matrix.m_12 + temp.m_32 * _matrix.m_22
+               + temp.m_33 * _matrix.m_32;
+        m_33 = temp.m_31 * _matrix.m_13 + temp.m_32 * _matrix.m_23
+               + temp.m_33 * _matrix.m_33;
     }
 
     void Matrix3x3::operator/=(float &_factor)

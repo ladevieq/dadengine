@@ -1,14 +1,14 @@
-#include "matrix2x2.hpp"
+#include "matrix/matrix2x2.hpp"
 
-#include "../constants.hpp"
-#include "../vector/vector2.hpp"
+#include "constants.hpp"
+#include "vector/vector2.hpp"
 
 #include <limits>
 
 
 namespace DadEngine
 {
-    Matrix2x2::Matrix2x2(Vector2 _vectors[2U])
+    Matrix2x2::Matrix2x2(std::array<Vector2, 2> _vectors)
     {
         m_11 = _vectors[0U].x, m_12 = _vectors[1U].x;
         m_21 = _vectors[0U].y, m_22 = _vectors[1U].y;
@@ -20,7 +20,7 @@ namespace DadEngine
         m_21 = _21, m_22 = _22;
     }
 
-    Matrix2x2::Matrix2x2(float _data[4U])
+    Matrix2x2::Matrix2x2(std::array<float, 4> _data)
     {
         m_11 = _data[0U], m_12 = _data[1U];
         m_21 = _data[2U], m_22 = _data[3U];
@@ -44,12 +44,11 @@ namespace DadEngine
 
     void Matrix2x2::Inverse()
     {
-        Matrix2x2 temp = *this;
+        Matrix2x2 temp    = *this;
         float determinant = Determinant();
 
-        if (determinant > std::numeric_limits<decltype(determinant)>::epsilon() ||
-            determinant < std::numeric_limits<decltype(determinant)>::epsilon())
-        {
+        if (determinant > std::numeric_limits<decltype(determinant)>::epsilon()
+            || determinant < std::numeric_limits<decltype(determinant)>::epsilon()) {
             determinant = 1.f / determinant;
 
             m_11 = determinant * temp.m_22, m_12 = determinant * -temp.m_12;
@@ -57,7 +56,7 @@ namespace DadEngine
         }
     }
 
-    float Matrix2x2::Determinant()
+    float Matrix2x2::Determinant() const
     {
         return m_11 * m_22 - m_12 * m_21;
     }
@@ -76,7 +75,7 @@ namespace DadEngine
 
 
     // Binary math operators
-    Matrix2x2 Matrix2x2::operator+(Matrix2x2 &_matrix)
+    Matrix2x2 Matrix2x2::operator+(Matrix2x2 &_matrix) const
     {
         Matrix2x2 result;
 
@@ -86,7 +85,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix2x2 Matrix2x2::operator-(Matrix2x2 &_matrix)
+    Matrix2x2 Matrix2x2::operator-(Matrix2x2 &_matrix) const
     {
         Matrix2x2 result;
 
@@ -96,7 +95,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix2x2 Matrix2x2::operator*(float &_factor)
+    Matrix2x2 Matrix2x2::operator*(float &_factor) const
     {
         Matrix2x2 result;
 
@@ -106,13 +105,13 @@ namespace DadEngine
         return result;
     }
 
-    Vector2 Matrix2x2::operator*(Vector2 &_vector)
+    Vector2 Matrix2x2::operator*(Vector2 &_vector) const
     {
         return Vector2(m_11 * _vector.x + m_12 * _vector.y,
                        m_21 * _vector.x + m_22 * _vector.y);
     }
 
-    Matrix2x2 Matrix2x2::operator*(Matrix2x2 &_matrix)
+    Matrix2x2 Matrix2x2::operator*(Matrix2x2 &_matrix) const
     {
         Matrix2x2 result;
 
@@ -124,7 +123,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix2x2 Matrix2x2::operator/(float &_factor)
+    Matrix2x2 Matrix2x2::operator/(float &_factor) const
     {
         Matrix2x2 result;
 
@@ -134,7 +133,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix2x2 Matrix2x2::operator/(Matrix2x2 &_matrix)
+    Matrix2x2 Matrix2x2::operator/(Matrix2x2 &_matrix) const
     {
         Matrix2x2 result;
 
@@ -164,7 +163,7 @@ namespace DadEngine
         m_21 *= _factor, m_22 *= _factor;
     }
 
-    Vector2 Matrix2x2::operator*=(Vector2 &_vector)
+    Vector2 Matrix2x2::operator*=(Vector2 &_vector) const
     {
         return Vector2(m_11 * _vector.x + m_12 * _vector.y,
                        m_21 * _vector.x + m_22 * _vector.y);

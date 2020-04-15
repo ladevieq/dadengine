@@ -15,29 +15,29 @@ namespace DadEngine
         // Standard vector functions
         void Normalize();
 
-        float Length();
+        float Length() const;
 
-        float SqLength();
+        float SqLength() const;
 
-        float Angle(Vector4 &_vector);
+        float Angle(Vector4 &_vector) const;
 
-        float Dot(Vector4 &_vector);
+        float Dot(Vector4 &_vector) const;
 
-        Vector4 Lerp(Vector4 &_from, Vector4 &_to, float _factor);
+        static Vector4 Lerp(Vector4 &_from, Vector4 &_to, float _factor);
 
         // Unary operators
-        Vector4 operator-();
+        Vector4 operator-() const;
 
         // Binary math operators
-        Vector4 operator+(Vector4 &_vector);
+        Vector4 operator+(Vector4 &_vector) const;
 
-        Vector4 operator-(Vector4 &_vector);
+        Vector4 operator-(Vector4 &_vector) const;
 
-        Vector4 operator*(float _val);
+        Vector4 operator*(float _val) const;
 
-        Vector4 operator/(float _val);
+        Vector4 operator/(float _val) const;
 
-        Vector4 operator^(Vector4 &_vector);
+        Vector4 operator^(Vector4 &_vector) const;
 
 
         // Binary assignement math operators
@@ -60,4 +60,3 @@ namespace DadEngine
 } // namespace DadEngine
 
 #endif //__VECTOR4_HPP_
-

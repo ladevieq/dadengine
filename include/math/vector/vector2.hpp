@@ -20,29 +20,29 @@ namespace DadEngine
 
         void Projection();
 
-        float Length();
+        float Length() const;
 
-        float SqLength();
+        float SqLength() const;
 
-        float Angle(Vector2 &_vector);
+        float Angle(Vector2 &_vector) const;
 
-        float Dot(Vector2 &_vector);
+        float Dot(Vector2 &_vector) const;
 
-        Vector2 Lerp(Vector2 &_from, Vector2 &_to, float _factor);
+        static Vector2 Lerp(Vector2 &_from, Vector2 &_to, float _factor);
 
         // Unary operators
-        Vector2 operator-();
+        Vector2 operator-() const;
 
         // Binary math operators
-        Vector2 operator+(Vector2 &_vector);
+        Vector2 operator+(Vector2 &_vector) const;
 
-        Vector2 operator-(Vector2 &_vector);
+        Vector2 operator-(Vector2 &_vector) const;
 
-        Vector2 operator*(float _val);
+        Vector2 operator*(float _val) const;
 
-        Vector2 operator/(float _val);
+        Vector2 operator/(float _val) const;
 
-        float operator^(Vector2 &_vector);
+        float operator^(Vector2 &_vector) const;
 
 
         // Binary assignement math operators
@@ -61,4 +61,3 @@ namespace DadEngine
 } // namespace DadEngine
 
 #endif //__VECTOR2_HPP_
-

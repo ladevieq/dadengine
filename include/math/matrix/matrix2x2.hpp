@@ -1,6 +1,7 @@
 #ifndef __MATRIX2X2_HPP_
 #define __MATRIX2X2_HPP_
 
+#include <array>
 
 namespace DadEngine
 {
@@ -12,11 +13,11 @@ namespace DadEngine
         public:
         Matrix2x2() = default;
 
-        Matrix2x2(Vector2 _vectors[2U]);
+        Matrix2x2(std::array<Vector2, 2> _vectors);
 
         Matrix2x2(float _11, float _12, float _21, float _22);
 
-        Matrix2x2(float _data[4U]);
+        Matrix2x2(std::array<float, 4> _data);
 
 
         // Standard matrix functions
@@ -26,7 +27,7 @@ namespace DadEngine
 
         void Inverse();
 
-        float Determinant();
+        float Determinant() const;
 
         void Rotation(float _angle);
 
@@ -34,19 +35,19 @@ namespace DadEngine
 
 
         // Binary math operators
-        Matrix2x2 operator+(Matrix2x2 &_matrix);
+        Matrix2x2 operator+(Matrix2x2 &_matrix) const;
 
-        Matrix2x2 operator-(Matrix2x2 &_matrix);
+        Matrix2x2 operator-(Matrix2x2 &_matrix) const;
 
-        Matrix2x2 operator*(float &_factor);
+        Matrix2x2 operator*(float &_factor) const;
 
-        Vector2 operator*(Vector2 &_vector);
+        Vector2 operator*(Vector2 &_vector) const;
 
-        Matrix2x2 operator*(Matrix2x2 &_matrix);
+        Matrix2x2 operator*(Matrix2x2 &_matrix) const;
 
-        Matrix2x2 operator/(float &_factor);
+        Matrix2x2 operator/(float &_factor) const;
 
-        Matrix2x2 operator/(Matrix2x2 &_matrix);
+        Matrix2x2 operator/(Matrix2x2 &_matrix) const;
 
         // Binary assignement math operators
         void operator+=(Matrix2x2 &_matrix);
@@ -55,7 +56,7 @@ namespace DadEngine
 
         void operator*=(float &_factor);
 
-        Vector2 operator*=(Vector2 &_vector);
+        Vector2 operator*=(Vector2 &_vector) const;
 
         void operator*=(Matrix2x2 &_matrix);
 
@@ -70,4 +71,3 @@ namespace DadEngine
 } // namespace DadEngine
 
 #endif //__MATRIX2X2_HPP_
-

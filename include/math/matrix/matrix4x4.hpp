@@ -1,6 +1,7 @@
 #ifndef __MATRIX4X4_HPP_
 #define __MATRIX4X4_HPP_
 
+#include <array>
 
 namespace DadEngine
 {
@@ -13,7 +14,7 @@ namespace DadEngine
         public:
         Matrix4x4() = default;
 
-        Matrix4x4(Vector4 _vectors[4U]);
+        // Matrix4x4(std::array<Vector4, 4> _vectors);
 
         Matrix4x4(float _11,
                   float _12,
@@ -32,7 +33,7 @@ namespace DadEngine
                   float _43,
                   float _44);
 
-        Matrix4x4(float _data[16U]);
+        Matrix4x4(std::array<float, 16> _data);
 
 
         // Standard matrix functions
@@ -42,31 +43,31 @@ namespace DadEngine
 
         void Inverse();
 
-        float Determinant();
+        float Determinant() const;
 
         void Translation(Vector3 _translation);
 
         void Orthographic();
 
-        void PerspectiveRH_NO(float _near, float _far, float _fov, float _aspect);
+        void PerspectiveRHNO(float _near, float _far, float _fov, float _aspect);
 
         void LookAtRH(Vector3 &_eyePosition, Vector3 &_targetPosition, Vector3 &_up);
 
 
         // Binary math operators
-        Matrix4x4 operator+(Matrix4x4 &_matrix);
+        Matrix4x4 operator+(Matrix4x4 &_matrix) const;
 
-        Matrix4x4 operator-(Matrix4x4 &_matrix);
+        Matrix4x4 operator-(Matrix4x4 &_matrix) const;
 
-        Matrix4x4 operator*(float &_factor);
+        Matrix4x4 operator*(float &_factor) const;
 
-        Vector4 operator*(Vector4 &_vector);
+        Vector4 operator*(Vector4 &_vector) const;
 
-        Matrix4x4 operator*(Matrix4x4 &_matrix);
+        Matrix4x4 operator*(Matrix4x4 &_matrix) const;
 
-        Matrix4x4 operator/(float &_factor);
+        Matrix4x4 operator/(float &_factor) const;
 
-        Matrix4x4 operator/(Matrix4x4 &_matrix);
+        Matrix4x4 operator/(Matrix4x4 &_matrix) const;
 
 
         // Binary assignement math operators
@@ -76,7 +77,7 @@ namespace DadEngine
 
         void operator*=(float &_factor);
 
-        Vector4 operator*=(Vector4 &_vector);
+        Vector4 operator*=(Vector4 &_vector) const;
 
         void operator*=(Matrix4x4 &_matrix);
 
@@ -93,4 +94,3 @@ namespace DadEngine
 } // namespace DadEngine
 
 #endif //__MATRIX4X4_HPP_
-

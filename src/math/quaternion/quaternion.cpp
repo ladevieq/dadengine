@@ -1,8 +1,8 @@
-#include "quaternion.hpp"
+#include "quaternion/quaternion.hpp"
 
-#include "../matrix/matrix3x3.hpp"
-#include "../matrix/matrix4x4.hpp"
-#include "../vector/vector3.hpp"
+#include "matrix/matrix3x3.hpp"
+#include "matrix/matrix4x4.hpp"
+#include "vector/vector3.hpp"
 
 #include <cmath>
 
@@ -20,7 +20,7 @@ namespace DadEngine
     Quaternion::Quaternion(float _angle, Vector3 _axis)
     {
         float angle2 = _angle / 2.f;
-        float sin2 = sin(angle2);
+        float sin2   = sin(angle2);
 
         w = cos(angle2);
         x = _axis.x * sin2;
@@ -28,13 +28,13 @@ namespace DadEngine
         z = _axis.z * sin2;
     }
 
-    Quaternion Quaternion::Conjugate()
+    Quaternion Quaternion::Conjugate() const
     {
         return Quaternion(w, -x, -y, -z);
     }
 
     // Binary math operators
-    Quaternion Quaternion::operator*(Quaternion &_quat)
+    Quaternion Quaternion::operator*(Quaternion &_quat) const
     {
         return Quaternion(w * _quat.w - x * _quat.x - y * _quat.y - z * _quat.z,
                           w * _quat.x + x * _quat.w + y * _quat.z - z * _quat.y,
@@ -46,17 +46,17 @@ namespace DadEngine
     void Quaternion::operator*=(Quaternion &_quat)
     {
         Quaternion temp = *this;
-        w = temp.w * _quat.w - temp.x * _quat.x - temp.y * _quat.y -
-            temp.z * _quat.z;
-        x = temp.w * _quat.x + temp.x * _quat.w + temp.y * _quat.z -
-            temp.z * _quat.y;
-        y = temp.w * _quat.y - temp.x * _quat.z + temp.y * _quat.w +
-            temp.z * _quat.x;
-        z = temp.w * _quat.z + temp.x * _quat.y - temp.y * _quat.x +
-            temp.z * _quat.w;
+        w               = temp.w * _quat.w - temp.x * _quat.x - temp.y * _quat.y
+            - temp.z * _quat.z;
+        x = temp.w * _quat.x + temp.x * _quat.w + temp.y * _quat.z
+            - temp.z * _quat.y;
+        y = temp.w * _quat.y - temp.x * _quat.z + temp.y * _quat.w
+            + temp.z * _quat.x;
+        z = temp.w * _quat.z + temp.x * _quat.y - temp.y * _quat.x
+            + temp.z * _quat.w;
     }
 
-    Matrix3x3 Quaternion::GetRotationMatrix()
+    Matrix3x3 Quaternion::GetRotationMatrix() const
     {
         Matrix3x3 result;
 
@@ -73,7 +73,7 @@ namespace DadEngine
         return result;
     }
 
-    Matrix4x4 Quaternion::GetRotationMatrixExtended()
+    Matrix4x4 Quaternion::GetRotationMatrixExtended() const
     {
         Matrix4x4 result;
 

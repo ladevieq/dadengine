@@ -1,12 +1,23 @@
-#ifndef __CONSTANTS_HPP_
-#define __CONSTANTS_HPP_
-
-#define _USE_MATH_DEFINES
+#pragma once
 
 #include <cmath>
 
-#define RADTODEG(x) x * 180.0 / M_PI
-#define DEGTORAD(x) x *M_PI / 180.0
+inline constexpr double RadToDeg(double _x)
+{
+    return _x * 180.0 / M_PI;
+}
 
-#endif //!__CONSTANTS_HPP_
+inline constexpr float RadToDeg(float _x)
+{
+    return _x * 180.0 / M_PI;
+}
 
+inline constexpr float DegToRad(float _x)
+{
+    return _x * M_PI / 180.0;
+}
+
+inline constexpr double DegToRad(double _x)
+{
+    return _x * M_PI / 180.0;
+}

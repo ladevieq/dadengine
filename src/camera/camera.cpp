@@ -9,6 +9,6 @@ namespace DadEngine
         Vector3 up(0.f, 1.f, 0.f);
         view.LookAtRH(position, target, up);
 
-        projection.PerspectiveRH_NO(near, far, fov, _aspect);
+        projection.PerspectiveRHNO(near, far, fov, _aspect);
     }
 } // namespace DadEngine

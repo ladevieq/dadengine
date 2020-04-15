@@ -1,6 +1,6 @@
-#include "vector3.hpp"
+#include "vector/vector3.hpp"
 
-#include "../constants.hpp"
+#include "constants.hpp"
 
 namespace DadEngine
 {
@@ -19,24 +19,24 @@ namespace DadEngine
         *this /= length;
     }
 
-    float Vector3::Length()
+    float Vector3::Length() const
     {
         return std::sqrt(SqLength());
     }
 
-    float Vector3::SqLength()
+    float Vector3::SqLength() const
     {
         return x * x + y * y + z * z;
     }
 
-    float Vector3::Angle(Vector3 &_vector)
+    float Vector3::Angle(Vector3 &_vector) const
     {
         Vector3 tempVec = _vector / (Length() * _vector.Length());
 
         return std::acos(Dot(tempVec));
     }
 
-    float Vector3::Dot(Vector3 &_vector)
+    float Vector3::Dot(Vector3 &_vector) const
     {
         return x * _vector.x + y * _vector.y + z * _vector.z;
     }
@@ -49,33 +49,33 @@ namespace DadEngine
     }
 
     // Unary operators
-    Vector3 Vector3::operator-()
+    Vector3 Vector3::operator-() const
     {
         return Vector3(-x, -y, -z);
     }
 
     // Binary math operators
-    Vector3 Vector3::operator+(Vector3 &_vector)
+    Vector3 Vector3::operator+(Vector3 &_vector) const
     {
         return Vector3(x + _vector.x, y + _vector.y, z + _vector.z);
     }
 
-    Vector3 Vector3::operator-(Vector3 &_vector)
+    Vector3 Vector3::operator-(Vector3 &_vector) const
     {
         return Vector3(x - _vector.x, y - _vector.y, z - _vector.z);
     }
 
-    Vector3 Vector3::operator*(float _val)
+    Vector3 Vector3::operator*(float _val) const
     {
         return Vector3(x * _val, y * _val, z * _val);
     }
 
-    Vector3 Vector3::operator/(float _val)
+    Vector3 Vector3::operator/(float _val) const
     {
         return Vector3(x / _val, y / _val, z / _val);
     }
 
-    Vector3 Vector3::operator^(Vector3 &_vector)
+    Vector3 Vector3::operator^(Vector3 &_vector) const
     {
         return Vector3(y * _vector.z - z * _vector.y,
                        z * _vector.x - x * _vector.z,

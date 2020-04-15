@@ -5,8 +5,6 @@
 #include <iostream>
 #include <limits>
 #include <numeric>
-#include <stdint.h>
-#include <vulkan/vulkan_core.h>
 
 #include "camera/camera.hpp"
 #include "math/math.hpp"
