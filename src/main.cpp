@@ -7,7 +7,7 @@
 #include <numeric>
 
 #include "camera/camera.hpp"
-#include "math/math.hpp"
+#include "math/matrix/matrix4x4.hpp"
 #include "model/model.hpp"
 #include "window/window.hpp"
 

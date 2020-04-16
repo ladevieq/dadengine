@@ -14,6 +14,7 @@ add_subdirectory(renderer/)
 add_executable(dadengine main.cpp)
 
 target_include_directories(dadengine PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(dadengine PRIVATE ${CMAKE_SOURCE_DIR}/include/math)
 target_include_directories(dadengine SYSTEM PRIVATE "$ENV{VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/include")
 
 target_link_libraries(dadengine PRIVATE ${OPENGL_LIBRARIES})

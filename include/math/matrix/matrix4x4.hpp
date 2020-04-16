@@ -3,6 +3,8 @@
 
 #include <array>
 
+#include "vector/vector4.hpp"
+
 namespace DadEngine
 {
     class Vector3;
@@ -14,7 +16,7 @@ namespace DadEngine
         public:
         Matrix4x4() = default;
 
-        // Matrix4x4(std::array<Vector4, 4> _vectors);
+        Matrix4x4(std::array<Vector4, 4> _vectors);
 
         Matrix4x4(float _11,
                   float _12,

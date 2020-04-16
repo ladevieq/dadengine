@@ -8,17 +8,17 @@
 
 namespace DadEngine
 {
-    // Matrix4x4::Matrix4x4(std::array<Vector4, 4> _vectors)
-    // {
-    //     m_11 = _vectors[0U].x, m_12 = _vectors[1U].x, m_13 = _vectors[2U].x,
-    //     m_14 = _vectors[3U].x;
-    //     m_21 = _vectors[0U].y, m_22 = _vectors[1U].y, m_23 = _vectors[2U].y,
-    //     m_24 = _vectors[3U].y;
-    //     m_31 = _vectors[0U].z, m_32 = _vectors[1U].z, m_33 = _vectors[2U].z,
-    //     m_34 = _vectors[3U].z;
-    //     m_41 = _vectors[0U].w, m_42 = _vectors[1U].w, m_43 = _vectors[2U].w,
-    //     m_44 = _vectors[3U].w;
-    // }
+    Matrix4x4::Matrix4x4(std::array<Vector4, 4> _vectors)
+    {
+        m_11 = _vectors[0U].x, m_12 = _vectors[1U].x, m_13 = _vectors[2U].x,
+        m_14 = _vectors[3U].x;
+        m_21 = _vectors[0U].y, m_22 = _vectors[1U].y, m_23 = _vectors[2U].y,
+        m_24 = _vectors[3U].y;
+        m_31 = _vectors[0U].z, m_32 = _vectors[1U].z, m_33 = _vectors[2U].z,
+        m_34 = _vectors[3U].z;
+        m_41 = _vectors[0U].w, m_42 = _vectors[1U].w, m_43 = _vectors[2U].w,
+        m_44 = _vectors[3U].w;
+    }
 
     Matrix4x4::Matrix4x4(float _11,
                          float _12,

@@ -13,8 +13,8 @@
 #include <stb_image.h>
 
 #include "helpers/file.hpp"
-#include "math/math.hpp"
 #include "model/model.hpp"
+#include "vector/vector3.hpp"
 
 using json = nlohmann::json;
 
