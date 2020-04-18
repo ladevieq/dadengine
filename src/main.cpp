@@ -83,8 +83,8 @@ int main()
 
 #include "renderer/vulkan-loader.hpp"
 
-#define VMA_IMPLEMENTATION
-#include <VulkanMemoryAllocator/vk_mem_alloc.h>
+// #define VMA_IMPLEMENTATION
+// #include <VulkanMemoryAllocator/vk_mem_alloc.h>
 
 inline std::optional<VkSwapchainKHR> CreateSwapchain(VkDevice _device,
                                                      VkPhysicalDevice _physicalDevice,
@@ -130,8 +130,9 @@ inline std::optional<VkSwapchainKHR> CreateSwapchain(VkDevice _device,
         imageExtent = surfaceCapabilities.minImageExtent;
     }
 
-    VkImageUsageFlags imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
-                                   & surfaceCapabilities.supportedUsageFlags;
+    VkImageUsageFlags imageUsage
+        = (VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT)
+          & surfaceCapabilities.supportedUsageFlags;
 
     uint32_t presentModesCount = 0;
     vkGetPhysicalDeviceSurfacePresentModesKHR(_physicalDevice, _presentationSurface,
@@ -178,12 +179,75 @@ inline std::optional<VkSwapchainKHR> CreateSwapchain(VkDevice _device,
     return std::optional(swapchain);
 }
 
-VkInstance instance;
-VkPhysicalDevice physicalDevice;
-VkDevice device;
-VkSwapchainKHR swapchain;
-VkSemaphore imageAvailableSemaphore;
-VkSemaphore renderingFinishedSemaphore;
+VkInstance Instance;
+VkPhysicalDevice PhysicalDevice;
+VkDevice Device;
+VkSwapchainKHR Swapchain;
+VkSemaphore ImageAvailableSemaphore;
+VkSemaphore QueueProcessingFinishedSemaphore;
+uint32_t GraphicsQueueIndex            = 0;
+uint32_t PresentationQueueIndex        = 0;
+VkQueue GraphicsQueue                  = nullptr;
+VkQueue PresentationQueue              = nullptr;
+VkCommandPool GraphicsQueueCmdPool     = nullptr;
+VkCommandPool PresentationQueueCmdPool = nullptr;
+std::vector<VkCommandBuffer> GraphicsCommandBuffers;
+std::vector<VkCommandBuffer> PresentationCommandBuffers;
+std::vector<VkImage> SwapchainImages;
+
+inline void RecordCommands()
+{
+    VkCommandBufferBeginInfo commandBufferBeginInfo {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, nullptr,
+        VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr
+    };
+
+    VkClearColorValue clearColor { { 0.f, 1.f, 0.f, 1.f } };
+
+    VkImageSubresourceRange imageSubressourceRange { VK_IMAGE_ASPECT_COLOR_BIT,
+                                                     0, 1, 0, 1 };
+
+    for (size_t imageIndex = 0; imageIndex < SwapchainImages.size(); imageIndex++) {
+        VkImageMemoryBarrier barrierFromPresentToClear { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+                                                         nullptr,
+                                                         VK_ACCESS_MEMORY_READ_BIT,
+                                                         VK_ACCESS_TRANSFER_WRITE_BIT,
+                                                         VK_IMAGE_LAYOUT_UNDEFINED,
+                                                         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                                         PresentationQueueIndex,
+                                                         PresentationQueueIndex,
+                                                         SwapchainImages[imageIndex],
+                                                         imageSubressourceRange };
+
+        VkImageMemoryBarrier barrierFromClearToPresent { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+                                                         nullptr,
+                                                         VK_ACCESS_TRANSFER_WRITE_BIT,
+                                                         VK_ACCESS_MEMORY_READ_BIT,
+                                                         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                                         VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+                                                         PresentationQueueIndex,
+                                                         PresentationQueueIndex,
+                                                         SwapchainImages[imageIndex],
+                                                         imageSubressourceRange };
+
+        vkBeginCommandBuffer(PresentationCommandBuffers[imageIndex], &commandBufferBeginInfo);
+
+        vkCmdPipelineBarrier(PresentationCommandBuffers[imageIndex], VK_PIPELINE_STAGE_TRANSFER_BIT,
+                             VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
+                             nullptr, 1, &barrierFromPresentToClear);
+        vkCmdClearColorImage(PresentationCommandBuffers[imageIndex],
+                             SwapchainImages[imageIndex], VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                             &clearColor, 1, &imageSubressourceRange);
+        vkCmdPipelineBarrier(PresentationCommandBuffers[imageIndex], VK_PIPELINE_STAGE_TRANSFER_BIT,
+                             VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0,
+                             nullptr, 0, nullptr, 1, &barrierFromClearToPresent);
+
+        vkEndCommandBuffer(PresentationCommandBuffers[imageIndex]);
+    }
+}
+
+inline void CreateRenderpass()
+{}
 
 inline void SetupVulkan(Window &_window)
 {
@@ -199,7 +263,7 @@ inline void SetupVulkan(Window &_window)
 #endif
           };
 
-    instance = CreateInstance(neededInstanceLayers, neededInstanceExtensions).value();
+    Instance = CreateInstance(neededInstanceLayers, neededInstanceExtensions).value();
 
     VkSurfaceKHR presentationSurface;
 
@@ -209,7 +273,7 @@ inline void SetupVulkan(Window &_window)
         _window.GetWindowHInstance(), _window.GetWindowHandle()
     };
 
-    if (vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &presentationSurface)
+    if (vkCreateWin32SurfaceKHR(Instance, &surfaceCreateInfo, nullptr, &presentationSurface)
         != VK_SUCCESS) {
         printf("Failed to create win32 surface\n");
     }
@@ -221,41 +285,106 @@ inline void SetupVulkan(Window &_window)
 
     auto requiredQueueFlags = VK_QUEUE_GRAPHICS_BIT;
 
-    physicalDevice = SelectPhysicalDevice(instance, requiredQueueFlags,
+    PhysicalDevice = SelectPhysicalDevice(Instance, requiredQueueFlags,
                                           requiredDeviceExtensions, presentationSurface)
                          .value();
 
-    int32_t graphicsQueueIndex = GetQueueFamilyIndex(physicalDevice, requiredQueueFlags);
-    int32_t presentationQueueIndex
-        = GetPresentationQueueIndex(physicalDevice, presentationSurface);
-    std::vector<uint32_t> queueFamilyIndices;
+    GraphicsQueueIndex = GetQueueFamilyIndex(PhysicalDevice, requiredQueueFlags);
+    PresentationQueueIndex = GetPresentationQueueIndex(PhysicalDevice, presentationSurface);
 
-    if (graphicsQueueIndex == presentationQueueIndex) {
-        queueFamilyIndices.emplace_back(graphicsQueueIndex);
+    std::vector<uint32_t> queueFamilyIndices;
+    if (GraphicsQueueIndex == PresentationQueueIndex) {
+        queueFamilyIndices.emplace_back(GraphicsQueueIndex);
     }
     else {
-        queueFamilyIndices.emplace_back(static_cast<uint32_t>(graphicsQueueIndex));
-        queueFamilyIndices.emplace_back(static_cast<uint32_t>(presentationQueueIndex));
+        queueFamilyIndices.emplace_back(static_cast<uint32_t>(GraphicsQueueIndex));
+        queueFamilyIndices.emplace_back(static_cast<uint32_t>(PresentationQueueIndex));
     }
 
-    device = CreateDevice(physicalDevice, queueFamilyIndices, requiredDeviceExtensions)
+    Device = CreateDevice(PhysicalDevice, queueFamilyIndices, requiredDeviceExtensions)
                  .value();
-
-    swapchain
-        = CreateSwapchain(device, physicalDevice, presentationSurface, nullptr).value();
 
     VkSemaphoreCreateInfo semaphoreCreateInfo { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
                                                 nullptr, 0 };
+    vkCreateSemaphore(Device, &semaphoreCreateInfo, nullptr, &ImageAvailableSemaphore);
+    vkCreateSemaphore(Device, &semaphoreCreateInfo, nullptr, &QueueProcessingFinishedSemaphore);
 
-    vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &imageAvailableSemaphore);
-    vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &renderingFinishedSemaphore);
+    vkGetDeviceQueue(Device, GraphicsQueueIndex, 0, &GraphicsQueue);
+    vkGetDeviceQueue(Device, PresentationQueueIndex, 0, &PresentationQueue);
+
+    VkCommandPoolCreateInfo graphicsCommandPoolCreateInfo {
+        VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, nullptr, 0, GraphicsQueueIndex
+    };
+    vkCreateCommandPool(Device, &graphicsCommandPoolCreateInfo, nullptr, &GraphicsQueueCmdPool);
+
+    VkCommandPoolCreateInfo presentationCommandPoolCreateInfo {
+        VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, nullptr, 0, PresentationQueueIndex
+    };
+    vkCreateCommandPool(Device, &presentationCommandPoolCreateInfo, nullptr,
+                        &PresentationQueueCmdPool);
+
+
+    Swapchain
+        = CreateSwapchain(Device, PhysicalDevice, presentationSurface, nullptr).value();
+
+    uint32_t imagesCount = 0;
+    vkGetSwapchainImagesKHR(Device, Swapchain, &imagesCount, nullptr);
+
+    SwapchainImages.resize(imagesCount);
+    vkGetSwapchainImagesKHR(Device, Swapchain, &imagesCount, SwapchainImages.data());
+
+    GraphicsCommandBuffers.resize(imagesCount);
+    PresentationCommandBuffers.resize(imagesCount);
+
+    VkCommandBufferAllocateInfo graphicsCommandBuffersAllocateInfo {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, nullptr,
+        GraphicsQueueCmdPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, imagesCount
+    };
+    vkAllocateCommandBuffers(Device, &graphicsCommandBuffersAllocateInfo,
+                             GraphicsCommandBuffers.data());
+
+    VkCommandBufferAllocateInfo presentationCommandBuffersAllocateInfo {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, nullptr,
+        PresentationQueueCmdPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, imagesCount
+    };
+    vkAllocateCommandBuffers(Device, &presentationCommandBuffersAllocateInfo,
+                             PresentationCommandBuffers.data());
+
+    RecordCommands();
 }
 
 void Draw()
 {
     uint32_t imageIndex;
-    vkAcquireNextImageKHR(device, swapchain, std::numeric_limits<uint64_t>::max(),
-                          imageAvailableSemaphore, nullptr, &imageIndex);
+    vkAcquireNextImageKHR(Device, Swapchain, std::numeric_limits<uint64_t>::max(),
+                          ImageAvailableSemaphore, nullptr, &imageIndex);
+
+    VkPipelineStageFlags waitPipelineStages = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+    // Send command buffers to the queue to execute it
+    VkSubmitInfo submitInfo { VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                              nullptr,
+                              1,
+                              &ImageAvailableSemaphore, // Useless for now ?
+                              &waitPipelineStages,
+                              1,
+                              &PresentationCommandBuffers[imageIndex],
+                              1,
+                              &QueueProcessingFinishedSemaphore };
+
+    vkQueueSubmit(PresentationQueue, 1, &submitInfo, VK_NULL_HANDLE);
+
+    // Present the resulting image
+    VkPresentInfoKHR presentInfo { VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+                                   nullptr,
+                                   1,
+                                   &QueueProcessingFinishedSemaphore,
+                                   1,
+                                   &Swapchain,
+                                   &imageIndex,
+                                   nullptr };
+
+    vkQueuePresentKHR(PresentationQueue, &presentInfo);
 }
 
 int main()
@@ -278,6 +407,8 @@ int main()
 
     while (app.GetWindow().IsOpen()) {
         app.GetWindow().MessagePump();
+
+        Draw();
     }
 
     return 0;

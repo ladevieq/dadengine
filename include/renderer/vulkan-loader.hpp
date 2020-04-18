@@ -54,19 +54,19 @@
     X(vkGetSwapchainImagesKHR)  \
     X(vkAcquireNextImageKHR)    \
     X(vkDestroySwapchainKHR)    \
+    X(vkQueueSubmit)            \
     X(vkQueuePresentKHR)        \
     X(vkCreateSemaphore)        \
-    X(vkDestroySemaphore)
+    X(vkDestroySemaphore)       \
+    X(vkCreateCommandPool)      \
+    X(vkAllocateCommandBuffers) \
+    X(vkBeginCommandBuffer)     \
+    X(vkEndCommandBuffer)       \
+    X(vkCmdPipelineBarrier)     \
+    X(vkCmdClearColorImage)
 
 namespace DadEngine
 {
-    struct VulkanContext
-    {
-        VkInstance instance;
-        VkPhysicalDevice physicalDevice;
-        VkDevice device;
-    };
-
 #define X(name) extern PFN_##name name;
     VULKAN_EXPORTED_FUNCTIONS
     VULKAN_APPLICATION_FUNCTIONS
