@@ -1,14 +1,17 @@
 Checks: 'modernize-*,performance-*,readability-*,-llvm-header-guard,-modernize-use-trailing-return-type,-readability-magic-numbers,-readability-uppercase-literal-suffix,-readability-implicit-bool-conversion'
 
 CheckOptions:
-  - { key: performance-move-const-arg.CheckTriviallyCopyableMove,    value: 0         }
-  - { key: readability-identifier-naming.NamespaceCase,             value: CamelCase  }
-  - { key: readability-identifier-naming.ClassCase,                 value: CamelCase  }
-  - { key: readability-identifier-naming.PrivateMemberPrefix,       value: m_         }
-  - { key: readability-identifier-naming.StructCase,                value: CamelCase  }
-  - { key: readability-identifier-naming.FunctionCase,              value: CamelCase  }
-  - { key: readability-identifier-naming.PublicMethodCase,          value: CamelCase  }
-  - { key: readability-identifier-naming.PrivateMethodCase,         value: camelBack  }
-  - { key: readability-identifier-naming.VariableCase,              value: camelBack  }
-  - { key: readability-identifier-naming.GlobalConstantCase,        value: camelBack  }
-  - { key: readability-identifier-naming.EnumCase,                  value: UPPER_CASE }
+  - { key: performance-move-const-arg.CheckTriviallyCopyableMove,           value: 0          }
+  - { key: readability-identifier-naming.NamespaceCase,                     value: CamelCase  }
+  - { key: readability-identifier-naming.ClassCase,                         value: CamelCase  }
+  - { key: readability-identifier-naming.PrivateMemberPrefix,               value: m_         }
+  - { key: readability-identifier-naming.ParameterPrefix,                   value: _          }
+  - { key: readability-identifier-naming.StructCase,                        value: CamelCase  }
+  - { key: readability-identifier-naming.FunctionCase,                      value: CamelCase  }
+  - { key: readability-identifier-naming.PublicMethodCase,                  value: CamelCase  }
+  - { key: readability-identifier-naming.PrivateMethodCase,                 value: camelBack  }
+  - { key: readability-identifier-naming.VariableCase,                      value: camelBack  }
+  - { key: readability-identifier-naming.GlobalVariableCase,                value: CamelCase  }
+  - { key: readability-identifier-naming.GlobalConstantCase,                value: UPPER_CASE }
+  - { key: readability-identifier-naming.ConstexprVariableConstantCase,     value: UPPER_CASE }
+  - { key: readability-identifier-naming.EnumCase,                          value: UPPER_CASE }
