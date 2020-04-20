@@ -19,6 +19,9 @@ namespace DadEngine
     struct Vertex
     {
         Vector3 position;
+#if defined(VULKAN)
+        Vector3 color;
+#endif
         Vector3 normal;
         Vector4 tangent;
         Vector2 uv0;
@@ -101,13 +104,14 @@ namespace DadEngine
     struct Primitive
     {
         Primitive(VertexBuffer &&_vertexBuffer, uint32_t _drawMode, PBRMaterial _material)
-            : vertices(_vertexBuffer), indices({}), drawMode(_drawMode),
-              material(_material)
+            : vertices(_vertexBuffer), indices({}), drawMode(_drawMode), material(_material)
         {}
 
         Primitive(VertexBuffer &&_vertexBuffer, IndexBuffer &&_indexBuffer, uint32_t _drawMode, PBRMaterial _material)
-            : vertices(_vertexBuffer), indices(_indexBuffer),
-              drawMode(_drawMode), material(_material)
+            : vertices(_vertexBuffer),
+              indices(_indexBuffer),
+              drawMode(_drawMode),
+              material(_material)
         {}
 
         void Render();

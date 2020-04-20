@@ -3,7 +3,6 @@
 #include <optional>
 #include <string>
 #include <vector>
-#include <vulkan/vulkan_core.h>
 
 #if defined(WINDOWS)
 #include <Windows.h>
@@ -30,6 +29,7 @@
     X(vkGetPhysicalDeviceProperties)             \
     X(vkGetPhysicalDeviceFeatures)               \
     X(vkGetPhysicalDeviceQueueFamilyProperties)  \
+    X(vkGetPhysicalDeviceMemoryProperties)       \
     X(vkCreateDevice)                            \
     X(vkEnumerateDeviceExtensionProperties)      \
     X(vkDestroySurfaceKHR)                       \
@@ -46,24 +46,64 @@
 #define PLATFORM_VULKAN_INSTANCE_FUNCTIONS
 #endif
 
-#define VULKAN_DEVICE_FUNCTIONS \
-    X(vkGetDeviceQueue)         \
-    X(vkDestroyDevice)          \
-    X(vkDeviceWaitIdle)         \
-    X(vkCreateSwapchainKHR)     \
-    X(vkGetSwapchainImagesKHR)  \
-    X(vkAcquireNextImageKHR)    \
-    X(vkDestroySwapchainKHR)    \
-    X(vkQueueSubmit)            \
-    X(vkQueuePresentKHR)        \
-    X(vkCreateSemaphore)        \
-    X(vkDestroySemaphore)       \
-    X(vkCreateCommandPool)      \
-    X(vkAllocateCommandBuffers) \
-    X(vkBeginCommandBuffer)     \
-    X(vkEndCommandBuffer)       \
-    X(vkCmdPipelineBarrier)     \
-    X(vkCmdClearColorImage)
+#define VULKAN_DEVICE_FUNCTIONS       \
+    X(vkGetDeviceQueue)               \
+    X(vkDestroyDevice)                \
+    X(vkDeviceWaitIdle)               \
+    X(vkCreateSwapchainKHR)           \
+    X(vkGetSwapchainImagesKHR)        \
+    X(vkAcquireNextImageKHR)          \
+    X(vkDestroySwapchainKHR)          \
+    X(vkQueueSubmit)                  \
+    X(vkQueuePresentKHR)              \
+    X(vkCreateSemaphore)              \
+    X(vkDestroySemaphore)             \
+    X(vkCreateCommandPool)            \
+    X(vkAllocateCommandBuffers)       \
+    X(vkFreeCommandBuffers)           \
+    X(vkDestroyCommandPool)           \
+    X(vkBeginCommandBuffer)           \
+    X(vkCmdPipelineBarrier)           \
+    X(vkCmdClearColorImage)           \
+    X(vkCmdBeginRenderPass)           \
+    X(vkCmdBindPipeline)              \
+    X(vkCmdDraw)                      \
+    X(vkCmdDrawIndexed)               \
+    X(vkCmdEndRenderPass)             \
+    X(vkEndCommandBuffer)             \
+    X(vkCreateRenderPass)             \
+    X(vkCreateImageView)              \
+    X(vkCreateFramebuffer)            \
+    X(vkCreateShaderModule)           \
+    X(vkCreatePipelineLayout)         \
+    X(vkCreateGraphicsPipelines)      \
+    X(vkCreateFence)                  \
+    X(vkCreateBuffer)                 \
+    X(vkGetBufferMemoryRequirements)  \
+    X(vkCreateImage)                  \
+    X(vkGetImageMemoryRequirements)   \
+    X(vkAllocateMemory)               \
+    X(vkMapMemory)                    \
+    X(vkInvalidateMappedMemoryRanges) \
+    X(vkFlushMappedMemoryRanges)      \
+    X(vkUnmapMemory)                  \
+    X(vkFreeMemory)                   \
+    X(vkBindBufferMemory)             \
+    X(vkBindImageMemory)              \
+    X(vkCmdBindVertexBuffers)         \
+    X(vkCmdBindIndexBuffer)           \
+    X(vkCmdCopyBuffer)                \
+    X(vkWaitForFences)                \
+    X(vkResetFences)                  \
+    X(vkDestroyFence)                 \
+    X(vkDestroyImage)                 \
+    X(vkDestroyBuffer)                \
+    X(vkDestroyPipeline)              \
+    X(vkDestroyPipelineLayout)        \
+    X(vkDestroyShaderModule)          \
+    X(vkDestroyFramebuffer)           \
+    X(vkDestroyImageView)             \
+    X(vkDestroyRenderPass)
 
 namespace DadEngine
 {

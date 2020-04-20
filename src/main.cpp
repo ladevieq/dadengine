@@ -5,8 +5,10 @@
 #include <iostream>
 #include <limits>
 #include <numeric>
+#include <vulkan/vulkan_core.h>
 
 #include "camera/camera.hpp"
+#include "helpers/file.hpp"
 #include "math/matrix/matrix4x4.hpp"
 #include "model/model.hpp"
 #include "window/window.hpp"
@@ -83,8 +85,12 @@ int main()
 
 #include "renderer/vulkan-loader.hpp"
 
-// #define VMA_IMPLEMENTATION
-// #include <VulkanMemoryAllocator/vk_mem_alloc.h>
+#define VMA_STATIC_VULKAN_FUNCTIONS 0
+#define VMA_IMPLEMENTATION
+#include <vk_mem_alloc.h>
+
+VkFormat SwapchainFormat;
+VkExtent2D SwapchainImagesSize;
 
 inline std::optional<VkSwapchainKHR> CreateSwapchain(VkDevice _device,
                                                      VkPhysicalDevice _physicalDevice,
@@ -118,6 +124,8 @@ inline std::optional<VkSwapchainKHR> CreateSwapchain(VkDevice _device,
         }
     }
 
+    SwapchainFormat = surfaceFormat.format;
+
     uint32_t imageCount = surfaceCapabilities.minImageCount + 1;
     if (surfaceCapabilities.maxImageCount) {
         imageCount = std::min(imageCount, surfaceCapabilities.maxImageCount);
@@ -129,6 +137,8 @@ inline std::optional<VkSwapchainKHR> CreateSwapchain(VkDevice _device,
         // TODO: Take client rect ??
         imageExtent = surfaceCapabilities.minImageExtent;
     }
+
+    SwapchainImagesSize = imageExtent;
 
     VkImageUsageFlags imageUsage
         = (VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_DST_BIT)
@@ -183,71 +193,604 @@ VkInstance Instance;
 VkPhysicalDevice PhysicalDevice;
 VkDevice Device;
 VkSwapchainKHR Swapchain;
-VkSemaphore ImageAvailableSemaphore;
-VkSemaphore QueueProcessingFinishedSemaphore;
 uint32_t GraphicsQueueIndex            = 0;
 uint32_t PresentationQueueIndex        = 0;
 VkQueue GraphicsQueue                  = nullptr;
 VkQueue PresentationQueue              = nullptr;
 VkCommandPool GraphicsQueueCmdPool     = nullptr;
 VkCommandPool PresentationQueueCmdPool = nullptr;
-std::vector<VkCommandBuffer> GraphicsCommandBuffers;
-std::vector<VkCommandBuffer> PresentationCommandBuffers;
-std::vector<VkImage> SwapchainImages;
+VkShaderModule VertexShaderModule      = nullptr;
+VkShaderModule FragmentShaderModule    = nullptr;
+VkRenderPass RenderPass                = nullptr;
+VkPipeline GraphicsPipeline            = nullptr;
+VmaAllocator Allocator                 = nullptr;
+VkClearValue ClearValue { { { 0.f, 1.f, 0.f, 1.f } } };
 
-inline void RecordCommands()
+
+// Define each rendering ressources count
+// CommandBuffers, Framebuffers, Fences, etc
+uint32_t VirtualFramesCount = 3;
+
+// Rendering ressources
+std::vector<VkCommandBuffer> GraphicsCommandBuffers { VirtualFramesCount };
+std::vector<VkCommandBuffer> PresentationCommandBuffers { VirtualFramesCount };
+std::vector<VkImage> SwapchainImages { VirtualFramesCount };
+std::vector<VkFramebuffer> Framebuffers { VirtualFramesCount };
+std::vector<VkImageView> SwapchainImagesViews { VirtualFramesCount };
+std::vector<VkFence> GraphicsCommandBuffersFences { VirtualFramesCount };
+std::vector<VkSemaphore> ImageAvailableSemaphores { VirtualFramesCount };
+std::vector<VkSemaphore> QueueProcessingFinishedSemaphores { VirtualFramesCount };
+
+std::vector<Vertex> VB {
+    {
+        { -0.7f, -0.7f, 0.f },
+        { 1.f, 0.f, 0.f },
+    },
+    {
+        { -0.7f, 0.7f, 0.f },
+        { 0.f, 1.f, 0.f },
+    },
+    {
+        { 0.7f, -0.7f, 0.f },
+        { 0.f, 0.f, 1.f },
+    },
+    {
+        { 0.7f, 0.7f, 0.f },
+        { 0.f, 0.f, 0.f },
+    },
+};
+VkBuffer VertexBufferHandle                 = nullptr;
+VmaAllocation VertexBufferAllocation        = nullptr;
+VkBuffer StagingVertexBufferHandle          = nullptr;
+VmaAllocation StagingVertexBufferAllocation = nullptr;
+
+std::vector<uint32_t> IB {
+    0, 1, 2, 1, 3, 2,
+};
+VkBuffer IndexBufferHandle          = nullptr;
+VmaAllocation IndexBufferAllocation = nullptr;
+
+inline void CreateFramebuffer(uint32_t _virtualFrameIndex);
+
+inline void RecordCommands(uint32_t _virtualFrameIndex)
 {
+    if (Framebuffers[_virtualFrameIndex] != VK_NULL_HANDLE) {
+        vkDestroyFramebuffer(Device, Framebuffers[_virtualFrameIndex], nullptr);
+    }
+
+    CreateFramebuffer(_virtualFrameIndex);
+
+
     VkCommandBufferBeginInfo commandBufferBeginInfo {
         VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, nullptr,
-        VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT, nullptr
+        VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr
     };
 
-    VkClearColorValue clearColor { { 0.f, 1.f, 0.f, 1.f } };
 
-    VkImageSubresourceRange imageSubressourceRange { VK_IMAGE_ASPECT_COLOR_BIT,
-                                                     0, 1, 0, 1 };
+    vkBeginCommandBuffer(GraphicsCommandBuffers[_virtualFrameIndex], &commandBufferBeginInfo);
 
-    for (size_t imageIndex = 0; imageIndex < SwapchainImages.size(); imageIndex++) {
-        VkImageMemoryBarrier barrierFromPresentToClear { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-                                                         nullptr,
-                                                         VK_ACCESS_MEMORY_READ_BIT,
-                                                         VK_ACCESS_TRANSFER_WRITE_BIT,
-                                                         VK_IMAGE_LAYOUT_UNDEFINED,
-                                                         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                                                         PresentationQueueIndex,
-                                                         PresentationQueueIndex,
-                                                         SwapchainImages[imageIndex],
-                                                         imageSubressourceRange };
+    VkImageSubresourceRange imageSubresourceRange { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
-        VkImageMemoryBarrier barrierFromClearToPresent { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-                                                         nullptr,
-                                                         VK_ACCESS_TRANSFER_WRITE_BIT,
-                                                         VK_ACCESS_MEMORY_READ_BIT,
-                                                         VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                                                         VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-                                                         PresentationQueueIndex,
-                                                         PresentationQueueIndex,
-                                                         SwapchainImages[imageIndex],
-                                                         imageSubressourceRange };
+    // Change ressource queue ownership
+    if (GraphicsQueueIndex != PresentationQueueIndex) {
+        VkImageMemoryBarrier barrierFromPresentToRenderpass {
+            VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            nullptr,
+            VK_ACCESS_MEMORY_READ_BIT,
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            PresentationQueueIndex,
+            GraphicsQueueIndex,
+            SwapchainImages[_virtualFrameIndex],
+            imageSubresourceRange
+        };
 
-        vkBeginCommandBuffer(PresentationCommandBuffers[imageIndex], &commandBufferBeginInfo);
-
-        vkCmdPipelineBarrier(PresentationCommandBuffers[imageIndex], VK_PIPELINE_STAGE_TRANSFER_BIT,
-                             VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0,
-                             nullptr, 1, &barrierFromPresentToClear);
-        vkCmdClearColorImage(PresentationCommandBuffers[imageIndex],
-                             SwapchainImages[imageIndex], VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
-                             &clearColor, 1, &imageSubressourceRange);
-        vkCmdPipelineBarrier(PresentationCommandBuffers[imageIndex], VK_PIPELINE_STAGE_TRANSFER_BIT,
-                             VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0,
-                             nullptr, 0, nullptr, 1, &barrierFromClearToPresent);
-
-        vkEndCommandBuffer(PresentationCommandBuffers[imageIndex]);
+        vkCmdPipelineBarrier(GraphicsCommandBuffers[_virtualFrameIndex],
+                             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, 0, 0,
+                             nullptr, 0, nullptr, 1, &barrierFromPresentToRenderpass);
     }
+
+
+    VkRenderPassBeginInfo renderPassBeginInfo {
+        VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+        nullptr,
+        RenderPass,
+        Framebuffers[_virtualFrameIndex],
+        { {
+              0,
+              0,
+          },
+          { SwapchainImagesSize.width, SwapchainImagesSize.height } },
+        1,
+        &ClearValue
+    };
+
+    vkCmdBeginRenderPass(GraphicsCommandBuffers[_virtualFrameIndex],
+                         &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    vkCmdBindPipeline(GraphicsCommandBuffers[_virtualFrameIndex],
+                      VK_PIPELINE_BIND_POINT_GRAPHICS, GraphicsPipeline);
+
+    VkDeviceSize offset = 0;
+    vkCmdBindIndexBuffer(GraphicsCommandBuffers[_virtualFrameIndex],
+                         IndexBufferHandle, offset, VK_INDEX_TYPE_UINT32);
+    vkCmdBindVertexBuffers(GraphicsCommandBuffers[_virtualFrameIndex], 0, 1,
+                           &VertexBufferHandle, &offset);
+    // vkCmdDraw(GraphicsCommandBuffers[_virtualFrameIndex], 3, 1, 0, 0);
+    vkCmdDrawIndexed(GraphicsCommandBuffers[_virtualFrameIndex], 6, 1, 0, 0, 0);
+
+    vkCmdEndRenderPass(GraphicsCommandBuffers[_virtualFrameIndex]);
+
+
+    // Change ressource queue ownership
+    if (GraphicsQueueIndex != PresentationQueueIndex) {
+        VkImageMemoryBarrier barrierFromRenderpassToPresent {
+            VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            nullptr,
+            VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+            VK_ACCESS_MEMORY_READ_BIT,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            GraphicsQueueIndex,
+            PresentationQueueIndex,
+            SwapchainImages[_virtualFrameIndex],
+            imageSubresourceRange
+        };
+
+        vkCmdPipelineBarrier(GraphicsCommandBuffers[_virtualFrameIndex],
+                             VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+                             VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, 0, 0, nullptr,
+                             0, nullptr, 1, &barrierFromRenderpassToPresent);
+    }
+
+    vkEndCommandBuffer(GraphicsCommandBuffers[_virtualFrameIndex]);
 }
 
 inline void CreateRenderpass()
-{}
+{
+    std::vector<VkAttachmentDescription> attachementsDescriptions {
+        { 0, SwapchainFormat, VK_SAMPLE_COUNT_1_BIT, VK_ATTACHMENT_LOAD_OP_CLEAR,
+          VK_ATTACHMENT_STORE_OP_STORE, VK_ATTACHMENT_LOAD_OP_DONT_CARE, VK_ATTACHMENT_STORE_OP_DONT_CARE,
+          VK_IMAGE_LAYOUT_PRESENT_SRC_KHR, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR }
+    };
+
+    std::vector<VkAttachmentReference> colorAttachmentsReferences {
+        { 0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL }
+    };
+
+    // Memory dependencies between subpasses (image memory barrier
+    std::vector<VkSubpassDependency> subpassesDependencies {
+        { VK_SUBPASS_EXTERNAL, 0, VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT,
+          VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT, VK_ACCESS_MEMORY_READ_BIT,
+          VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT, VK_DEPENDENCY_BY_REGION_BIT },
+        { 0, VK_SUBPASS_EXTERNAL, VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+          VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT, VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT,
+          VK_ACCESS_MEMORY_READ_BIT, VK_DEPENDENCY_BY_REGION_BIT }
+    };
+
+    VkSubpassDescription subpassDescription { 0,
+                                              VK_PIPELINE_BIND_POINT_GRAPHICS,
+                                              0,
+                                              nullptr,
+                                              static_cast<uint32_t>(
+                                                  colorAttachmentsReferences.size()),
+                                              colorAttachmentsReferences.data(),
+                                              nullptr,
+                                              nullptr,
+                                              0,
+                                              nullptr };
+    std::vector<VkSubpassDescription> subpassesDescriptions { subpassDescription };
+
+    VkRenderPassCreateInfo renderPassCreateInfo {
+        VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+        nullptr,
+        0,
+        static_cast<uint32_t>(attachementsDescriptions.size()),
+        attachementsDescriptions.data(),
+        static_cast<uint32_t>(subpassesDescriptions.size()),
+        subpassesDescriptions.data(),
+        static_cast<uint32_t>(subpassesDependencies.size()),
+        subpassesDependencies.data()
+    };
+
+    if (vkCreateRenderPass(Device, &renderPassCreateInfo, nullptr, &RenderPass) != VK_SUCCESS) {
+        printf("Failed to create render pass !\n");
+    }
+}
+
+inline void CreateFramebuffer(uint32_t _virtualFrameIndex)
+{
+    VkFramebufferCreateInfo framebufferCreateInfo { VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+                                                    nullptr,
+                                                    0,
+                                                    RenderPass,
+                                                    1,
+                                                    &SwapchainImagesViews[_virtualFrameIndex],
+                                                    SwapchainImagesSize.width,
+                                                    SwapchainImagesSize.height,
+                                                    1 };
+
+    vkCreateFramebuffer(Device, &framebufferCreateInfo, nullptr,
+                        &Framebuffers[_virtualFrameIndex]);
+}
+
+inline void CreatePipeline()
+{
+    std::vector<uint8_t> vertexShaderCode
+        = DadEngine::ReadFile("../data/shaders/easy.vert.spv");
+
+    VkShaderModuleCreateInfo vertexShaderModuleCreateInfo {
+        VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO, nullptr, 0,
+        vertexShaderCode.size() - 1,
+        reinterpret_cast<uint32_t *>(vertexShaderCode.data())
+    };
+
+    vkCreateShaderModule(Device, &vertexShaderModuleCreateInfo, nullptr, &VertexShaderModule);
+
+    auto fragmentShaderCode
+        = DadEngine::ReadFile("../data/shaders/easy.frag.spv");
+
+    VkShaderModuleCreateInfo fragmentShaderModuleCreateInfo {
+        VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO, nullptr, 0,
+        fragmentShaderCode.size() - 1,
+        reinterpret_cast<uint32_t *>(fragmentShaderCode.data())
+    };
+
+    vkCreateShaderModule(Device, &fragmentShaderModuleCreateInfo, nullptr, &FragmentShaderModule);
+
+    std::vector<VkPipelineShaderStageCreateInfo> shaderStagesCreateInfos {
+        { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
+          VK_SHADER_STAGE_VERTEX_BIT, VertexShaderModule, "main", nullptr },
+        { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO, nullptr, 0,
+          VK_SHADER_STAGE_FRAGMENT_BIT, FragmentShaderModule, "main", nullptr }
+    };
+
+
+    // Define vertex buffer layout ??
+    std::vector<VkVertexInputBindingDescription> vertexBindingsDescriptions {
+        { 0, sizeof(Vertex), VK_VERTEX_INPUT_RATE_VERTEX }
+    };
+    std::vector<VkVertexInputAttributeDescription> vertexInputAttributesDescriptions {
+        { 0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position) },
+        { 1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color) }
+    };
+
+    VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo {
+        VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+        nullptr,
+        0,
+        static_cast<uint32_t>(vertexBindingsDescriptions.size()),
+        vertexBindingsDescriptions.data(),
+        static_cast<uint32_t>(vertexInputAttributesDescriptions.size()),
+        vertexInputAttributesDescriptions.data()
+    };
+
+    VkPipelineInputAssemblyStateCreateInfo inputAssemblyStateCreateInfo {
+        VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO, nullptr, 0,
+        VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, VK_FALSE
+    };
+
+
+    VkViewport viewport { 0.f,
+                          0.f,
+                          static_cast<float>(SwapchainImagesSize.width),
+                          static_cast<float>(SwapchainImagesSize.height),
+                          0.f,
+                          1.f };
+
+    VkRect2D scissor { {
+                           static_cast<int32_t>(0.f),
+                           static_cast<int32_t>(0.f),
+                       },
+                       { SwapchainImagesSize.width, SwapchainImagesSize.height } };
+
+    VkPipelineViewportStateCreateInfo viewportStateCreateInfo {
+        VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO, nullptr, 0, 1, &viewport, 1, &scissor
+    };
+
+
+    VkPipelineRasterizationStateCreateInfo raterizationStateCreateInfo {
+        VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+        nullptr,
+        0,
+        VK_FALSE,
+        VK_FALSE,
+        VK_POLYGON_MODE_FILL,
+        VK_CULL_MODE_BACK_BIT,
+        VK_FRONT_FACE_COUNTER_CLOCKWISE,
+        VK_FALSE,
+        0.f,
+        0.f,
+        0.f,
+        1.f
+    };
+
+
+    VkPipelineMultisampleStateCreateInfo multisampleStateCreateInfo {
+        VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+        nullptr,
+        0,
+        VK_SAMPLE_COUNT_1_BIT,
+        VK_FALSE,
+        1.f,
+        nullptr,
+        VK_FALSE,
+        VK_FALSE
+    };
+
+
+    VkPipelineColorBlendAttachmentState colorBlendAttachmentState {
+        VK_FALSE,
+        VK_BLEND_FACTOR_ONE,
+        VK_BLEND_FACTOR_ZERO,
+        VK_BLEND_OP_ADD,
+        VK_BLEND_FACTOR_ONE,
+        VK_BLEND_FACTOR_ZERO,
+        VK_BLEND_OP_ADD,
+        VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+    };
+
+    VkPipelineColorBlendStateCreateInfo colorBlendStateCreateInfo {
+        VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+        nullptr,
+        0,
+        VK_FALSE,
+        VK_LOGIC_OP_COPY,
+        1,
+        &colorBlendAttachmentState,
+        { 0.f, 0.f, 0.f, 0.f }
+    };
+
+
+    VkPipelineLayoutCreateInfo layoutCreateInfo {
+        VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, nullptr, 0, 0, nullptr, 0, nullptr
+    };
+
+    VkPipelineLayout layout;
+    vkCreatePipelineLayout(Device, &layoutCreateInfo, nullptr, &layout);
+
+    VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo {
+        VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+        nullptr,
+        0,
+        static_cast<uint32_t>(shaderStagesCreateInfos.size()),
+        shaderStagesCreateInfos.data(),
+        &vertexInputStateCreateInfo,
+        &inputAssemblyStateCreateInfo,
+        nullptr,
+        &viewportStateCreateInfo,
+        &raterizationStateCreateInfo,
+        &multisampleStateCreateInfo,
+        nullptr,
+        &colorBlendStateCreateInfo,
+        nullptr,
+        layout,
+        RenderPass,
+        0,
+        VK_NULL_HANDLE,
+        -1
+    };
+
+    if (vkCreateGraphicsPipelines(Device, VK_NULL_HANDLE, 1, &graphicsPipelineCreateInfo,
+                                  nullptr, &GraphicsPipeline)
+        != VK_SUCCESS) {
+        printf("Failed to create graphics pipeline !");
+    }
+}
+
+void CreateVertexBuffer()
+{
+    // Device vertex buffer
+    VkDeviceSize bufferSize = VB.size() * sizeof(Vertex);
+    VkBufferCreateInfo bufferCreateInfo { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+                                          nullptr,
+                                          0,
+                                          bufferSize,
+                                          VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+                                          VK_SHARING_MODE_EXCLUSIVE,
+                                          0,
+                                          nullptr };
+
+    VmaAllocationCreateInfo allocationCreateInfo {};
+    allocationCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+    vmaCreateBuffer(Allocator, &bufferCreateInfo, &allocationCreateInfo,
+                    &VertexBufferHandle, &VertexBufferAllocation, nullptr);
+
+    // Staging vertex buffer
+    VkBufferCreateInfo stagingBufferCreateInfo { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+                                                 nullptr,
+                                                 0,
+                                                 bufferSize,
+                                                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT, // No need to specify vertex buffer bit a this buffer won't be bound as vertex buffer
+                                                 VK_SHARING_MODE_EXCLUSIVE,
+                                                 0,
+                                                 nullptr };
+
+    VmaAllocationCreateInfo stagingAllocationCreateInfo {};
+    stagingAllocationCreateInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+
+    vmaCreateBuffer(Allocator, &stagingBufferCreateInfo, &stagingAllocationCreateInfo,
+                    &StagingVertexBufferHandle, &StagingVertexBufferAllocation, nullptr);
+
+    void *deviceMemory = nullptr;
+    vmaMapMemory(Allocator, StagingVertexBufferAllocation, &deviceMemory);
+    memcpy(deviceMemory, VB.data(), bufferSize);
+    vmaUnmapMemory(Allocator, StagingVertexBufferAllocation);
+
+
+    // Copy staging buffer content to vertex buffer
+    VkCommandBufferBeginInfo beginInfo
+        = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, nullptr,
+            VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr };
+
+    vkWaitForFences(Device, 1, &GraphicsCommandBuffersFences[0], VK_TRUE,
+                    std::numeric_limits<uint64_t>::max());
+    vkResetFences(Device, 1, &GraphicsCommandBuffersFences[0]);
+
+    vkBeginCommandBuffer(GraphicsCommandBuffers[0], &beginInfo);
+
+    VkBufferCopy bufferCopy { 0, 0, bufferSize };
+    vkCmdCopyBuffer(GraphicsCommandBuffers[0], StagingVertexBufferHandle,
+                    VertexBufferHandle, 1, &bufferCopy);
+
+    VkBufferMemoryBarrier bufferMemoryBarrier { VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+                                                nullptr,
+                                                VK_ACCESS_MEMORY_WRITE_BIT,
+                                                VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
+                                                GraphicsQueueIndex,
+                                                GraphicsQueueIndex,
+                                                VertexBufferHandle,
+                                                0,
+                                                bufferSize };
+
+    vkCmdPipelineBarrier(GraphicsCommandBuffers[0], VK_PIPELINE_STAGE_TRANSFER_BIT,
+                         VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, 0, 0, nullptr, 1,
+                         &bufferMemoryBarrier, 0, nullptr);
+
+    vkEndCommandBuffer(GraphicsCommandBuffers[0]);
+
+    VkSubmitInfo submitInfo {
+        VK_STRUCTURE_TYPE_SUBMIT_INFO, nullptr, 0,      nullptr, nullptr, 1,
+        &GraphicsCommandBuffers[0],    0,       nullptr
+    };
+
+    vkQueueSubmit(GraphicsQueue, 1, &submitInfo, GraphicsCommandBuffersFences[0]);
+}
+
+void CreateIndexBuffer()
+{
+    VkDeviceSize bufferSize = IB.size() * sizeof(uint32_t);
+    VkBufferCreateInfo bufferCreateInfo { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+                                          nullptr,
+                                          0,
+                                          bufferSize,
+                                          VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                          VK_SHARING_MODE_EXCLUSIVE,
+                                          0,
+                                          nullptr };
+
+    VmaAllocationCreateInfo allocationCreateInfo {};
+    allocationCreateInfo.usage = VMA_MEMORY_USAGE_CPU_TO_GPU;
+
+    vmaCreateBuffer(Allocator, &bufferCreateInfo, &allocationCreateInfo,
+                    &IndexBufferHandle, &IndexBufferAllocation, nullptr);
+
+    void *deviceMemory = nullptr;
+    vmaMapMemory(Allocator, IndexBufferAllocation, &deviceMemory);
+    memcpy(deviceMemory, IB.data(), bufferSize);
+    vmaUnmapMemory(Allocator, IndexBufferAllocation);
+}
+
+void Draw()
+{
+    static uint32_t virtualFrameIndex = 0;
+    uint32_t imageIndex;
+
+    virtualFrameIndex = (virtualFrameIndex + 1) % VirtualFramesCount;
+
+    if (vkWaitForFences(Device, 1, &GraphicsCommandBuffersFences[virtualFrameIndex], VK_TRUE, 1000000000)
+        == VK_TIMEOUT) {
+        printf("Fence wasn't signaled within 1 second !\n");
+        return;
+    }
+    vkResetFences(Device, 1, &GraphicsCommandBuffersFences[virtualFrameIndex]);
+
+    // Acquire the next image index, and give a semaphore to signal once were allowed to draw on it
+    vkAcquireNextImageKHR(Device, Swapchain, std::numeric_limits<uint64_t>::max(),
+                          ImageAvailableSemaphores[virtualFrameIndex], nullptr, &imageIndex);
+
+    RecordCommands(virtualFrameIndex);
+
+    // Where does the semaphore needs to wait
+    VkPipelineStageFlags waitPipelineStages = VK_PIPELINE_STAGE_TRANSFER_BIT;
+
+    // Send command buffers to the queue to execute it
+    VkSubmitInfo submitInfo { VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                              nullptr,
+                              1,
+                              &ImageAvailableSemaphores[virtualFrameIndex], // Useless for now ?
+                              &waitPipelineStages,
+                              1,
+                              &GraphicsCommandBuffers[virtualFrameIndex],
+                              1,
+                              &QueueProcessingFinishedSemaphores[virtualFrameIndex] };
+
+    vkQueueSubmit(GraphicsQueue, 1, &submitInfo,
+                  GraphicsCommandBuffersFences[virtualFrameIndex]);
+
+    // Present the resulting image once the finishes processing commands
+    VkPresentInfoKHR presentInfo { VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+                                   nullptr,
+                                   1,
+                                   &QueueProcessingFinishedSemaphores[virtualFrameIndex],
+                                   1,
+                                   &Swapchain,
+                                   &imageIndex,
+                                   nullptr };
+
+    vkQueuePresentKHR(PresentationQueue, &presentInfo);
+}
+
+inline void CreateRenderingRessources()
+{
+    VkSemaphoreCreateInfo semaphoreCreateInfo { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+                                                nullptr, 0 };
+
+    for (size_t virtualFrameIndex = 0; virtualFrameIndex < VirtualFramesCount;
+         virtualFrameIndex++) {
+        vkCreateSemaphore(Device, &semaphoreCreateInfo, nullptr,
+                          &ImageAvailableSemaphores[virtualFrameIndex]);
+        vkCreateSemaphore(Device, &semaphoreCreateInfo, nullptr,
+                          &QueueProcessingFinishedSemaphores[virtualFrameIndex]);
+    }
+
+
+    VkCommandBufferAllocateInfo graphicsCommandBuffersAllocateInfo {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, nullptr,
+        GraphicsQueueCmdPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, VirtualFramesCount
+    };
+    vkAllocateCommandBuffers(Device, &graphicsCommandBuffersAllocateInfo,
+                             GraphicsCommandBuffers.data());
+
+    VkCommandBufferAllocateInfo presentationCommandBuffersAllocateInfo {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, nullptr,
+        PresentationQueueCmdPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, VirtualFramesCount
+    };
+    vkAllocateCommandBuffers(Device, &presentationCommandBuffersAllocateInfo,
+                             PresentationCommandBuffers.data());
+
+
+    VkFenceCreateInfo fenceCreateInfo { VK_STRUCTURE_TYPE_FENCE_CREATE_INFO, nullptr, 0 };
+
+    for (auto &fence : GraphicsCommandBuffersFences) {
+        vkCreateFence(Device, &fenceCreateInfo, nullptr, &fence);
+    }
+
+
+    // Image views, recreate them on swapchain recreation ?
+    for (size_t imageIndex = 0; imageIndex < SwapchainImages.size(); imageIndex++) {
+        VkComponentMapping componentMapping
+            = { VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY,
+                VK_COMPONENT_SWIZZLE_IDENTITY, VK_COMPONENT_SWIZZLE_IDENTITY };
+        VkImageSubresourceRange imageSubresourceRange { VK_IMAGE_ASPECT_COLOR_BIT,
+                                                        0, 1, 0, 1 };
+
+        VkImageViewCreateInfo imageViewCreateInfo { VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+                                                    nullptr,
+                                                    0,
+                                                    SwapchainImages[imageIndex],
+                                                    VK_IMAGE_VIEW_TYPE_2D,
+                                                    SwapchainFormat,
+                                                    componentMapping,
+                                                    imageSubresourceRange };
+
+        vkCreateImageView(Device, &imageViewCreateInfo, nullptr,
+                          &SwapchainImagesViews[imageIndex]);
+    }
+}
 
 inline void SetupVulkan(Window &_window)
 {
@@ -304,21 +847,44 @@ inline void SetupVulkan(Window &_window)
     Device = CreateDevice(PhysicalDevice, queueFamilyIndices, requiredDeviceExtensions)
                  .value();
 
-    VkSemaphoreCreateInfo semaphoreCreateInfo { VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
-                                                nullptr, 0 };
-    vkCreateSemaphore(Device, &semaphoreCreateInfo, nullptr, &ImageAvailableSemaphore);
-    vkCreateSemaphore(Device, &semaphoreCreateInfo, nullptr, &QueueProcessingFinishedSemaphore);
+    VmaVulkanFunctions vmaVulkanFunctions;
+    vmaVulkanFunctions.vkGetPhysicalDeviceProperties = vkGetPhysicalDeviceProperties;
+    vmaVulkanFunctions.vkGetPhysicalDeviceMemoryProperties = vkGetPhysicalDeviceMemoryProperties;
+    vmaVulkanFunctions.vkCreateImage                       = vkCreateImage;
+    vmaVulkanFunctions.vkCreateBuffer                      = vkCreateBuffer;
+    vmaVulkanFunctions.vkAllocateMemory                    = vkAllocateMemory;
+    vmaVulkanFunctions.vkMapMemory                         = vkMapMemory;
+    vmaVulkanFunctions.vkBindBufferMemory                  = vkBindBufferMemory;
+    vmaVulkanFunctions.vkBindImageMemory                   = vkBindImageMemory;
+    vmaVulkanFunctions.vkGetBufferMemoryRequirements = vkGetBufferMemoryRequirements;
+    vmaVulkanFunctions.vkGetImageMemoryRequirements = vkGetImageMemoryRequirements;
+    vmaVulkanFunctions.vkCmdCopyBuffer              = vkCmdCopyBuffer;
+    vmaVulkanFunctions.vkUnmapMemory                = vkUnmapMemory;
+    vmaVulkanFunctions.vkFlushMappedMemoryRanges    = vkFlushMappedMemoryRanges;
+    vmaVulkanFunctions.vkInvalidateMappedMemoryRanges = vkInvalidateMappedMemoryRanges;
+    vmaVulkanFunctions.vkFreeMemory                   = vkFreeMemory;
+    vmaVulkanFunctions.vkDestroyImage                 = vkDestroyImage;
+    vmaVulkanFunctions.vkDestroyBuffer                = vkDestroyBuffer;
+    VmaAllocatorCreateInfo allocatorCreateInfo {};
+    allocatorCreateInfo.physicalDevice   = PhysicalDevice;
+    allocatorCreateInfo.device           = Device;
+    allocatorCreateInfo.pVulkanFunctions = &vmaVulkanFunctions;
+
+    vmaCreateAllocator(&allocatorCreateInfo, &Allocator);
+
 
     vkGetDeviceQueue(Device, GraphicsQueueIndex, 0, &GraphicsQueue);
     vkGetDeviceQueue(Device, PresentationQueueIndex, 0, &PresentationQueue);
 
     VkCommandPoolCreateInfo graphicsCommandPoolCreateInfo {
-        VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, nullptr, 0, GraphicsQueueIndex
+        VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, nullptr,
+        VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, GraphicsQueueIndex
     };
     vkCreateCommandPool(Device, &graphicsCommandPoolCreateInfo, nullptr, &GraphicsQueueCmdPool);
 
     VkCommandPoolCreateInfo presentationCommandPoolCreateInfo {
-        VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, nullptr, 0, PresentationQueueIndex
+        VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO, nullptr,
+        VK_COMMAND_POOL_CREATE_TRANSIENT_BIT | VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT, PresentationQueueIndex
     };
     vkCreateCommandPool(Device, &presentationCommandPoolCreateInfo, nullptr,
                         &PresentationQueueCmdPool);
@@ -333,58 +899,79 @@ inline void SetupVulkan(Window &_window)
     SwapchainImages.resize(imagesCount);
     vkGetSwapchainImagesKHR(Device, Swapchain, &imagesCount, SwapchainImages.data());
 
-    GraphicsCommandBuffers.resize(imagesCount);
-    PresentationCommandBuffers.resize(imagesCount);
+    CreateRenderingRessources();
 
-    VkCommandBufferAllocateInfo graphicsCommandBuffersAllocateInfo {
-        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, nullptr,
-        GraphicsQueueCmdPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, imagesCount
+    // Change swapchain images memory layout
+    VkCommandBufferBeginInfo commandBufferBeginInfo {
+        VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, nullptr,
+        VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr
     };
-    vkAllocateCommandBuffers(Device, &graphicsCommandBuffersAllocateInfo,
-                             GraphicsCommandBuffers.data());
 
-    VkCommandBufferAllocateInfo presentationCommandBuffersAllocateInfo {
-        VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO, nullptr,
-        PresentationQueueCmdPool, VK_COMMAND_BUFFER_LEVEL_PRIMARY, imagesCount
-    };
-    vkAllocateCommandBuffers(Device, &presentationCommandBuffersAllocateInfo,
-                             PresentationCommandBuffers.data());
+    VkImageSubresourceRange imageSubresourceRange { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
 
-    RecordCommands();
-}
+    // Change image layout foreach swapchain images
+    for (size_t imageIndex = 0; imageIndex < imagesCount; imageIndex++) {
+        uint32_t virtualFrameIndex  = imageIndex % VirtualFramesCount;
+        uint32_t acquiredImageIndex = 0;
 
-void Draw()
-{
-    uint32_t imageIndex;
-    vkAcquireNextImageKHR(Device, Swapchain, std::numeric_limits<uint64_t>::max(),
-                          ImageAvailableSemaphore, nullptr, &imageIndex);
+        vkAcquireNextImageKHR(Device, Swapchain, std::numeric_limits<uint64_t>::max(),
+                              ImageAvailableSemaphores[virtualFrameIndex],
+                              nullptr, &acquiredImageIndex);
 
-    VkPipelineStageFlags waitPipelineStages = VK_PIPELINE_STAGE_TRANSFER_BIT;
+        // Change current swapchain image layout
+        VkImageMemoryBarrier fromUndefinedToPresentBarrier {
+            VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+            nullptr,
+            VK_ACCESS_MEMORY_READ_BIT,
+            VK_ACCESS_MEMORY_READ_BIT,
+            VK_IMAGE_LAYOUT_UNDEFINED,
+            VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+            GraphicsQueueIndex,
+            GraphicsQueueIndex,
+            SwapchainImages[acquiredImageIndex],
+            imageSubresourceRange
+        };
 
-    // Send command buffers to the queue to execute it
-    VkSubmitInfo submitInfo { VK_STRUCTURE_TYPE_SUBMIT_INFO,
-                              nullptr,
-                              1,
-                              &ImageAvailableSemaphore, // Useless for now ?
-                              &waitPipelineStages,
-                              1,
-                              &PresentationCommandBuffers[imageIndex],
-                              1,
-                              &QueueProcessingFinishedSemaphore };
+        vkBeginCommandBuffer(GraphicsCommandBuffers[virtualFrameIndex], &commandBufferBeginInfo);
+        vkCmdPipelineBarrier(GraphicsCommandBuffers[virtualFrameIndex],
+                             VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT,
+                             VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, 0, 0, nullptr,
+                             0, nullptr, 1, &fromUndefinedToPresentBarrier);
+        vkEndCommandBuffer(GraphicsCommandBuffers[virtualFrameIndex]);
 
-    vkQueueSubmit(PresentationQueue, 1, &submitInfo, VK_NULL_HANDLE);
+        VkPipelineStageFlags waitPipelineStages = VK_PIPELINE_STAGE_TRANSFER_BIT;
 
-    // Present the resulting image
-    VkPresentInfoKHR presentInfo { VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-                                   nullptr,
-                                   1,
-                                   &QueueProcessingFinishedSemaphore,
-                                   1,
-                                   &Swapchain,
-                                   &imageIndex,
-                                   nullptr };
+        // Send command buffers to the queue to execute it
+        VkSubmitInfo submitInfo { VK_STRUCTURE_TYPE_SUBMIT_INFO,
+                                  nullptr,
+                                  1,
+                                  &ImageAvailableSemaphores[virtualFrameIndex],
+                                  &waitPipelineStages,
+                                  1,
+                                  &GraphicsCommandBuffers[virtualFrameIndex],
+                                  1,
+                                  &QueueProcessingFinishedSemaphores[virtualFrameIndex] };
 
-    vkQueuePresentKHR(PresentationQueue, &presentInfo);
+        vkQueueSubmit(GraphicsQueue, 1, &submitInfo,
+                      GraphicsCommandBuffersFences[virtualFrameIndex]);
+
+        // Present the resulting image, give it back to the presentation engine
+        VkPresentInfoKHR presentInfo { VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+                                       nullptr,
+                                       1,
+                                       &QueueProcessingFinishedSemaphores[virtualFrameIndex],
+                                       1,
+                                       &Swapchain,
+                                       &acquiredImageIndex,
+                                       nullptr };
+
+        vkQueuePresentKHR(PresentationQueue, &presentInfo);
+    }
+
+    CreateRenderpass();
+    CreatePipeline();
+    CreateVertexBuffer();
+    CreateIndexBuffer();
 }
 
 int main()

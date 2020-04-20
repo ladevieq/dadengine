@@ -2,9 +2,10 @@
 
 #include <cstdint>
 
-#include <vector>
 #include <filesystem>
+#include <vector>
 
-namespace DadEngine {
-    std::vector<uint8_t> ReadFile(std::filesystem::path _filePath);
+namespace DadEngine
+{
+    std::vector<uint8_t> ReadFile(std::filesystem::path _fullpath);
 }
