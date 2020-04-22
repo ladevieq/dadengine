@@ -247,8 +247,10 @@ VmaAllocation StagingVertexBufferAllocation = nullptr;
 std::vector<uint32_t> IB {
     0, 1, 2, 1, 3, 2,
 };
-VkBuffer IndexBufferHandle          = nullptr;
-VmaAllocation IndexBufferAllocation = nullptr;
+VkBuffer IndexBufferHandle                 = nullptr;
+VmaAllocation IndexBufferAllocation        = nullptr;
+VkBuffer StagingIndexBufferHandle          = nullptr;
+VmaAllocation StagingIndexBufferAllocation = nullptr;
 
 inline void CreateFramebuffer(uint32_t _virtualFrameIndex);
 
@@ -667,7 +669,7 @@ void CreateIndexBuffer()
                                           nullptr,
                                           0,
                                           bufferSize,
-                                          VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+                                          VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
                                           VK_SHARING_MODE_EXCLUSIVE,
                                           0,
                                           nullptr };
@@ -678,10 +680,66 @@ void CreateIndexBuffer()
     vmaCreateBuffer(Allocator, &bufferCreateInfo, &allocationCreateInfo,
                     &IndexBufferHandle, &IndexBufferAllocation, nullptr);
 
+
+    // Staging index buffer
+    VkBufferCreateInfo stagingBufferCreateInfo { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+                                                 nullptr,
+                                                 0,
+                                                 bufferSize,
+                                                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT, // No need to specify vertex buffer bit a this buffer won't be bound as vertex buffer
+                                                 VK_SHARING_MODE_EXCLUSIVE,
+                                                 0,
+                                                 nullptr };
+
+    VmaAllocationCreateInfo stagingAllocationCreateInfo {};
+    stagingAllocationCreateInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+
+    vmaCreateBuffer(Allocator, &stagingBufferCreateInfo, &stagingAllocationCreateInfo,
+                    &StagingIndexBufferHandle, &StagingIndexBufferAllocation, nullptr);
+
     void *deviceMemory = nullptr;
-    vmaMapMemory(Allocator, IndexBufferAllocation, &deviceMemory);
+    vmaMapMemory(Allocator, StagingIndexBufferAllocation, &deviceMemory);
     memcpy(deviceMemory, IB.data(), bufferSize);
-    vmaUnmapMemory(Allocator, IndexBufferAllocation);
+    vmaUnmapMemory(Allocator, StagingIndexBufferAllocation);
+
+
+    // Copy staging buffer content to vertex buffer
+    VkCommandBufferBeginInfo beginInfo
+        = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, nullptr,
+            VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr };
+
+    vkWaitForFences(Device, 1, &GraphicsCommandBuffersFences[0], VK_TRUE,
+                    std::numeric_limits<uint64_t>::max());
+    vkResetFences(Device, 1, &GraphicsCommandBuffersFences[0]);
+
+    vkBeginCommandBuffer(GraphicsCommandBuffers[0], &beginInfo);
+
+    VkBufferCopy bufferCopy { 0, 0, bufferSize };
+    vkCmdCopyBuffer(GraphicsCommandBuffers[0], StagingIndexBufferHandle,
+                    IndexBufferHandle, 1, &bufferCopy);
+
+    VkBufferMemoryBarrier bufferMemoryBarrier { VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
+                                                nullptr,
+                                                VK_ACCESS_MEMORY_WRITE_BIT,
+                                                VK_ACCESS_INDEX_READ_BIT,
+                                                GraphicsQueueIndex,
+                                                GraphicsQueueIndex,
+                                                IndexBufferHandle,
+                                                0,
+                                                bufferSize };
+
+    vkCmdPipelineBarrier(GraphicsCommandBuffers[0], VK_PIPELINE_STAGE_TRANSFER_BIT,
+                         VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, 0, 0, nullptr, 1,
+                         &bufferMemoryBarrier, 0, nullptr);
+
+    vkEndCommandBuffer(GraphicsCommandBuffers[0]);
+
+    VkSubmitInfo submitInfo {
+        VK_STRUCTURE_TYPE_SUBMIT_INFO, nullptr, 0,      nullptr, nullptr, 1,
+        &GraphicsCommandBuffers[0],    0,       nullptr
+    };
+
+    vkQueueSubmit(GraphicsQueue, 1, &submitInfo, GraphicsCommandBuffersFences[0]);
 }
 
 void Draw()
