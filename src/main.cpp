@@ -87,6 +87,7 @@ int main()
 
 #define VMA_STATIC_VULKAN_FUNCTIONS 0
 #define VMA_IMPLEMENTATION
+#include <stb_image.h>
 #include <vk_mem_alloc.h>
 
 VkFormat SwapchainFormat;
@@ -202,8 +203,10 @@ VkCommandPool PresentationQueueCmdPool = nullptr;
 VkShaderModule VertexShaderModule      = nullptr;
 VkShaderModule FragmentShaderModule    = nullptr;
 VkRenderPass RenderPass                = nullptr;
-VkPipeline GraphicsPipeline            = nullptr;
-VmaAllocator Allocator                 = nullptr;
+VkPipelineLayout Layout                = nullptr;
+;
+VkPipeline GraphicsPipeline = nullptr;
+VmaAllocator Allocator      = nullptr;
 VkClearValue ClearValue { { { 0.f, 1.f, 0.f, 1.f } } };
 
 
@@ -225,18 +228,22 @@ std::vector<Vertex> VB {
     {
         { -0.7f, -0.7f, 0.f },
         { 1.f, 0.f, 0.f },
+        { 0.f, 0.f },
     },
     {
         { -0.7f, 0.7f, 0.f },
         { 0.f, 1.f, 0.f },
+        { 0.f, 1.f },
     },
     {
         { 0.7f, -0.7f, 0.f },
         { 0.f, 0.f, 1.f },
+        { 1.f, 0.f },
     },
     {
         { 0.7f, 0.7f, 0.f },
         { 0.f, 0.f, 0.f },
+        { 1.f, 1.f },
     },
 };
 VkBuffer VertexBufferHandle                 = nullptr;
@@ -251,6 +258,16 @@ VkBuffer IndexBufferHandle                 = nullptr;
 VmaAllocation IndexBufferAllocation        = nullptr;
 VkBuffer StagingIndexBufferHandle          = nullptr;
 VmaAllocation StagingIndexBufferAllocation = nullptr;
+
+VkImage TextureImage                        = nullptr;
+VkImageView TextureImageView                = nullptr;
+VmaAllocation TextureImageAllocation        = nullptr;
+VkBuffer StagingTextureImage                 = nullptr;
+VmaAllocation StagingTextureImageAllocation = nullptr;
+VkSampler TextureImageSampler               = nullptr;
+VkDescriptorSetLayout DescriptorSetLayout   = nullptr;
+VkDescriptorPool DescriptorPool             = nullptr;
+VkDescriptorSet DescriptorSet               = nullptr;
 
 inline void CreateFramebuffer(uint32_t _virtualFrameIndex);
 
@@ -320,6 +337,9 @@ inline void RecordCommands(uint32_t _virtualFrameIndex)
                          IndexBufferHandle, offset, VK_INDEX_TYPE_UINT32);
     vkCmdBindVertexBuffers(GraphicsCommandBuffers[_virtualFrameIndex], 0, 1,
                            &VertexBufferHandle, &offset);
+    vkCmdBindDescriptorSets(GraphicsCommandBuffers[_virtualFrameIndex],
+                            VK_PIPELINE_BIND_POINT_GRAPHICS, Layout, 0, 1,
+                            &DescriptorSet, 0, nullptr);
     // vkCmdDraw(GraphicsCommandBuffers[_virtualFrameIndex], 3, 1, 0, 0);
     vkCmdDrawIndexed(GraphicsCommandBuffers[_virtualFrameIndex], 6, 1, 0, 0, 0);
 
@@ -456,7 +476,8 @@ inline void CreatePipeline()
     };
     std::vector<VkVertexInputAttributeDescription> vertexInputAttributesDescriptions {
         { 0, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, position) },
-        { 1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color) }
+        { 1, 0, VK_FORMAT_R32G32B32_SFLOAT, offsetof(Vertex, color) },
+        { 2, 0, VK_FORMAT_R32G32_SFLOAT, offsetof(Vertex, uv) }
     };
 
     VkPipelineVertexInputStateCreateInfo vertexInputStateCreateInfo {
@@ -547,11 +568,10 @@ inline void CreatePipeline()
 
 
     VkPipelineLayoutCreateInfo layoutCreateInfo {
-        VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, nullptr, 0, 0, nullptr, 0, nullptr
+        VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO, nullptr, 0, 1, &DescriptorSetLayout, 0, nullptr
     };
 
-    VkPipelineLayout layout;
-    vkCreatePipelineLayout(Device, &layoutCreateInfo, nullptr, &layout);
+    vkCreatePipelineLayout(Device, &layoutCreateInfo, nullptr, &Layout);
 
     VkGraphicsPipelineCreateInfo graphicsPipelineCreateInfo {
         VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
@@ -568,7 +588,7 @@ inline void CreatePipeline()
         nullptr,
         &colorBlendStateCreateInfo,
         nullptr,
-        layout,
+        Layout,
         RenderPass,
         0,
         VK_NULL_HANDLE,
@@ -731,6 +751,155 @@ void CreateIndexBuffer()
     vkCmdPipelineBarrier(GraphicsCommandBuffers[0], VK_PIPELINE_STAGE_TRANSFER_BIT,
                          VK_PIPELINE_STAGE_VERTEX_INPUT_BIT, 0, 0, nullptr, 1,
                          &bufferMemoryBarrier, 0, nullptr);
+
+    vkEndCommandBuffer(GraphicsCommandBuffers[0]);
+
+    VkSubmitInfo submitInfo {
+        VK_STRUCTURE_TYPE_SUBMIT_INFO, nullptr, 0,      nullptr, nullptr, 1,
+        &GraphicsCommandBuffers[0],    0,       nullptr
+    };
+
+    vkQueueSubmit(GraphicsQueue, 1, &submitInfo, GraphicsCommandBuffersFences[0]);
+}
+
+void CreateImage()
+{
+    int32_t width;
+    int32_t height;
+    int32_t channels;
+    uint8_t *data = stbi_load("../data/sponza/11474523244911310074.jpg", &width,
+                              &height, &channels, 4);
+
+    VkDeviceSize imageSize = width * height * 4;
+    // Device image
+    VkImageCreateInfo imageCreateInfo
+        = { VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
+            nullptr,
+            0,
+            VK_IMAGE_TYPE_2D,
+            VK_FORMAT_R8G8B8A8_UNORM,
+            { 1024, 1024, 1 },
+            1,
+            1,
+            VK_SAMPLE_COUNT_1_BIT,
+            VK_IMAGE_TILING_OPTIMAL,
+            VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+            VK_SHARING_MODE_EXCLUSIVE,
+            0,
+            nullptr,
+            VK_IMAGE_LAYOUT_UNDEFINED };
+
+    VmaAllocationCreateInfo allocationCreateInfo {};
+    allocationCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+    vmaCreateImage(Allocator, &imageCreateInfo, &allocationCreateInfo,
+                   &TextureImage, &TextureImageAllocation, nullptr);
+
+
+    // Create image view
+    VkImageSubresourceRange imageSubresourceRange { VK_IMAGE_ASPECT_COLOR_BIT,
+                                                     0, 1, 0, 1 };
+
+    VkImageViewCreateInfo imageViewCreateInfo { VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+                                                nullptr,
+                                                0,
+                                                TextureImage,
+                                                VK_IMAGE_VIEW_TYPE_2D,
+                                                VK_FORMAT_R8G8B8A8_UNORM,
+                                                { VK_COMPONENT_SWIZZLE_R, VK_COMPONENT_SWIZZLE_G,
+                                                  VK_COMPONENT_SWIZZLE_B, VK_COMPONENT_SWIZZLE_A },
+                                                imageSubresourceRange };
+
+    vkCreateImageView(Device, &imageViewCreateInfo, nullptr, &TextureImageView);
+
+
+    // Staging image
+    VkBufferCreateInfo stagingBufferCreateInfo { VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+                                                 nullptr,
+                                                 0,
+                                                 imageSize,
+                                                 VK_BUFFER_USAGE_TRANSFER_SRC_BIT, // No need to specify vertex buffer bit a this buffer won't be bound as vertex buffer
+                                                 VK_SHARING_MODE_EXCLUSIVE,
+                                                 0,
+                                                 nullptr };
+
+    VmaAllocationCreateInfo stagingAllocationCreateInfo {};
+    stagingAllocationCreateInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+
+    vmaCreateBuffer(Allocator, &stagingBufferCreateInfo, &stagingAllocationCreateInfo,
+                    &StagingTextureImage, &StagingTextureImageAllocation, nullptr);
+
+    void *deviceMemory = nullptr;
+    vmaMapMemory(Allocator, StagingTextureImageAllocation, &deviceMemory);
+    memcpy(deviceMemory, data, imageSize);
+    vmaUnmapMemory(Allocator, StagingTextureImageAllocation);
+
+
+    // Copy staging image content to device image
+    VkCommandBufferBeginInfo beginInfo
+        = { VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO, nullptr,
+            VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT, nullptr };
+
+    vkWaitForFences(Device, 1, &GraphicsCommandBuffersFences[0], VK_TRUE,
+                    std::numeric_limits<uint64_t>::max());
+    vkResetFences(Device, 1, &GraphicsCommandBuffersFences[0]);
+
+    vkBeginCommandBuffer(GraphicsCommandBuffers[0], &beginInfo);
+
+    VkImageMemoryBarrier imageMemoryBarrier {
+        VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+        nullptr,
+        0,
+        VK_ACCESS_TRANSFER_WRITE_BIT,
+        VK_IMAGE_LAYOUT_UNDEFINED,
+        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        VK_QUEUE_FAMILY_IGNORED,
+        VK_QUEUE_FAMILY_IGNORED,
+        TextureImage,
+        imageSubresourceRange
+    };
+
+    vkCmdPipelineBarrier(GraphicsCommandBuffers[0], VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, 0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
+
+    VkImageSubresourceLayers imageSubresourceLayers {
+        VK_IMAGE_ASPECT_COLOR_BIT,
+        0,
+        0,
+        1,
+    };
+    VkBufferImageCopy bufferImageCopy {
+        0,
+        0,
+        0,
+        imageSubresourceLayers,
+        {
+            0,
+            0,
+            0
+        },
+        {
+            1024,
+            1024,
+            1
+        }
+    };
+
+    vkCmdCopyBufferToImage(GraphicsCommandBuffers[0], StagingTextureImage, TextureImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &bufferImageCopy);
+
+    VkImageMemoryBarrier imageMemoryBarrierToRead { VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
+                                                    nullptr,
+                                                    VK_ACCESS_TRANSFER_WRITE_BIT,
+                                                    VK_ACCESS_SHADER_READ_BIT,
+                                                    VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+                                                    VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                                    GraphicsQueueIndex,
+                                                    GraphicsQueueIndex,
+                                                    TextureImage,
+                                                    imageSubresourceRange };
+
+    vkCmdPipelineBarrier(GraphicsCommandBuffers[0], VK_PIPELINE_STAGE_TRANSFER_BIT,
+                         VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT, 0, 0, nullptr, 0,
+                         nullptr, 1, &imageMemoryBarrierToRead);
 
     vkEndCommandBuffer(GraphicsCommandBuffers[0]);
 
@@ -948,6 +1117,56 @@ inline void SetupVulkan(Window &_window)
                         &PresentationQueueCmdPool);
 
 
+    VkSamplerCreateInfo samplerCreateInfo = { VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO,
+                                              nullptr,
+                                              0,
+                                              VK_FILTER_NEAREST,
+                                              VK_FILTER_NEAREST,
+                                              VK_SAMPLER_MIPMAP_MODE_NEAREST,
+                                              VK_SAMPLER_ADDRESS_MODE_REPEAT,
+                                              VK_SAMPLER_ADDRESS_MODE_REPEAT,
+                                              VK_SAMPLER_ADDRESS_MODE_REPEAT,
+                                              0.f,
+                                              VK_FALSE,
+                                              1.f,
+                                              VK_FALSE,
+                                              VK_COMPARE_OP_ALWAYS,
+                                              0.f,
+                                              0.f,
+                                              VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK,
+                                              VK_FALSE };
+
+    vkCreateSampler(Device, &samplerCreateInfo, nullptr, &TextureImageSampler);
+
+    // Set 0
+    // Binding 0 texture image
+    VkDescriptorSetLayoutBinding descriptorSetLayoutBinding {
+        0, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1, VK_SHADER_STAGE_FRAGMENT_BIT, &TextureImageSampler
+    };
+
+    // Set 0 layout
+    VkDescriptorSetLayoutCreateInfo descriptorSetLayoutCreateInfo {
+        VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO, nullptr, 0, 1, &descriptorSetLayoutBinding
+    };
+
+    vkCreateDescriptorSetLayout(Device, &descriptorSetLayoutCreateInfo, nullptr,
+                                &DescriptorSetLayout);
+
+
+    // Create descriptor pool
+    VkDescriptorPoolSize descriptorPoolSize { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1 };
+
+    VkDescriptorPoolCreateInfo descriptorPoolCreateInfo {
+        VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO, nullptr, 0, 1, 1, &descriptorPoolSize
+    };
+
+    vkCreateDescriptorPool(Device, &descriptorPoolCreateInfo, nullptr, &DescriptorPool);
+
+    VkDescriptorSetAllocateInfo descriptorSetCreateInfo {
+        VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO, nullptr, DescriptorPool, 1, &DescriptorSetLayout
+    };
+    vkAllocateDescriptorSets(Device, &descriptorSetCreateInfo, &DescriptorSet);
+
     Swapchain
         = CreateSwapchain(Device, PhysicalDevice, presentationSurface, nullptr).value();
 
@@ -1030,6 +1249,26 @@ inline void SetupVulkan(Window &_window)
     CreatePipeline();
     CreateVertexBuffer();
     CreateIndexBuffer();
+    CreateImage();
+
+    // vkDeviceWaitIdle(Device);
+
+    VkDescriptorImageInfo descriptorImageInfo { TextureImageSampler, TextureImageView,
+                                                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL };
+
+
+    VkWriteDescriptorSet writeDescriptorSet { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
+                                              nullptr,
+                                              DescriptorSet,
+                                              0,
+                                              0,
+                                              1,
+                                              VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                                              &descriptorImageInfo,
+                                              nullptr,
+                                              nullptr };
+
+    vkUpdateDescriptorSets(Device, 1, &writeDescriptorSet, 0, nullptr);
 }
 
 int main()

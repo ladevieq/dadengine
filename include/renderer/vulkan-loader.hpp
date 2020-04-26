@@ -67,20 +67,31 @@
     X(vkCmdClearColorImage)           \
     X(vkCmdBeginRenderPass)           \
     X(vkCmdBindPipeline)              \
+    X(vkCmdBindVertexBuffers)         \
+    X(vkCmdBindIndexBuffer)           \
+    X(vkCmdBindDescriptorSets)        \
+    X(vkCmdCopyBuffer)                \
+    X(vkCmdCopyImage)                 \
+    X(vkCmdCopyBufferToImage)                \
     X(vkCmdDraw)                      \
     X(vkCmdDrawIndexed)               \
     X(vkCmdEndRenderPass)             \
     X(vkEndCommandBuffer)             \
     X(vkCreateRenderPass)             \
+    X(vkCreateBuffer)                 \
+    X(vkCreateImage)                  \
     X(vkCreateImageView)              \
+    X(vkCreateSampler)                \
     X(vkCreateFramebuffer)            \
     X(vkCreateShaderModule)           \
     X(vkCreatePipelineLayout)         \
     X(vkCreateGraphicsPipelines)      \
     X(vkCreateFence)                  \
-    X(vkCreateBuffer)                 \
+    X(vkCreateDescriptorSetLayout)    \
+    X(vkCreateDescriptorPool)         \
+    X(vkAllocateDescriptorSets)       \
+    X(vkUpdateDescriptorSets)         \
     X(vkGetBufferMemoryRequirements)  \
-    X(vkCreateImage)                  \
     X(vkGetImageMemoryRequirements)   \
     X(vkAllocateMemory)               \
     X(vkMapMemory)                    \
@@ -90,19 +101,20 @@
     X(vkFreeMemory)                   \
     X(vkBindBufferMemory)             \
     X(vkBindImageMemory)              \
-    X(vkCmdBindVertexBuffers)         \
-    X(vkCmdBindIndexBuffer)           \
-    X(vkCmdCopyBuffer)                \
     X(vkWaitForFences)                \
     X(vkResetFences)                  \
     X(vkDestroyFence)                 \
-    X(vkDestroyImage)                 \
-    X(vkDestroyBuffer)                \
+    X(vkFreeDescriptorSets)           \
+    X(vkDestroyDescriptorPool)        \
+    X(vkDestroyDescriptorSetLayout)   \
     X(vkDestroyPipeline)              \
     X(vkDestroyPipelineLayout)        \
     X(vkDestroyShaderModule)          \
     X(vkDestroyFramebuffer)           \
+    X(vkDestroySampler)               \
     X(vkDestroyImageView)             \
+    X(vkDestroyImage)                 \
+    X(vkDestroyBuffer)                \
     X(vkDestroyRenderPass)
 
 namespace DadEngine

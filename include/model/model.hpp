@@ -21,6 +21,7 @@ namespace DadEngine
         Vector3 position;
 #if defined(VULKAN)
         Vector3 color;
+        Vector2 uv;
 #endif
         Vector3 normal;
         Vector4 tangent;
