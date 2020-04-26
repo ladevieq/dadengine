@@ -5,7 +5,7 @@ namespace DadEngine
     VertexBuffer::VertexBuffer(std::vector<Vertex> &&_vertices)
         : vertices(_vertices)
     {
-#if defined(_OPENGL)
+#if defined(OPENGL)
         glGenVertexArrays(1, &vertexArrayID);
         glBindVertexArray(vertexArrayID);
 
@@ -42,7 +42,7 @@ namespace DadEngine
     IndexBuffer::IndexBuffer(std::vector<uint32_t> &&_indices)
         : indices(_indices)
     {
-#if defined(_OPENGL)
+#if defined(OPENGL)
         glGenBuffers(1, &elementBufferID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementBufferID);
 
@@ -59,7 +59,7 @@ namespace DadEngine
         : sampler(_sampler), data(_data), width(_width), height(_height),
           channels(_channels), hasAlpha(_hasAlpha)
     {
-#if defined(_OPENGL)
+#if defined(OPENGL)
         glGenTextures(1, &textureID);
         glBindTexture(GL_TEXTURE_2D, textureID);
 
@@ -81,7 +81,7 @@ namespace DadEngine
 
     void Primitive::Render()
     {
-#if defined(_OPENGL)
+#if defined(OPENGL)
         glBindVertexArray(vertices.vertexArrayID);
 
         glUniform4fv(0, 1, reinterpret_cast<float *>(&material.baseColorFactor));
